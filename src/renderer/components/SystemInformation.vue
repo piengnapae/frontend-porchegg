@@ -83,7 +83,6 @@ export default {
     }
     .item {
         display: flex;
-        margin-bottom: 6px;
     }
     .item .name {
         color: #6a6a6a;
