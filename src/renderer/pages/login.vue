@@ -16,10 +16,18 @@
             <el-button type="primary"  @click="submitForm('ruleForms')">Sign In</el-button> 
         </el-form-item>
 
+        Doesn't have an account ?
+        <nuxt-link
+          to="/register"
+          exact
+        >
+          Register Here
+        </nuxt-link>
     </el-form>
      
 </template>
 <script>
+import {env} from '../nuxt.config'
 import axios from 'axios'
   export default {
     data() {
@@ -41,6 +49,7 @@ import axios from 'axios'
             } 
       };     
       return {
+        server_api: env.SERVER_API,
         ruleForm: { 
           username:'',
           password: ''
@@ -61,11 +70,9 @@ import axios from 'axios'
         this.$refs[formName].validate((valid) => {
           if (valid) {
 
-            //  this.$router.replace({ name: "next" });
-
             axios({
               method: 'post',
-              url: 'http://localhost:9000/signin',
+              url: this.server_api+'/signin',
               header: {
                'Content-type':'application/json'
               },
@@ -75,7 +82,9 @@ import axios from 'axios'
               }
             })
             .then(res => {
-              console.log(res)
+              // console.log(res)
+              //if login success?
+              // this.$router.push('/member')
             })
              
           } 

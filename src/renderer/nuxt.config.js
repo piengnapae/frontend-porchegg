@@ -22,4 +22,7 @@ module.exports = {
   modules: [
     
   ],
+  env: {
+    SERVER_API: 'http://localhost:9000',
+  }
 };
