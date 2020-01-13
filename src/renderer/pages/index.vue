@@ -5,12 +5,15 @@
 <script>
 import { remote } from 'electron'
 import SystemInformation from '@/components/SystemInformation.vue'
-import Main from '@/components/main.vue'
+import Main from '@/components/Main.vue'
 
 export default {
   components: {
     SystemInformation,
     Main
+  },
+  mounted() {
+    this.$router.push('/login')
   },
   data () {
     return {

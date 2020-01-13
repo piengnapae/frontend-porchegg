@@ -6,15 +6,23 @@
           to="/"
           exact
         >
-          System info
+          Register
         </nuxt-link>
       </div>
       <div>
         <nuxt-link
-          to="/other"
+          to="/signin"
           exact
         >
-          Next page
+          Sign In
+        </nuxt-link>
+      </div>
+       <div>
+        <nuxt-link
+          to="/submit"
+          exact
+        >
+          submit
         </nuxt-link>
       </div>
     </nav>
