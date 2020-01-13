@@ -11,6 +11,8 @@
           <el-form-item label="Password" prop="password">
             <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
         </el-form-item>
+
+        <center>{{errorMessage}}</center>
        
         <el-form-item>
             <el-button type="primary"  @click="submitForm('ruleForms')">Sign In</el-button> 
@@ -50,6 +52,7 @@ import axios from 'axios'
       };     
       return {
         server_api: env.SERVER_API,
+        errorMessage : '',
         ruleForm: { 
           username:'',
           password: ''
@@ -72,7 +75,7 @@ import axios from 'axios'
 
             axios({
               method: 'post',
-              url: this.server_api+'/signin',
+              url: this.server_api+'/login',
               header: {
                'Content-type':'application/json'
               },
@@ -82,9 +85,11 @@ import axios from 'axios'
               }
             })
             .then(res => {
-              // console.log(res)
-              //if login success?
-              // this.$router.push('/member')
+              console.log(res)
+              this.$router.push('/member')
+            })
+            .catch(err =>{
+              this.errorMessage = err.response.data.error.message;
             })
              
           } 
