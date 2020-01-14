@@ -4,55 +4,39 @@
 
   <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" class="demo-ruleForm">
     <el-row>
-      <b><h2>เข้าสู่ระบบ</h2></b>
+      <b><h2>ลงทะเบียน</h2></b>
     </el-row>
-       <!-- <v-row>
-
-        <v-col cols="12" sm="6" md="3">
-          <v-text-field
-            label="Regular"
-          ></v-text-field>
-        </v-col>
-        </v-row> -->
 
     <el-row>
-      
+        <el-form-item label="E-mail" prop="email">
+          <el-input type="email"  v-model="ruleForm.email"></el-input>
+        </el-form-item>
+    </el-row>
+
+    <el-row>
         <el-form-item  label="Username" prop="username" >
-          <el-input id="input" type="text"  prefix-icon="fas fa-user" placeholder="Username" v-model="ruleForm.username" ></el-input>
+          <el-input type="text"  v-model="ruleForm.username"></el-input>
         </el-form-item> 
     </el-row>
 
     <el-row>
-        
-        <!-- <el-form-item  label="Password" prop="pass"> -->
-            <!-- <i class="el-icon-unlock"></i> -->
-          <!-- <el-input id="input" type="password"  prefix-icon="fas fa-lock" placeholder="Password" v-model="ruleForm.pass"   autocomplete="off"> -->
-            <!-- <i slot="suffix" class="el-input__icon el-icon-view"></i> -->
-         <!-- </el-input>
-        </el-form-item>  -->
-
-        <el-form-item v-if="visible" label="Password" prop="pass" >
-          <el-input type="password" v-model="ruleForm.pass" prefix-icon="fas fa-lock" placeholder="Password">
-            <i slot="suffix"  @click="changePass('show')"  class="el-icon-view"></i>
-          </el-input>
-        </el-form-item>
-        <el-form-item v-else label="Password" prop="pass">
-          <el-input type="text" v-model="ruleForm.pass" prefix-icon="fas fa-lock" placeholder="Password">
-            <i slot="suffix" @click="changePass('hide')" class="el-icon-view"></i>
-          </el-input>
-        </el-form-item>
-
+        <el-form-item  label="Password" prop="pass">
+          <el-input type="password"  v-model="ruleForm.pass" autocomplete="off"></el-input>
+        </el-form-item> 
+      
     </el-row>
- 
+    <el-row>
+      <el-form-item  label="Confirm Password" prop="checkPass">
+        <el-input type="password"  v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+      </el-form-item>
+    </el-row>
+  
     <p class="error">{{errorMessage}}</p>
 
     <el-row>
-        <el-button type="primary" class="button" round @click="submitForm('ruleForm')">เข้าสู่ระบบ</el-button>
+        <el-button type="primary" class="button" round @click="submitForm('ruleForm')">ลงทะเบียน</el-button>
     </el-row>
-<br>
- <el-row>
-        <el-button type="primary" class="buttonregis" round @click="submitForms('ruleForm')">ลงทะเบียน</el-button>
-    </el-row>
+
   </el-form>
 </div>
 
@@ -62,7 +46,6 @@
 import axios from 'axios'
 import { type } from 'os';
   export default {
-
     head() {
     return {
       bodyAttrs: {
@@ -79,6 +62,14 @@ import { type } from 'os';
               callback();
             }   
       };
+      var checkEmail = (rule, value, callback) => {
+          if (!value) {
+          return callback(new Error('Please input the E-mail'));
+        } 
+            else {
+              callback();
+            }       
+      };
       var validatePass = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('Please input the password'));
@@ -93,31 +84,42 @@ import { type } from 'os';
           callback();
         }
       };
-    
-
-    
+      var validatePass2 = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('Please input the password again'));
+        } else if (value !== this.ruleForm.pass) {
+          callback(new Error('Two password don\'t match!'));
+        } else {
+          callback();
+        }
+      };
+      
       return {
         errorMessage : '',
-        visible: true ,
         ruleForm: {
+          email:'',
           username:'',
-          pass: ''
+          pass: '',
+          checkPass: ''
         },
         rules: {
           pass: [
             { validator: validatePass, trigger: 'blur' }
           ],
+          checkPass: [
+            { validator: validatePass2, trigger: 'blur' }
+          ],
           username: [
             { validator: checkUsername, trigger: 'blur' }
           ],
+          email: [
+           { validator: checkEmail, trigger: 'blur' },
+           { type: 'email', message: 'Please input correct email address', trigger: ['blur', 'change'] }
+          ]
         }
       };
     },
-    methods: {      
-      
-      togglePassword() {
-        this.password_type = this.password_type === 'password' ? 'text' : 'password'
-      } ,
+    methods: {       
       submitForm(formName) {
         
         this.$refs[formName].validate((valid) => {
@@ -127,23 +129,31 @@ import { type } from 'os';
 
             axios({
               method: 'post',
-              url: 'http://localhost:9000/login',
+              url: 'http://localhost:9000/register',
               header: {
                'Content-type':'application/json'
               },
               data: {
+                'email': this.ruleForm.email,
                 'username':this.ruleForm.username,
                 'password': this.ruleForm.pass
               }
             })
             .then(res => {
-              // this.errorMessage = res.data.data.token
-              this.$router.replace({ name: "submitsignin" });
+              this.$router.replace({ name: "submitregister" });
             })
             .catch(err => {
-              this.errorMessage = err.response.data.error.message
-            })
-            
+              if(err.response.data.email && err.response.data.username){
+                this.errorMessage = "Email และ Username มีคนใช้แล้ว กรุณาตรวจสอบใหม่"
+                // The email and username has already been taken.
+              }else if(err.response.data.email){
+                this.errorMessage = "Email มีคนใช้แล้ว กรุณาตรวจสอบใหม่"
+                // +err.response.data.email
+              }else{
+                this.errorMessage = "Username มีคนใช้แล้ว กรุณาตรวจสอบใหม่"
+                // +err.response.data.username
+              }              
+            })            
           } 
           else {
             console.log('error submit!!');
@@ -151,12 +161,6 @@ import { type } from 'os';
           }
         });   
       }, 
-      submitForms(){
-         this.$router.replace({ name: "register" });
-      },
-       changePass(value) {
-        this.visible = !(value === 'show');
-      }  
     }
 }
     
@@ -168,10 +172,6 @@ import { type } from 'os';
 #app {
   font-family: 'Mitr', sans-serif;
 }
-
-/* #input {
-  border: none;
-} */
 
 .container {
   position: relative;
@@ -201,19 +201,6 @@ import { type } from 'os';
   font-family: 'Mitr', sans-serif;
   border: none;
   color: white;
-  width: 100%;
-  text-align: center;
-  text-decoration: none;
-  display: flex;
-  justify-content: center;
-  font-size: 18px;
-  cursor: pointer;
-}
-.buttonregis {
-  background-color: #E5E5E5; 
-  font-family: 'Mitr', sans-serif;
-  border: none;
-  color: black;
   width: 100%;
   text-align: center;
   text-decoration: none;

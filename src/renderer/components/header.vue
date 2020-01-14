@@ -2,29 +2,29 @@
   <header class="main-header">
     <nav>
       <div>
-        <nuxt-link
-          to="/"
-          exact
-        >
+        <nuxt-link to="/" exact >
+          sign in
+        </nuxt-link>
+      </div>
+
+      <div>
+        <nuxt-link to="/register" exact >
           Register
         </nuxt-link>
       </div>
-      <div>
-        <nuxt-link
-          to="/signin"
-          exact
-        >
-          Sign In
-        </nuxt-link>
-      </div>
+
        <div>
-        <nuxt-link
-          to="/submit"
-          exact
-        >
+        <nuxt-link to="/submitsignin" exact>
           submit
         </nuxt-link>
+       </div>
+
+        <!-- <div>
+          <nuxt-link to="/test" exact>
+          test
+        </nuxt-link>
       </div>
+       -->
     </nav>
   </header>
 </template>
