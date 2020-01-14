@@ -1,7 +1,6 @@
 <template>
 
 <div class="form" id="app">
-
   <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" class="demo-ruleForm">
     <el-row>
       <b><h2>ลงทะเบียน</h2></b>
@@ -9,25 +8,25 @@
 
     <el-row>
         <el-form-item label="E-mail" prop="email">
-          <el-input type="email"  v-model="ruleForm.email"></el-input>
+          <el-input type="email" placeholder="email" v-model="ruleForm.email"></el-input>
         </el-form-item>
     </el-row>
 
     <el-row>
         <el-form-item  label="Username" prop="username" >
-          <el-input type="text"  v-model="ruleForm.username"></el-input>
+          <el-input type="text" placeholder="Username" v-model="ruleForm.username"></el-input>
         </el-form-item> 
     </el-row>
 
     <el-row>
         <el-form-item  label="Password" prop="pass">
-          <el-input type="password"  v-model="ruleForm.pass" autocomplete="off"></el-input>
+          <el-input type="password" placeholder="Password" v-model="ruleForm.pass" autocomplete="off"></el-input>
         </el-form-item> 
       
     </el-row>
     <el-row>
       <el-form-item  label="Confirm Password" prop="checkPass">
-        <el-input type="password"  v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+        <el-input type="password" placeholder="Confirm Password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
       </el-form-item>
     </el-row>
   
@@ -140,7 +139,7 @@ import { type } from 'os';
               }
             })
             .then(res => {
-              this.$router.replace({ name: "submitregister" });
+              this.$router.replace({ name: "submit" });
             })
             .catch(err => {
               if(err.response.data.email && err.response.data.username){
@@ -152,8 +151,10 @@ import { type } from 'os';
               }else{
                 this.errorMessage = "Username มีคนใช้แล้ว กรุณาตรวจสอบใหม่"
                 // +err.response.data.username
-              }              
-            })            
+              }
+              
+            })
+            
           } 
           else {
             console.log('error submit!!');
