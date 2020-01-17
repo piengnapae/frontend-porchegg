@@ -51,7 +51,7 @@
     </el-row>
 <br>
  <el-row>
-        <el-button type="primary" class="buttonregis" round @click="submitForms('ruleForm')">ลงทะเบียน</el-button>
+        <el-button type="primary" class="buttonregis" round @click="goToRegister">ลงทะเบียน</el-button>
     </el-row>
   </el-form>
 </div>
@@ -153,8 +153,8 @@ import {env} from '../nuxt.config'
           }
         });   
       }, 
-      submitForms(){
-         this.$router.replace({ name: "register" });
+      goToRegister(){
+        this.$router.push({ name: "register" });
       },
        changePass(value) {
         this.visible = !(value === 'show');

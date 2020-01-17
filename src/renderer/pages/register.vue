@@ -48,7 +48,6 @@ import {env} from '../nuxt.config'
   export default {
     head() {
     return {
-      server_api: env.SERVER_API,
       bodyAttrs: {
         class: 'register'
       }
@@ -96,6 +95,7 @@ import {env} from '../nuxt.config'
       };
       
       return {
+        server_api: env.SERVER_API,
         errorMessage : '',
         ruleForm: {
           email:'',
