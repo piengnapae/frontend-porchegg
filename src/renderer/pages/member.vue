@@ -24,7 +24,7 @@
         <div v-if="isShowing" class="box">
 
           <el-row>
-            <el-col :span="24">
+            <el-col>
               <el-select v-model="method" style="width:10%">
                 <el-option
                   v-for="item in options"
@@ -33,9 +33,7 @@
                   :value="item.value">
                 </el-option>
               </el-select>
-
               <el-input v-model="url" style="padding-left: 10px; padding-right: 10px; width:65%"></el-input>
-
               <el-button type="warning" class="button" @click="sendRequest">SEND 
                 <i class="el-icon-position"></i>
               </el-button>
@@ -171,7 +169,7 @@ const prettyPrintJson = require('pretty-print-json');
 
 body {
   font-family: 'Mitr', sans-serif;
-  background-color: #eeeeee
+  background-color: #eeeeee;
 }
 
 .button{
