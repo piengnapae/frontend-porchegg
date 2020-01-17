@@ -8,25 +8,25 @@
 
     <el-row>
         <el-form-item label="E-mail" prop="email">
-          <el-input type="email" placeholder="email" v-model="ruleForm.email"></el-input>
+          <el-input type="email"  v-model="ruleForm.email"></el-input>
         </el-form-item>
     </el-row>
 
     <el-row>
         <el-form-item  label="Username" prop="username" >
-          <el-input type="text" placeholder="Username" v-model="ruleForm.username"></el-input>
+          <el-input type="text"  v-model="ruleForm.username"></el-input>
         </el-form-item> 
     </el-row>
 
     <el-row>
         <el-form-item  label="Password" prop="pass">
-          <el-input type="password" placeholder="Password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+          <el-input type="password"  v-model="ruleForm.pass" autocomplete="off"></el-input>
         </el-form-item> 
       
     </el-row>
     <el-row>
       <el-form-item  label="Confirm Password" prop="checkPass">
-        <el-input type="password" placeholder="Confirm Password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+        <el-input type="password"  v-model="ruleForm.checkPass" autocomplete="off"></el-input>
       </el-form-item>
     </el-row>
   
@@ -44,9 +44,11 @@
 <script>
 import axios from 'axios'
 import { type } from 'os';
+import {env} from '../nuxt.config'
   export default {
     head() {
     return {
+      server_api: env.SERVER_API,
       bodyAttrs: {
         class: 'register'
       }
@@ -128,7 +130,7 @@ import { type } from 'os';
 
             axios({
               method: 'post',
-              url: 'http://localhost:9000/register',
+              url: this.server_api+'/register',
               header: {
                'Content-type':'application/json'
               },
@@ -139,7 +141,7 @@ import { type } from 'os';
               }
             })
             .then(res => {
-              this.$router.replace({ name: "submit" });
+              this.$router.replace({ name: "login" });
             })
             .catch(err => {
               if(err.response.data.email && err.response.data.username){
