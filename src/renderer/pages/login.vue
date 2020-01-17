@@ -1,39 +1,77 @@
 <template>
-    <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForms" label-width="120px" class="demo-ruleForm">
 
-        <el-form-item label="Sign In">
+<div class="form" id="app">
+
+  <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" class="demo-ruleForm">
+    <el-row>
+      <b><h2>เข้าสู่ระบบ</h2></b>
+    </el-row>
+       <!-- <v-row>
+
+        <v-col cols="12" sm="6" md="3">
+          <v-text-field
+            label="Regular"
+          ></v-text-field>
+        </v-col>
+        </v-row> -->
+
+    <el-row>
+      
+        <el-form-item  label="Username" prop="username" >
+          <el-input id="input" type="text"  prefix-icon="fas fa-user"  v-model="ruleForm.username" ></el-input>
+        </el-form-item> 
+    </el-row>
+
+    <el-row>
+        
+        <!-- <el-form-item  label="Password" prop="pass"> -->
+            <!-- <i class="el-icon-unlock"></i> -->
+          <!-- <el-input id="input" type="password"  prefix-icon="fas fa-lock" placeholder="Password" v-model="ruleForm.pass"   autocomplete="off"> -->
+            <!-- <i slot="suffix" class="el-input__icon el-icon-view"></i> -->
+         <!-- </el-input>
+        </el-form-item>  -->
+
+        <el-form-item v-if="visible" label="Password" prop="pass" >
+          <el-input type="password" v-model="ruleForm.pass" prefix-icon="fas fa-lock" >
+            <i slot="suffix"  @click="changePass('show')"  class="el-icon-view"></i>
+          </el-input>
+        </el-form-item>
+        <el-form-item v-else label="Password" prop="pass">
+          <el-input type="text" v-model="ruleForm.pass" prefix-icon="fas fa-lock" >
+            <i slot="suffix" @click="changePass('hide')" class="el-icon-view"></i>
+          </el-input>
         </el-form-item>
 
-        <el-form-item label="Username" prop="username">
-          <el-input type="text" v-model="ruleForm.username" ></el-input>
-        </el-form-item>
+    </el-row>
+ 
+    <p class="error">{{errorMessage}}</p>
 
-          <el-form-item label="Password" prop="password">
-            <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
-        </el-form-item>
+    <el-row>
+        <el-button type="primary" class="button" round @click="submitForm('ruleForm')">เข้าสู่ระบบ</el-button>
+    </el-row>
+<br>
+ <el-row>
+        <el-button type="primary" class="buttonregis" round @click="submitForms('ruleForm')">ลงทะเบียน</el-button>
+    </el-row>
+  </el-form>
+</div>
 
-        <center>{{errorMessage}}</center>
-       
-        <el-form-item>
-            <el-button type="primary"  @click="submitForm('ruleForms')">Sign In</el-button> 
-        </el-form-item>
-
-        Doesn't have an account ?
-        <nuxt-link
-          to="/register"
-          exact
-        >
-          Register Here
-        </nuxt-link>
-    </el-form>
-     
 </template>
+
 <script>
-import {env} from '../nuxt.config'
 import axios from 'axios'
+import { type } from 'os';
   export default {
+
+    head() {
+    return {
+      bodyAttrs: {
+        class: 'register'
+      }
+    }
+  },
     data() {
-      var checksUsername = (rule, value, callback) => {
+      var checkUsername = (rule, value, callback) => {
           if (!value) {
           return callback(new Error('Please input the username'));  
         }
@@ -41,57 +79,71 @@ import axios from 'axios'
               callback();
             }   
       };
-      
-      var validatePassword = (rule, value, callback) => {
+      var validatePass = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('Please input the password'));
         } 
+        else if (value.length <=5 ) {
+          callback(new Error('Password more than 6 characters long'));
+        }
         else {
-              callback();
-            } 
-      };     
+          if (this.ruleForm.checkPass !== '') {
+            this.$refs.ruleForm.validateField('checkPass');
+          }
+          callback();
+        }
+      };
+    
+
+    
       return {
-        server_api: env.SERVER_API,
         errorMessage : '',
-        ruleForm: { 
+        visible: true ,
+        ruleForm: {
           username:'',
-          password: ''
+          pass: ''
         },
         rules: {
-            username: [
-            { validator: checksUsername, trigger: 'blur' }
+          pass: [
+            { validator: validatePass, trigger: 'blur' }
           ],
-          password: [
-            { validator: validatePassword, trigger: 'blur' }
+          username: [
+            { validator: checkUsername, trigger: 'blur' }
           ],
-         
         }
       };
     },
     methods: {      
+      
+      togglePassword() {
+        this.password_type = this.password_type === 'password' ? 'text' : 'password'
+      } ,
       submitForm(formName) {
+        
         this.$refs[formName].validate((valid) => {
           if (valid) {
 
+            //  this.$router.replace({ name: "next" });
+
             axios({
               method: 'post',
-              url: this.server_api+'/login',
+              url: 'http://localhost:9000/login',
               header: {
                'Content-type':'application/json'
               },
-              data: {               
-                'username': this.ruleForm.username,
-                'password': this.ruleForm.password
+              data: {
+                'username':this.ruleForm.username,
+                'password': this.ruleForm.pass
               }
             })
             .then(res => {
-              console.log(res)
-              this.$router.push('/member')
+              // this.errorMessage = res.data.data.token
+              this.$router.replace({ name: "submitsignin" });
             })
-            .catch(err =>{
-              this.errorMessage = err.response.data.error.message;
+            .catch(err => {
+              this.errorMessage = err.response.data.error.message
             })
-             
+            
           } 
           else {
             console.log('error submit!!');
@@ -99,10 +151,79 @@ import axios from 'axios'
           }
         });   
       }, 
-
-  }
+      submitForms(){
+         this.$router.replace({ name: "register" });
+      },
+       changePass(value) {
+        this.visible = !(value === 'show');
+      }  
+    }
 }
     
-  
 </script>
 
+<style>
+@import url('https://fonts.googleapis.com/css?family=Mitr&display=swap');
+
+#app {
+  font-family: 'Mitr', sans-serif;
+}
+
+/* #input {
+  border: none;
+} */
+
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 300px;
+  margin:  auto;
+}
+.form {
+  position: relative;
+  border-radius: 50px;
+  top: 100px;
+  z-index: 1;
+  background: #FFFFFF;
+  max-width: 500px;
+  margin: 0 auto 100px;
+  padding: 50px 150px 100px 150px;
+  text-align: center;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+
+.register {
+    background-color: #ffb526;
+    
+  }
+.button {
+  background-color: #ffb526; 
+  font-family: 'Mitr', sans-serif;
+  border: none;
+  color: white;
+  width: 100%;
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+}
+.buttonregis {
+  background-color: #E5E5E5; 
+  font-family: 'Mitr', sans-serif;
+  border: none;
+  color: black;
+  width: 100%;
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.error {
+  color: red;
+}
+</style>
