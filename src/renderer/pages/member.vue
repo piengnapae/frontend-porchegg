@@ -217,6 +217,7 @@ body {
 
 .jsonStyle {
   font-family: Consolas,Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,sans-serif;
+  white-space: pre;
 }
 
 </style>
