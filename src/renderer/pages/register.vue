@@ -44,9 +44,11 @@
 <script>
 import axios from 'axios'
 import { type } from 'os';
+import {env} from '../nuxt.config'
   export default {
     head() {
     return {
+      server_api: env.SERVER_API,
       bodyAttrs: {
         class: 'register'
       }
@@ -128,7 +130,7 @@ import { type } from 'os';
 
             axios({
               method: 'post',
-              url: 'http://localhost:9000/register',
+              url: this.server_api+'/register',
               header: {
                'Content-type':'application/json'
               },
