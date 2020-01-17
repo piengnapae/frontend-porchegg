@@ -1,9 +1,10 @@
 <template>
-  <el-container>
-    <el-aside width="20%">Aside
-    </el-aside>
+  <el-row>
+    <el-col :xs="0" :sm="5">
+    Aside
+    </el-col>
     
-    <el-container>
+    <el-col :xs="24" :sm="19">
       <el-main>
         <el-row>
           <el-col :span="24">
@@ -21,29 +22,37 @@
           </el-col>
         </el-row>
 
+        
+
         <div v-if="isShowing" class="box">
 
-          <el-row>
-            <el-col :span="24">
-              <el-select v-model="method" style="width:10%">
+          <el-row gutter="15">
+            <el-col :span="4">
+              <el-select v-model="method" style="width:100%">
                 <el-option
                   v-for="item in options"
                   :key="item.value"
                   :label="item.label"
-                  :value="item.value">
+                  :value="item.value"
+                   >
                 </el-option>
               </el-select>
-
-              <el-input v-model="url" style="padding-left: 10px; padding-right: 10px; width:65%"></el-input>
-
-              <el-button type="warning" class="button" @click="sendRequest">SEND 
+            </el-col>
+            <el-col :xs="11" :sm="12">
+              <el-input v-model="url"></el-input>
+            </el-col>
+            <el-col :span="4">
+              <el-button type="warning" style="width:100%;" class="button" @click="sendRequest">SEND 
                 <i class="el-icon-position"></i>
               </el-button>
+            </el-col>
+            <el-col :xs="5" :sm="4" style="text-align:right;">
               <el-button circle><i class="fas fa-save" style="padding: 2px 4px 2px 4px"></i></el-button>
               <el-button circle><i class="fas fa-cloud-download-alt" style="padding: 2px;"></i></el-button>
             </el-col>
 
           </el-row>
+
 
           <el-tabs v-model="activeTab" @tab-click="paramsTab">
             <el-tab-pane label="Parameters" name="params">Parameters</el-tab-pane>
@@ -83,8 +92,8 @@
 
         
       </el-main>
-    </el-container>
-  </el-container>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
@@ -204,7 +213,6 @@ body {
   background-color: white; 
   padding: 20px;
   border: 2px solid #e5e5e5;
-  white-space: pre;
 }
 
 .jsonStyle {
