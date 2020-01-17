@@ -6,39 +6,24 @@
     <el-row>
       <b><h2>เข้าสู่ระบบ</h2></b>
     </el-row>
-       <!-- <v-row>
 
-        <v-col cols="12" sm="6" md="3">
-          <v-text-field
-            label="Regular"
-          ></v-text-field>
-        </v-col>
-        </v-row> -->
-
-    <el-row>
-      
+    <el-row>     
         <el-form-item  label="Username" prop="username" >
-          <el-input id="input" type="text"  prefix-icon="fas fa-user"  v-model="ruleForm.username" ></el-input>
+          <el-input id="input" type="text"  prefix-icon="fas fa-user" placeholder="Example@mail.com" v-model="ruleForm.username" ></el-input>
         </el-form-item> 
     </el-row>
 
     <el-row>
-        
-        <!-- <el-form-item  label="Password" prop="pass"> -->
-            <!-- <i class="el-icon-unlock"></i> -->
-          <!-- <el-input id="input" type="password"  prefix-icon="fas fa-lock" placeholder="Password" v-model="ruleForm.pass"   autocomplete="off"> -->
-            <!-- <i slot="suffix" class="el-input__icon el-icon-view"></i> -->
-         <!-- </el-input>
-        </el-form-item>  -->
 
         <el-form-item v-if="visible" label="Password" prop="pass" >
-          <el-input type="password" v-model="ruleForm.pass" prefix-icon="fas fa-lock" >
-            <i slot="suffix"  @click="changePass('show')"  class="el-icon-view"></i>
+          <el-input type="password" v-model="ruleForm.pass" placeholder="myname112" prefix-icon="fas fa-lock" >
+            <i slot="suffix"  @click="changePass('show')"  class="fa fa-eye-slash"></i>
           </el-input>
         </el-form-item>
+
         <el-form-item v-else label="Password" prop="pass">
-          <el-input type="text" v-model="ruleForm.pass" prefix-icon="fas fa-lock" >
-            <i slot="suffix" @click="changePass('hide')" class="el-icon-view"></i>
+          <el-input type="text" v-model="ruleForm.pass" placeholder="myname112" prefix-icon="fas fa-lock" >
+            <i slot="suffix" @click="changePass('hide')" class="fa fa-eye"></i>
           </el-input>
         </el-form-item>
 
