@@ -127,23 +127,23 @@ import {env} from '../nuxt.config'
 
             //  this.$router.replace({ name: "next" });
 
-            axios({
+           axios({
               method: 'post',
               url: this.server_api+'/login',
               header: {
                'Content-type':'application/json'
               },
-              data: {
-                'username':this.ruleForm.username,
-                'password': this.ruleForm.pass
+              data: {               
+                'username': this.ruleForm.username,
+                'password': this.ruleForm.password
               }
             })
             .then(res => {
-              // this.errorMessage = res.data.data.token
-              this.$router.replace({ name: "submitsignin" });
+              console.log(res)
+              this.$router.push('/member')
             })
-            .catch(err => {
-              this.errorMessage = err.response.data.error.message
+            .catch(err =>{
+              this.errorMessage = err.response.data.error.message;
             })
             
           } 

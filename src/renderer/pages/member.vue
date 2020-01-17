@@ -136,7 +136,7 @@ const prettyPrintJson = require('pretty-print-json');
             },
             data: {               
               'username': 'view',
-              'password': '1234566'
+              'password': '123456'
             }
         })
         .then(res => {
