@@ -37,6 +37,7 @@
     "webpack-node-externals": "1.7.2"
   },
   "dependencies": {
-    "axios": "^0.19.1"
+    "axios": "^0.19.1",
+    "pretty-print-json": "^0.2.0"
   }
 }
