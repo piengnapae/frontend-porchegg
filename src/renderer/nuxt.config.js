@@ -8,7 +8,7 @@
 module.exports = {
   mode: 'spa', // or 'universal'
   head: {
-    title: 'porchegg-client'
+    title: 'Porchegg'
   },
   loading: false,
   plugins: [
