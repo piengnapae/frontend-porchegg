@@ -1,11 +1,20 @@
 <template>
   <div>
-    <h1>Loading...</h1>
   </div>
 </template>
 <script>
 export default {
+  data() {
+    return {
+      
+    }
+  },
   mounted() {
   }
 }
 </script>
+<style>
+body{
+  background: #ffb526;
+}
+</style>
