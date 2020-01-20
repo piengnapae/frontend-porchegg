@@ -35,6 +35,9 @@
     <el-row>
         <el-button type="primary" class="button" round @click="submitForm('ruleForm')">ลงทะเบียน</el-button>
     </el-row>
+    <div style="margin-top:20px;">
+      <router-link :to="{ name: 'login'}">กลับไปหน้าแรก</router-link>
+    </div>
 
   </el-form>
 </div>
