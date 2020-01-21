@@ -26,7 +26,7 @@
 
         <div v-if="isShowing" class="box">
 
-          <el-row gutter="15">
+          <el-row :gutter="15">
             <el-col :span="4">
               <el-select v-model="method" style="width:100%">
                 <el-option
@@ -83,7 +83,14 @@
 
           <el-tabs v-model="activeName" @tab-click="requestTab">
             <el-tab-pane label="Pretty" name="first">
-              <div class="jsonStyle" v-html="pretty"></div>
+                <AceEditor
+                  v-model="content"
+                  @init="editorInit"
+                  lang="json"
+                  theme="chrome"
+                  height="500px"
+                  :options="optionsj"
+                ></AceEditor>
               </el-tab-pane>
             <el-tab-pane label="Raw" name="second">{{raw}}</el-tab-pane>
             <el-tab-pane label="Preview" name="third">{{preview}}</el-tab-pane>
@@ -99,13 +106,19 @@
 <script>
 import axios from 'axios';
 import '@fortawesome/fontawesome-free/css/all.css';
-const prettyPrintJson = require('pretty-print-json');
+import AceEditor from "vue2-ace-editor";
 
   export default {
     components: {
+      AceEditor
     },
     data() {
       return {
+        content: '',
+        optionsj: {
+          readOnly: true,
+          autoScrollEditorIntoView: true
+        },
         options: [{
           value: 'get',
           label: 'GET'
@@ -131,13 +144,16 @@ const prettyPrintJson = require('pretty-print-json');
         preview: 'preview',
         status: '',
         statusText: '',
-        paramsInput:'',
-        
-
+        paramsInput:''
       }
     },
 
     methods: {
+      editorInit: function(editor) {
+        require('brace/mode/json')
+        require('brace/theme/chrome')
+        //console.log(editor);
+      },
       sendRequest() {
         axios({
           method: this.method,
@@ -151,13 +167,11 @@ const prettyPrintJson = require('pretty-print-json');
             }
         })
         .then(res => {
-          const html = prettyPrintJson.toHtml(res.data);
-          this.pretty = html
+          this.content = JSON.stringify(res.data, null, 4)
           this.status = res.status+" "+res.statusText
         }).catch(err => {
           console.log(err)
-          const html = prettyPrintJson.toHtml(err.response.data);
-          this.pretty = html
+          this.content = JSON.stringify(err.response.data, null, 4)
           this.status = err.response.status+" "+err.response.statusText
         })
         
@@ -176,7 +190,6 @@ const prettyPrintJson = require('pretty-print-json');
 
 <style>
 @import url('https://fonts.googleapis.com/css?family=Mitr&display=swap');
-@import '../assets/styles/json.css';
 
 body {
   font-family: 'Mitr', sans-serif;
@@ -214,10 +227,4 @@ body {
   padding: 20px;
   border: 2px solid #e5e5e5;
 }
-
-.jsonStyle {
-  font-family: Consolas,Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,sans-serif;
-  white-space: pre;
-}
-
 </style>
