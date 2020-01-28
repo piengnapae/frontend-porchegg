@@ -1,0 +1,48 @@
+//out: false
+
+@import url('https://fonts.googleapis.com/css?family=Mitr&display=swap');
+
+#app {
+  font-family: 'Mitr', sans-serif;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 300px;
+  margin:  auto;
+}
+.form {
+  position: relative;
+  border-radius: 50px;
+  top: 100px;
+  z-index: 1;
+  background: #FFFFFF;
+  max-width: 500px;
+  margin: 0 auto 100px;
+  padding: 50px 150px 100px 150px;
+  text-align: center;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+
+.register {
+    background-color: #ffb526;
+    
+  }
+.button {
+  background-color: #ffb526; 
+  font-family: 'Mitr', sans-serif;
+  border: none;
+  color: white;
+  width: 100%;
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.error {
+  color: red;
+}

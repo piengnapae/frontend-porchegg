@@ -107,6 +107,7 @@
 import axios from 'axios';
 import '@fortawesome/fontawesome-free/css/all.css';
 import AceEditor from "vue2-ace-editor";
+import '@/assets/scss/main.scss';
 
   export default {
     components: {
@@ -187,50 +188,3 @@ import AceEditor from "vue2-ace-editor";
     }
   }
 </script>
-
-<style>
-@import url('https://fonts.googleapis.com/css?family=Mitr&display=swap');
-
-body {
-  font-family: 'Mitr', sans-serif;
-  background-color: #eeeeee;
-}
-
-.button{
-  background-color: #ffb526;
-  color: white;
-  border: 2px solid #ffb526
-}
-
-.button:hover {
-  background-color: #f8e5bf;
-  color: #ffb526;
-  border: 2px solid #f8e5bf
-}
-
-.text {
-  color: #303133;
-  font-size: 16px
-}
-
-.text:hover {
-  color: #303133
-}
-
-.circle{
-  border-radius: 50%;
-  padding: 20px;
-}
-
-.box {
-  background-color: white; 
-  padding: 20px;
-  border: 2px solid #e5e5e5;
-  position: relative;
-}
-.status-code{
-  position: absolute;
-  top: 10px;
-  right: 20px;
-}
-</style>
