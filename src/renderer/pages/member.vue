@@ -72,7 +72,7 @@
         </el-row>
 
         <div v-if="isResponse" class="box">
-          <el-form style="display: flex; justify-content: flex-end;">
+          <el-form class="status-code" style="display: flex; justify-content: flex-end;">
             <el-form-item>
               <span class="demo-input-label" style="padding-right: 10px">Status </span>
             </el-form-item>
@@ -226,5 +226,11 @@ body {
   background-color: white; 
   padding: 20px;
   border: 2px solid #e5e5e5;
+  position: relative;
+}
+.status-code{
+  position: absolute;
+  top: 10px;
+  right: 20px;
 }
 </style>
