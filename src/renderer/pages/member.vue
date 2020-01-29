@@ -17,12 +17,10 @@
         <el-row>
           <el-col :span="24">
             <div>
-              <el-button type="text" class="el-icon-arrow-down text" @click="isShowing = !isShowing"> Request</el-button>
+              <el-button type="text" class="el-icon-arrow-down text" @click="isShowing = !isShowing">Request</el-button>
             </div>
           </el-col>
         </el-row>
-
-        
 
         <div v-if="isShowing" class="box">
 
@@ -53,12 +51,172 @@
 
           </el-row>
 
+          <el-tabs v-model="activeTab" @tab-click="paramsTab" >
+            <el-tab-pane label="Parameters" name="params">
+              <el-row>
+                <el-col :span="24">
+                  <div>
+                    <el-button type="text" class="el-icon-arrow-down text" @click="isShowParam = !isShowParam">Parameters</el-button>
+                  </div>
+                </el-col>
+              </el-row>
 
-          <el-tabs v-model="activeTab" @tab-click="paramsTab">
-            <el-tab-pane label="Parameters" name="params">Parameters</el-tab-pane>
-            <el-tab-pane label="Authentication" name="authentication">Authentication</el-tab-pane>
-            <el-tab-pane label="Headers" name="headers">Headers</el-tab-pane>
-            <el-tab-pane label="Body" name="body">Body</el-tab-pane>
+            <div v-if="isShowParam"  >  
+              <el-row gutter="25">
+                <el-col :span="11">
+                  <el-row>KEY</el-row>
+                    <el-input v-model="keyParam"></el-input>
+                </el-col>
+
+                <el-col :span="11">
+                  <el-row>VALUE</el-row>
+                    <el-input v-model="valuesParam"></el-input>
+                  </el-col>
+              </el-row>
+            
+              <div v-for="(input, index) in inputsParam" v-bind:key="index">
+                <div style="margin: 15px;"></div>
+                  <el-row gutter="25"> 
+                    <el-col :span="11">
+                        <el-input v-model="input.keyParammeter"></el-input>
+                    </el-col>
+                    <el-col :span="11">
+                        <el-input v-model="input.valuesParammeter"></el-input>
+                    </el-col>
+                    <el-col :span="2">
+                      <el-button @click="deleteRow(index)" type="danger" circle><i class="el-icon-delete"></i></el-button>
+                    </el-col>
+                  </el-row>
+              </div>
+    
+              <div style="margin: 15px;"></div>
+                <center><el-button class="font" type="text" @click="addRow" ><i class="el-icon-plus"></i> Add New</el-button></center>
+                  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.3/vue.js"></script>
+              </div>       
+            </el-tab-pane>
+
+          <el-tab-pane label="Authentication" name="authentication"> 
+              
+            <el-row>
+              <el-col :span="24">
+                <div>
+                  <el-button type="text" class="el-icon-arrow-down text" @click="isShowAuth = !isShowAuth">Authentication</el-button>
+                </div>
+              </el-col>
+             </el-row>
+       
+          <div v-if="isShowAuth" >
+            <el-row gutter="15">
+              <el-col :span="4">
+                <el-row>TYPE</el-row>
+                  <el-select v-model="auth" >
+                    <el-option 
+                      v-for="auth in optionauth"
+                      :key="auth.value"
+                      :label="auth.label"
+                      :value="auth.value">
+                    </el-option>
+                  </el-select>  
+              </el-col>
+
+            <el-col :xs="18" :sm="20">
+              <el-row v-if="auth === 'Bearer Token'">
+                <el-row>TOKEN</el-row>
+                  <el-input v-model="token"></el-input>                 
+              </el-row>
+            </el-col>
+
+            <el-col  :sm="10">
+              <el-row v-if="auth === 'Basic Auth'">
+                <el-row>USERNAME</el-row>
+                  <el-input v-model="username"></el-input>
+              </el-row>
+            </el-col> 
+
+            <el-col  :sm="10">
+              <el-row v-if="auth === 'Basic Auth'">
+                <el-row>PASSWORD</el-row>
+                  <el-input  v-model="password" show-password></el-input>
+              </el-row>
+            </el-col>            
+            </el-row>
+          </div>
+          </el-tab-pane>
+  
+            <el-tab-pane label="Headers" name="headers">
+               <el-row>
+                <el-col :span="24">
+                  <div>
+                    <el-button type="text" class="el-icon-arrow-down text" @click="isShowHeader = !isShowHeader">Headers</el-button>
+                  </div>
+                </el-col>
+              </el-row>
+
+        <div v-if="!isShowHeader" >  
+              <el-row gutter="25">
+                <el-col :span="11">
+                  <el-row>KEY</el-row>
+                    <el-input v-model="keyHeader"></el-input>
+                </el-col>
+                <el-col :span="11">
+                  <el-row>VALUE</el-row>
+                    <el-input v-model="valuesHeader"></el-input>
+                  </el-col>
+              </el-row>
+            
+             <div v-for="(head, indexs) in inputsheaders" v-bind:key="indexs">
+                <div style="margin: 15px;"></div>
+                  <el-row gutter="25"> 
+                      <el-col :span="11">
+                          <el-input v-model="head.keyheaders"></el-input>
+                      </el-col>
+                      <el-col :span="11">
+                          <el-input v-model="head.valuesheaders"></el-input>
+                      </el-col>
+                      <el-col :span="2">
+                          <el-button @click="deleteRows(indexs)" type="danger" circle><i class="el-icon-delete"></i></el-button>
+                      </el-col>
+                  </el-row>
+             </div>
+
+              <div style="margin: 15px;"></div>
+                <center><el-button class="font" type="text" @click="addRows"><i class="el-icon-plus"></i> Add New</el-button></center>
+                  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.3/vue.js"></script>
+            </div>       
+          </el-tab-pane>
+
+            <el-tab-pane label="Body" name="body">
+               <el-row>
+                <el-col :span="24">
+                  <div>
+                    <el-button type="text" class="el-icon-arrow-down text" @click="isShowBody = !isShowBody">Body</el-button>
+                  </div>
+                </el-col>
+              </el-row>
+
+              <div v-if="isShowBody" class="jsonStyle">  
+                  <!-- <el-input 
+                    type="textarea"
+                    :autosize="{ minRows: 7, maxRows: 7}"
+                    v-model="textarea"> 
+                  </el-input>   -->
+
+                <el-table :data="tableData" style="width: 100%">
+                  <el-table-column  >
+                    <template slot-scope="scope">
+                      <vue-json-editor
+                        v-model="scope.row.data"
+                        mode="code"
+                        :modes="['code']"
+                        :show-btns="false"
+                        :exapndedOnStart="true"
+                      ></vue-json-editor>
+                    </template>
+                  </el-table-column>
+                </el-table>
+
+              </div>       
+            </el-tab-pane>
           </el-tabs>
           
         </div>
@@ -88,9 +246,7 @@
             <el-tab-pane label="Raw" name="second">{{raw}}</el-tab-pane>
             <el-tab-pane label="Preview" name="third">{{preview}}</el-tab-pane>
           </el-tabs>
-        </div>
-
-        
+        </div>        
       </el-main>
     </el-col>
   </el-row>
@@ -101,11 +257,20 @@ import axios from 'axios';
 import '@fortawesome/fontawesome-free/css/all.css';
 const prettyPrintJson = require('pretty-print-json');
 
+import vueJsonEditor from "vue-json-editor";
+
   export default {
-    components: {
+    components: {  
+      vueJsonEditor 
     },
     data() {
       return {
+         tableData: [ 
+          {}
+          ],
+
+        inputsParam: [],
+        inputsheaders: [],
         options: [{
           value: 'get',
           label: 'GET'
@@ -119,11 +284,34 @@ const prettyPrintJson = require('pretty-print-json');
           value: 'delete',
           label: 'DEL'
         }],
+        optionauth: [{
+          value: 'No Auth',
+          label: 'No Auth'
+        }, {
+          value: 'Bearer Token',
+          label: 'Bearer Token'
+        }, {
+          value: 'Basic Auth',
+          label: 'Basic Auth'
+        }],
+        auth: 'No Auth',
         method: 'get',
         url: '',
+        keyParam:'',
+        valuesParam: '',
+        keyHeader: '',
+        valuesHeader: '',
+        token: '',
+        username: '',
+        password: '',
+        textarea: '',
+        isShowHeader: '',
         hideRequest: '',
         isShowing: true,
         isResponse: true,
+        isShowAuth: true,
+        isShowParam: true,
+        isShowBody: true,
         activeName: 'first',
         activeTab: 'params',
         pretty: '',
@@ -131,9 +319,7 @@ const prettyPrintJson = require('pretty-print-json');
         preview: 'preview',
         status: '',
         statusText: '',
-        paramsInput:'',
-        
-
+        paramsInput:''  
       }
     },
 
@@ -159,8 +345,7 @@ const prettyPrintJson = require('pretty-print-json');
           const html = prettyPrintJson.toHtml(err.response.data);
           this.pretty = html
           this.status = err.response.status+" "+err.response.statusText
-        })
-        
+        })       
       },
 
       requestTab(tab, event) {
@@ -169,8 +354,26 @@ const prettyPrintJson = require('pretty-print-json');
 
       paramsTab(tab, event) {
         console.log(tab, event);
+      },
+      addRow() {
+      this.inputsParam.push({
+        keyParammeter: '',
+        valuesParammeter: ''
+      })
+      },
+      deleteRow(index) {
+        this.inputsParam.splice(index,1)
+      },
+      addRows() {
+        this.inputsheaders.push({
+          keyheaders: '',
+          valuesheaders: ''
+        })
+      },
+      deleteRows(indexs) {
+        this.inputsheaders.splice(indexs,1)
       }
-    }
+    }   
   }
 </script>
 
@@ -217,6 +420,9 @@ body {
 
 .jsonStyle {
   font-family: Consolas,Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,sans-serif;
+}
+.font{
+   font-family: 'Mitr';
 }
 
 </style>

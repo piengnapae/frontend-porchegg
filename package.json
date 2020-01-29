@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "axios": "^0.19.1",
-    "pretty-print-json": "^0.2.0"
+    "pretty-print-json": "^0.2.0",
+    "vue-json-editor": "^1.4.0"
   }
 }

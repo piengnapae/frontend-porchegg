@@ -37,6 +37,7 @@
     </el-row>
     <div style="margin-top:20px;">
       <router-link :to="{ name: 'login'}">กลับไปหน้าแรก</router-link>
+      
     </div>
 
   </el-form>
