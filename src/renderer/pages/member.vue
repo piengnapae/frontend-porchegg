@@ -24,7 +24,7 @@
 
         <div v-if="isShowing" class="box">
 
-          <el-row gutter="15">
+          <el-row :gutter="15">
             <el-col :span="4">
               <el-select v-model="method" style="width:100%">
                 <el-option
@@ -230,7 +230,7 @@
         </el-row>
 
         <div v-if="isResponse" class="box">
-          <el-form style="display: flex; justify-content: flex-end;">
+          <el-form class="status-code" style="display: flex; justify-content: flex-end;">
             <el-form-item>
               <span class="demo-input-label" style="padding-right: 10px">Status </span>
             </el-form-item>
@@ -241,7 +241,14 @@
 
           <el-tabs v-model="activeName" @tab-click="requestTab">
             <el-tab-pane label="Pretty" name="first">
-              <div class="jsonStyle" v-html="pretty"></div>
+                <AceEditor
+                  v-model="content"
+                  @init="editorInit"
+                  lang="json"
+                  theme="chrome"
+                  height="500px"
+                  :options="optionsj"
+                ></AceEditor>
               </el-tab-pane>
             <el-tab-pane label="Raw" name="second">{{raw}}</el-tab-pane>
             <el-tab-pane label="Preview" name="third">{{preview}}</el-tab-pane>
@@ -255,22 +262,29 @@
 <script>
 import axios from 'axios';
 import '@fortawesome/fontawesome-free/css/all.css';
-const prettyPrintJson = require('pretty-print-json');
+import AceEditor from "vue2-ace-editor";
+import '@/assets/scss/main.scss';
 
 import vueJsonEditor from "vue-json-editor";
 
   export default {
-    components: {  
-      vueJsonEditor 
+    components: {
+      AceEditor,
+      vueJsonEditor
     },
     data() {
       return {
-         tableData: [ 
+        tableData: [ 
           {}
           ],
 
         inputsParam: [],
         inputsheaders: [],
+        content: '',
+        optionsj: {
+          readOnly: true,
+          autoScrollEditorIntoView: true
+        },
         options: [{
           value: 'get',
           label: 'GET'
@@ -319,11 +333,16 @@ import vueJsonEditor from "vue-json-editor";
         preview: 'preview',
         status: '',
         statusText: '',
-        paramsInput:''  
+        paramsInput:''
       }
     },
 
     methods: {
+      editorInit: function(editor) {
+        require('brace/mode/json')
+        require('brace/theme/chrome')
+        //console.log(editor);
+      },
       sendRequest() {
         axios({
           method: this.method,
@@ -333,17 +352,15 @@ import vueJsonEditor from "vue-json-editor";
             },
             data: {               
               'username': 'view',
-              'password': '1234566'
+              'password': '123456'
             }
         })
         .then(res => {
-          const html = prettyPrintJson.toHtml(res.data);
-          this.pretty = html
+          this.content = JSON.stringify(res.data, null, 4)
           this.status = res.status+" "+res.statusText
         }).catch(err => {
           console.log(err)
-          const html = prettyPrintJson.toHtml(err.response.data);
-          this.pretty = html
+          this.content = JSON.stringify(err.response.data, null, 4)
           this.status = err.response.status+" "+err.response.statusText
         })       
       },
@@ -376,53 +393,3 @@ import vueJsonEditor from "vue-json-editor";
     }   
   }
 </script>
-
-<style>
-@import url('https://fonts.googleapis.com/css?family=Mitr&display=swap');
-@import '../assets/styles/json.css';
-
-body {
-  font-family: 'Mitr', sans-serif;
-  background-color: #eeeeee
-}
-
-.button{
-  background-color: #ffb526;
-  color: white;
-  border: 2px solid #ffb526
-}
-
-.button:hover {
-  background-color: #f8e5bf;
-  color: #ffb526;
-  border: 2px solid #f8e5bf
-}
-
-.text {
-  color: #303133;
-  font-size: 16px
-}
-
-.text:hover {
-  color: #303133
-}
-
-.circle{
-  border-radius: 50%;
-  padding: 20px;
-}
-
-.box {
-  background-color: white; 
-  padding: 20px;
-  border: 2px solid #e5e5e5;
-}
-
-.jsonStyle {
-  font-family: Consolas,Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,sans-serif;
-}
-.font{
-   font-family: 'Mitr';
-}
-
-</style>
