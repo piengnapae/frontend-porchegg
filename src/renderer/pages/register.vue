@@ -8,25 +8,25 @@
 
     <el-row>
         <el-form-item label="E-mail" prop="email">
-          <el-input type="email"  v-model="ruleForm.email"></el-input>
+          <el-input type="email"  v-model="ruleForm.email" placeholder="Example@mail.com" prefix-icon="fa fa-envelope"></el-input>
         </el-form-item>
     </el-row>
 
     <el-row>
         <el-form-item  label="Username" prop="username" >
-          <el-input type="text"  v-model="ruleForm.username"></el-input>
+          <el-input type="text"  v-model="ruleForm.username" placeholder="myname112" prefix-icon="fas fa-user"></el-input>
         </el-form-item> 
     </el-row>
 
     <el-row>
         <el-form-item  label="Password" prop="pass">
-          <el-input type="password"  v-model="ruleForm.pass" autocomplete="off"></el-input>
+          <el-input type="password"  v-model="ruleForm.pass" autocomplete="off" placeholder="eg.WeebnK" prefix-icon="fas fa-lock"></el-input>
         </el-form-item> 
       
     </el-row>
     <el-row>
       <el-form-item  label="Confirm Password" prop="checkPass">
-        <el-input type="password"  v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+        <el-input type="password"  v-model="ruleForm.checkPass" autocomplete="off" placeholder="eg.WeebnK" prefix-icon="fas fa-lock"></el-input>
       </el-form-item>
     </el-row>
   
@@ -37,6 +37,7 @@
     </el-row>
     <div style="margin-top:20px;">
       <router-link :to="{ name: 'login'}">กลับไปหน้าแรก</router-link>
+      
     </div>
 
   </el-form>

@@ -17,12 +17,10 @@
         <el-row>
           <el-col :span="24">
             <div>
-              <el-button type="text" class="el-icon-arrow-down text" @click="isShowing = !isShowing"> Request</el-button>
+              <el-button type="text" class="el-icon-arrow-down text" @click="isShowing = !isShowing">Request</el-button>
             </div>
           </el-col>
         </el-row>
-
-        
 
         <div v-if="isShowing" class="box">
 
@@ -53,14 +51,161 @@
 
           </el-row>
 
+          <el-tabs v-model="activeTab" @tab-click="paramsTab" >
+            <el-tab-pane label="Parameters" name="params">
+              <el-row>
+                <el-col :span="24">
+                  <div>
+                    <el-button type="text" class="el-icon-arrow-down text" @click="isShowParam = !isShowParam">Parameters</el-button>
+                  </div>
+                </el-col>
+              </el-row>
 
-          <el-tabs v-model="activeTab" @tab-click="paramsTab">
-            <el-tab-pane label="Parameters" name="params">Parameters</el-tab-pane>
-            <el-tab-pane label="Authentication" name="authentication">Authentication</el-tab-pane>
-            <el-tab-pane label="Headers" name="headers">Headers</el-tab-pane>
-            <el-tab-pane label="Body" name="body">Body</el-tab-pane>
-          </el-tabs>
-          
+            <div v-if="isShowParameter"  >  
+              <el-row :gutter="25">
+                <el-col :span="11">
+                  <el-row>KEY</el-row>
+                    <el-input v-model="keyParameter" ></el-input>
+                </el-col>
+
+                <el-col :span="11">
+                  <el-row>VALUE</el-row>
+                    <el-input v-model="valueParameter"></el-input>
+                  </el-col>
+              </el-row>
+            
+              <div v-for="(input, indexParameter) in inputParameter" v-bind:key="indexParameter">
+                <div style="margin: 15px;"></div>
+                  <el-row :gutter="25"> 
+                    <el-col :span="11">
+                        <el-input v-model="input.keyParammeters"></el-input>
+                    </el-col>
+                    <el-col :span="11">
+                        <el-input v-model="input.valueParammeters"></el-input>
+                    </el-col>
+                    <el-col :span="2">
+                      <el-button @click="deleteRowParam(indexParameter)" type="danger" circle><i class="el-icon-delete"></i></el-button>
+                    </el-col>
+                  </el-row>
+              </div>
+    
+              <div style="margin: 15px;"></div>
+                <center><el-button class="font" type="text" @click="addRowParameter" ><i class="el-icon-plus"></i> Add New</el-button></center>
+                 
+              </div>       
+            </el-tab-pane>
+
+          <el-tab-pane label="Authentication" name="authentication"> 
+              
+            <el-row>
+              <el-col :span="24">
+                <div>
+                  <el-button type="text" class="el-icon-arrow-down text" @click="isShowAuth = !isShowAuth">Authentication</el-button>
+                </div>
+              </el-col>
+             </el-row>
+       
+          <div v-if="isShowAuth" >
+            <el-row :gutter="15">
+              <el-col :span="4">
+                <el-row>TYPE</el-row>
+                  <el-select v-model="auth" >
+                    <el-option 
+                      v-for="auth in optionauth"
+                      :key="auth.value"
+                      :label="auth.label"
+                      :value="auth.value">
+                    </el-option>
+                  </el-select>  
+              </el-col>
+
+            <el-col :xs="18" :sm="20">
+              <el-row v-if="auth === 'Bearer Token'">
+                <el-row>TOKEN</el-row>
+                  <el-input v-model="token"></el-input>                 
+              </el-row>
+            </el-col>
+
+            <el-col  :sm="10">
+              <el-row v-if="auth === 'Basic Auth'">
+                <el-row>USERNAME</el-row>
+                  <el-input v-model="username"></el-input>
+              </el-row>
+            </el-col> 
+
+            <el-col  :sm="10">
+              <el-row v-if="auth === 'Basic Auth'">
+                <el-row>PASSWORD</el-row>
+                  <el-input  v-model="password" show-password></el-input>
+              </el-row>
+            </el-col>            
+            </el-row>
+          </div>
+          </el-tab-pane>
+  
+            <el-tab-pane label="Headers" name="headers">
+               <el-row>
+                <el-col :span="24">
+                  <div>
+                    <el-button type="text" class="el-icon-arrow-down text" @click="isShowHeader = !isShowHeader">Headers</el-button>
+                  </div>
+                </el-col>
+              </el-row>
+
+        <div v-if="!isShowHeader" >  
+              <el-row :gutter="25">
+                <el-col :span="11">
+                  <el-row>KEY</el-row>
+                    <el-input v-model="keyHeader"></el-input>
+                </el-col>
+                <el-col :span="11">
+                  <el-row>VALUE</el-row>
+                    <el-input v-model="valueHeader"></el-input>
+                  </el-col>
+              </el-row>
+            
+             <div v-for="(head, indexHeader) in inputHeader" v-bind:key="indexHeader">
+                <div style="margin: 15px;"></div>
+                  <el-row :gutter="25"> 
+                      <el-col :span="11">
+                          <el-input v-model="head.keyHeaders"></el-input>
+                      </el-col>
+                      <el-col :span="11">
+                          <el-input v-model="head.valueHeaders"></el-input>
+                      </el-col>
+                      <el-col :span="2">
+                          <el-button @click="deleteRowsHeader(indexHeader)" type="danger" circle><i class="el-icon-delete"></i></el-button>
+                      </el-col>
+                  </el-row>
+             </div>
+
+              <div style="margin: 15px;"></div>
+                <center><el-button class="font" type="text" @click="addRowsHeader"><i class="el-icon-plus"></i> Add New</el-button></center>
+                 
+            </div>       
+          </el-tab-pane>
+
+            <el-tab-pane label="Body" name="body">
+               <el-row>
+                <el-col :span="24">
+                  <div>
+                    <el-button type="text" class="el-icon-arrow-down text" @click="isShowBody = !isShowBody">Body</el-button>
+                  </div>
+                </el-col>
+              </el-row>
+
+              <div v-if="isShowBody" class="jsonStyle">  
+                <AceEditor
+                  v-model="textbody"
+                  @init="editorInit"
+                  lang="json"
+                  theme="chrome"
+                  height="150px"
+                  :options="optionsbody"
+                ></AceEditor>
+              </div>       
+            </el-tab-pane>
+          </el-tabs>         
         </div>
 
         <el-row>
@@ -95,9 +240,7 @@
             <el-tab-pane label="Raw" name="second">{{raw}}</el-tab-pane>
             <el-tab-pane label="Preview" name="third">{{preview}}</el-tab-pane>
           </el-tabs>
-        </div>
-
-        
+        </div>        
       </el-main>
     </el-col>
   </el-row>
@@ -108,16 +251,21 @@ import axios from 'axios';
 import '@fortawesome/fontawesome-free/css/all.css';
 import AceEditor from "vue2-ace-editor";
 import '@/assets/scss/main.scss';
-
   export default {
     components: {
-      AceEditor
+      AceEditor,
     },
     data() {
       return {
+        inputParameter: [],
+        inputHeader: [],
         content: '',
+        textbody: '',
         optionsj: {
           readOnly: true,
+          autoScrollEditorIntoView: true
+        },
+        optionsbody: {
           autoScrollEditorIntoView: true
         },
         options: [{
@@ -133,11 +281,34 @@ import '@/assets/scss/main.scss';
           value: 'delete',
           label: 'DEL'
         }],
+        optionauth: [{
+          value: 'No Auth',
+          label: 'No Auth'
+        }, {
+          value: 'Bearer Token',
+          label: 'Bearer Token'
+        }, {
+          value: 'Basic Auth',
+          label: 'Basic Auth'
+        }],
+        auth: 'No Auth',
         method: 'get',
         url: '',
+        keyParameter:'',
+        valueParameter: '',
+        keyHeader: '',
+        valueHeader: '',
+        token: '',
+        username: '',
+        password: '',
+        textarea: '',
+        isShowHeader: '',
         hideRequest: '',
         isShowing: true,
         isResponse: true,
+        isShowAuth: true,
+        isShowParameter: true,
+        isShowBody: true,
         activeName: 'first',
         activeTab: 'params',
         pretty: '',
@@ -174,8 +345,7 @@ import '@/assets/scss/main.scss';
           console.log(err)
           this.content = JSON.stringify(err.response.data, null, 4)
           this.status = err.response.status+" "+err.response.statusText
-        })
-        
+        })       
       },
 
       requestTab(tab, event) {
@@ -184,7 +354,25 @@ import '@/assets/scss/main.scss';
 
       paramsTab(tab, event) {
         console.log(tab, event);
+      },
+      addRowParameter() {
+      this.inputParameter.push({
+        keyParammeters: '',
+        valuesParammeters: ''
+      })
+      },
+      deleteRowParam(indexParameter) {
+        this.inputParameter.splice(indexParameter,1)
+      },
+      addRowsHeader() {
+        this.inputHeader.push({
+          keyHeaders: '',
+          valueHeaders: ''
+        })
+      },
+      deleteRowsHeader(indexHeader) {
+        this.inputHeader.splice(indexHeader,1)
       }
-    }
+    }   
   }
 </script>
