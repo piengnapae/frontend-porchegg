@@ -195,25 +195,15 @@
               </el-row>
 
               <div v-if="isShowBody" class="jsonStyle">  
-                  <!-- <el-input 
-                    type="textarea"
-                    :autosize="{ minRows: 7, maxRows: 7}"
-                    v-model="textarea"> 
-                  </el-input>   -->
 
-                <el-table :data="tableData" style="width: 100%">
-                  <el-table-column  >
-                    <template slot-scope="scope">
-                      <vue-json-editor
-                        v-model="scope.row.data"
-                        mode="code"
-                        :modes="['code']"
-                        :show-btns="false"
-                        :exapndedOnStart="true"
-                      ></vue-json-editor>
-                    </template>
-                  </el-table-column>
-                </el-table>
+                <AceEditor
+                  v-model="textbody"
+                  @init="editorInit"
+                  lang="json"
+                  theme="chrome"
+                  height="150px"
+                  :options="optionsbody"
+                ></AceEditor>
 
               </div>       
             </el-tab-pane>
@@ -265,24 +255,23 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import AceEditor from "vue2-ace-editor";
 import '@/assets/scss/main.scss';
 
-import vueJsonEditor from "vue-json-editor";
+
 
   export default {
     components: {
       AceEditor,
-      vueJsonEditor
     },
     data() {
       return {
-        tableData: [ 
-          {}
-          ],
-
         inputsParam: [],
         inputsheaders: [],
         content: '',
+        textbody: '',
         optionsj: {
           readOnly: true,
+          autoScrollEditorIntoView: true
+        },
+        optionsbody: {
           autoScrollEditorIntoView: true
         },
         options: [{
