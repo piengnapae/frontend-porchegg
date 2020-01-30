@@ -61,37 +61,37 @@
                 </el-col>
               </el-row>
 
-            <div v-if="isShowParam"  >  
+            <div v-if="isShowParameter"  >  
               <el-row :gutter="25">
                 <el-col :span="11">
                   <el-row>KEY</el-row>
-                    <el-input v-model="keyParam" ></el-input>
+                    <el-input v-model="keyParameter" ></el-input>
                 </el-col>
 
                 <el-col :span="11">
                   <el-row>VALUE</el-row>
-                    <el-input v-model="valuesParam"></el-input>
+                    <el-input v-model="valueParameter"></el-input>
                   </el-col>
               </el-row>
             
-              <div v-for="(input, indexParam) in inputsParam" v-bind:key="indexParam">
+              <div v-for="(input, indexParameter) in inputParameter" v-bind:key="indexParameter">
                 <div style="margin: 15px;"></div>
                   <el-row :gutter="25"> 
                     <el-col :span="11">
-                        <el-input v-model="input.keyParammeter"></el-input>
+                        <el-input v-model="input.keyParammeters"></el-input>
                     </el-col>
                     <el-col :span="11">
-                        <el-input v-model="input.valuesParammeter"></el-input>
+                        <el-input v-model="input.valueParammeters"></el-input>
                     </el-col>
                     <el-col :span="2">
-                      <el-button @click="deleteRowParam(indexParam)" type="danger" circle><i class="el-icon-delete"></i></el-button>
+                      <el-button @click="deleteRowParam(indexParameter)" type="danger" circle><i class="el-icon-delete"></i></el-button>
                     </el-col>
                   </el-row>
               </div>
     
               <div style="margin: 15px;"></div>
-                <center><el-button class="font" type="text" @click="addRowParam" ><i class="el-icon-plus"></i> Add New</el-button></center>
-                  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.3/vue.js"></script>
+                <center><el-button class="font" type="text" @click="addRowParameter" ><i class="el-icon-plus"></i> Add New</el-button></center>
+                 
               </div>       
             </el-tab-pane>
 
@@ -160,18 +160,18 @@
                 </el-col>
                 <el-col :span="11">
                   <el-row>VALUE</el-row>
-                    <el-input v-model="valuesHeader"></el-input>
+                    <el-input v-model="valueHeader"></el-input>
                   </el-col>
               </el-row>
             
-             <div v-for="(head, indexHeader) in inputsheaders" v-bind:key="indexHeader">
+             <div v-for="(head, indexHeader) in inputHeader" v-bind:key="indexHeader">
                 <div style="margin: 15px;"></div>
                   <el-row :gutter="25"> 
                       <el-col :span="11">
-                          <el-input v-model="head.keyheaders"></el-input>
+                          <el-input v-model="head.keyHeaders"></el-input>
                       </el-col>
                       <el-col :span="11">
-                          <el-input v-model="head.valuesheaders"></el-input>
+                          <el-input v-model="head.valueHeaders"></el-input>
                       </el-col>
                       <el-col :span="2">
                           <el-button @click="deleteRowsHeader(indexHeader)" type="danger" circle><i class="el-icon-delete"></i></el-button>
@@ -181,7 +181,7 @@
 
               <div style="margin: 15px;"></div>
                 <center><el-button class="font" type="text" @click="addRowsHeader"><i class="el-icon-plus"></i> Add New</el-button></center>
-                  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.3/vue.js"></script>
+                 
             </div>       
           </el-tab-pane>
 
@@ -257,8 +257,8 @@ import '@/assets/scss/main.scss';
     },
     data() {
       return {
-        inputsParam: [],
-        inputsheaders: [],
+        inputParameter: [],
+        inputHeader: [],
         content: '',
         textbody: '',
         optionsj: {
@@ -294,10 +294,10 @@ import '@/assets/scss/main.scss';
         auth: 'No Auth',
         method: 'get',
         url: '',
-        keyParam:'',
-        valuesParam: '',
+        keyParameter:'',
+        valueParameter: '',
         keyHeader: '',
-        valuesHeader: '',
+        valueHeader: '',
         token: '',
         username: '',
         password: '',
@@ -307,7 +307,7 @@ import '@/assets/scss/main.scss';
         isShowing: true,
         isResponse: true,
         isShowAuth: true,
-        isShowParam: true,
+        isShowParameter: true,
         isShowBody: true,
         activeName: 'first',
         activeTab: 'params',
@@ -355,23 +355,23 @@ import '@/assets/scss/main.scss';
       paramsTab(tab, event) {
         console.log(tab, event);
       },
-      addRowParam() {
-      this.inputsParam.push({
-        keyParammeter: '',
-        valuesParammeter: ''
+      addRowParameter() {
+      this.inputParameter.push({
+        keyParammeters: '',
+        valuesParammeters: ''
       })
       },
-      deleteRowParam(indexParam) {
-        this.inputsParam.splice(indexParam,1)
+      deleteRowParam(indexParameter) {
+        this.inputParameter.splice(indexParameter,1)
       },
       addRowsHeader() {
-        this.inputsheaders.push({
-          keyheaders: '',
-          valuesheaders: ''
+        this.inputHeader.push({
+          keyHeaders: '',
+          valueHeaders: ''
         })
       },
       deleteRowsHeader(indexHeader) {
-        this.inputsheaders.splice(indexHeader,1)
+        this.inputHeader.splice(indexHeader,1)
       }
     }   
   }
