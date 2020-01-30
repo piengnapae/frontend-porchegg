@@ -62,10 +62,10 @@
               </el-row>
 
             <div v-if="isShowParam"  >  
-              <el-row gutter="25">
+              <el-row :gutter="25">
                 <el-col :span="11">
                   <el-row>KEY</el-row>
-                    <el-input v-model="keyParam"></el-input>
+                    <el-input v-model="keyParam" ></el-input>
                 </el-col>
 
                 <el-col :span="11">
@@ -74,9 +74,9 @@
                   </el-col>
               </el-row>
             
-              <div v-for="(input, index) in inputsParam" v-bind:key="index">
+              <div v-for="(input, indexParam) in inputsParam" v-bind:key="indexParam">
                 <div style="margin: 15px;"></div>
-                  <el-row gutter="25"> 
+                  <el-row :gutter="25"> 
                     <el-col :span="11">
                         <el-input v-model="input.keyParammeter"></el-input>
                     </el-col>
@@ -84,13 +84,13 @@
                         <el-input v-model="input.valuesParammeter"></el-input>
                     </el-col>
                     <el-col :span="2">
-                      <el-button @click="deleteRow(index)" type="danger" circle><i class="el-icon-delete"></i></el-button>
+                      <el-button @click="deleteRowParam(indexParam)" type="danger" circle><i class="el-icon-delete"></i></el-button>
                     </el-col>
                   </el-row>
               </div>
     
               <div style="margin: 15px;"></div>
-                <center><el-button class="font" type="text" @click="addRow" ><i class="el-icon-plus"></i> Add New</el-button></center>
+                <center><el-button class="font" type="text" @click="addRowParam" ><i class="el-icon-plus"></i> Add New</el-button></center>
                   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.3/vue.js"></script>
               </div>       
             </el-tab-pane>
@@ -106,7 +106,7 @@
              </el-row>
        
           <div v-if="isShowAuth" >
-            <el-row gutter="15">
+            <el-row :gutter="15">
               <el-col :span="4">
                 <el-row>TYPE</el-row>
                   <el-select v-model="auth" >
@@ -153,7 +153,7 @@
               </el-row>
 
         <div v-if="!isShowHeader" >  
-              <el-row gutter="25">
+              <el-row :gutter="25">
                 <el-col :span="11">
                   <el-row>KEY</el-row>
                     <el-input v-model="keyHeader"></el-input>
@@ -164,9 +164,9 @@
                   </el-col>
               </el-row>
             
-             <div v-for="(head, indexs) in inputsheaders" v-bind:key="indexs">
+             <div v-for="(head, indexHeader) in inputsheaders" v-bind:key="indexHeader">
                 <div style="margin: 15px;"></div>
-                  <el-row gutter="25"> 
+                  <el-row :gutter="25"> 
                       <el-col :span="11">
                           <el-input v-model="head.keyheaders"></el-input>
                       </el-col>
@@ -174,13 +174,13 @@
                           <el-input v-model="head.valuesheaders"></el-input>
                       </el-col>
                       <el-col :span="2">
-                          <el-button @click="deleteRows(indexs)" type="danger" circle><i class="el-icon-delete"></i></el-button>
+                          <el-button @click="deleteRowsHeader(indexHeader)" type="danger" circle><i class="el-icon-delete"></i></el-button>
                       </el-col>
                   </el-row>
              </div>
 
               <div style="margin: 15px;"></div>
-                <center><el-button class="font" type="text" @click="addRows"><i class="el-icon-plus"></i> Add New</el-button></center>
+                <center><el-button class="font" type="text" @click="addRowsHeader"><i class="el-icon-plus"></i> Add New</el-button></center>
                   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.3/vue.js"></script>
             </div>       
           </el-tab-pane>
@@ -195,7 +195,6 @@
               </el-row>
 
               <div v-if="isShowBody" class="jsonStyle">  
-
                 <AceEditor
                   v-model="textbody"
                   @init="editorInit"
@@ -204,11 +203,9 @@
                   height="150px"
                   :options="optionsbody"
                 ></AceEditor>
-
               </div>       
             </el-tab-pane>
-          </el-tabs>
-          
+          </el-tabs>         
         </div>
 
         <el-row>
@@ -254,9 +251,6 @@ import axios from 'axios';
 import '@fortawesome/fontawesome-free/css/all.css';
 import AceEditor from "vue2-ace-editor";
 import '@/assets/scss/main.scss';
-
-
-
   export default {
     components: {
       AceEditor,
@@ -361,23 +355,23 @@ import '@/assets/scss/main.scss';
       paramsTab(tab, event) {
         console.log(tab, event);
       },
-      addRow() {
+      addRowParam() {
       this.inputsParam.push({
         keyParammeter: '',
         valuesParammeter: ''
       })
       },
-      deleteRow(index) {
-        this.inputsParam.splice(index,1)
+      deleteRowParam(indexParam) {
+        this.inputsParam.splice(indexParam,1)
       },
-      addRows() {
+      addRowsHeader() {
         this.inputsheaders.push({
           keyheaders: '',
           valuesheaders: ''
         })
       },
-      deleteRows(indexs) {
-        this.inputsheaders.splice(indexs,1)
+      deleteRowsHeader(indexHeader) {
+        this.inputsheaders.splice(indexHeader,1)
       }
     }   
   }
