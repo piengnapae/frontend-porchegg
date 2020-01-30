@@ -19,12 +19,7 @@
         </nuxt-link>
        </div>
 
-        <!-- <div>
-          <nuxt-link to="/test" exact>
-          test
-        </nuxt-link>
-      </div>
-       -->
+
     </nav>
   </header>
 </template>

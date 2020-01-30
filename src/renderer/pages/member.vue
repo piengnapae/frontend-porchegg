@@ -52,25 +52,25 @@
           </el-row>
 
           <el-tabs v-model="activeTab" @tab-click="paramsTab" >
-            <el-tab-pane label="Parameters" name="params">
+            <el-tab-pane label="Parameters" name="params"  >
               <el-row>
                 <el-col :span="24">
                   <div>
-                    <el-button type="text" class="text" @click="isShowParam = !isShowParam"><i class="el-icon-arrow-down"></i> Parameters</el-button>
+                    <el-button type="text" class="text" id="tabs" @click="isShowParameter = !isShowParameter"><i class="el-icon-arrow-down"></i> Parameters</el-button>
                   </div>
                 </el-col>
               </el-row>
 
-            <div v-if="isShowParameter"  >  
+            <div v-if="isShowParameter" >  
               <el-row :gutter="25">
                 <el-col :span="11">
                   <el-row>KEY</el-row>
-                    <el-input v-model="keyParameter" ></el-input>
+                    <el-input v-model="keyParameter" size="mini"></el-input>
                 </el-col>
 
                 <el-col :span="11">
                   <el-row>VALUE</el-row>
-                    <el-input v-model="valueParameter"></el-input>
+                    <el-input v-model="valueParameter" size="mini"></el-input>
                   </el-col>
               </el-row>
             
@@ -78,20 +78,19 @@
                 <div style="margin: 15px;"></div>
                   <el-row :gutter="25"> 
                     <el-col :span="11">
-                        <el-input v-model="input.keyParammeters"></el-input>
+                        <el-input v-model="input.keyParammeters" size="mini"></el-input>
                     </el-col>
                     <el-col :span="11">
-                        <el-input v-model="input.valueParammeters"></el-input>
+                        <el-input v-model="input.valueParammeters" size="mini"></el-input>
                     </el-col>
                     <el-col :span="2">
-                      <el-button @click="deleteRowParam(indexParameter)" type="danger" circle><i class="el-icon-delete"></i></el-button>
+                      <el-button @click="deleteRowParam(indexParameter)" type="danger" size="mini" circle><i class="el-icon-delete"></i></el-button>
                     </el-col>
                   </el-row>
               </div>
     
-              <div style="margin: 15px;"></div>
-                <center><el-button class="font" type="text" @click="addRowParameter" ><i class="el-icon-plus"></i> Add New</el-button></center>
-                 
+                <center><el-button  type="text" @click="addRowParameter" ><i class="el-icon-plus"></i> Add New</el-button></center>
+
               </div>       
             </el-tab-pane>
 
@@ -100,7 +99,7 @@
             <el-row>
               <el-col :span="24">
                 <div>
-                  <el-button type="text" class="text" @click="isShowAuth = !isShowAuth"><i class="el-icon-arrow-down"></i> Authentication</el-button>
+                  <el-button type="text" class="text" id="tabs" @click="isShowAuth = !isShowAuth"><i class="el-icon-arrow-down"></i> Authentication</el-button>
                 </div>
               </el-col>
              </el-row>
@@ -109,7 +108,7 @@
             <el-row :gutter="15">
               <el-col :span="4">
                 <el-row>TYPE</el-row>
-                  <el-select v-model="auth" >
+                  <el-select v-model="auth" size="mini">
                     <el-option 
                       v-for="auth in optionauth"
                       :key="auth.value"
@@ -122,21 +121,21 @@
             <el-col :xs="18" :sm="20">
               <el-row v-if="auth === 'Bearer Token'">
                 <el-row>TOKEN</el-row>
-                  <el-input v-model="token"></el-input>                 
+                  <el-input v-model="token" size="mini"></el-input>                 
               </el-row>
             </el-col>
 
             <el-col  :sm="10">
               <el-row v-if="auth === 'Basic Auth'">
                 <el-row>USERNAME</el-row>
-                  <el-input v-model="username"></el-input>
+                  <el-input v-model="username" size="mini"></el-input>
               </el-row>
             </el-col> 
 
             <el-col  :sm="10">
               <el-row v-if="auth === 'Basic Auth'">
                 <el-row>PASSWORD</el-row>
-                  <el-input  v-model="password" show-password></el-input>
+                  <el-input  v-model="password" show-password size="mini"></el-input>
               </el-row>
             </el-col>            
             </el-row>
@@ -147,7 +146,7 @@
             <el-row>
             <el-col :span="24">
               <div>
-                <el-button type="text" class="text" @click="isShowHeader = !isShowHeader"><i class="el-icon-arrow-down"></i> Headers</el-button>
+                <el-button type="text" class="text" id="tabs" @click="isShowHeader = !isShowHeader"><i class="el-icon-arrow-down"></i> Headers</el-button>
               </div>
             </el-col>
           </el-row>
@@ -156,11 +155,11 @@
               <el-row :gutter="25">
                 <el-col :span="11">
                   <el-row>KEY</el-row>
-                    <el-input v-model="keyHeader"></el-input>
+                    <el-input v-model="keyHeader" size="mini"></el-input>
                 </el-col>
                 <el-col :span="11">
                   <el-row>VALUE</el-row>
-                    <el-input v-model="valueHeader"></el-input>
+                    <el-input v-model="valueHeader" size="mini"></el-input>
                   </el-col>
               </el-row>
             
@@ -168,19 +167,18 @@
                 <div style="margin: 15px;"></div>
                   <el-row :gutter="25"> 
                       <el-col :span="11">
-                          <el-input v-model="head.keyHeaders"></el-input>
+                          <el-input v-model="head.keyHeaders" size="mini"></el-input>
                       </el-col>
                       <el-col :span="11">
-                          <el-input v-model="head.valueHeaders"></el-input>
+                          <el-input v-model="head.valueHeaders" size="mini"></el-input>
                       </el-col>
                       <el-col :span="2">
-                          <el-button @click="deleteRowsHeader(indexHeader)" type="danger" circle><i class="el-icon-delete"></i></el-button>
+                          <el-button @click="deleteRowsHeader(indexHeader)" type="danger" size="mini" circle><i class="el-icon-delete"></i></el-button>
                       </el-col>
                   </el-row>
              </div>
-
-              <div style="margin: 15px;"></div>
-                <center><el-button class="font" type="text" @click="addRowsHeader"><i class="el-icon-plus"></i> Add New</el-button></center>
+            
+                <center><el-button type="text" @click="addRowsHeader"><i class="el-icon-plus"></i> Add New</el-button></center>
                  
             </div>       
           </el-tab-pane>
@@ -189,7 +187,7 @@
                <el-row>
                 <el-col :span="24">
                   <div>
-                    <el-button type="text" class="text" @click="isShowBody = !isShowBody"><i class="el-icon-arrow-down"></i> Body</el-button>
+                    <el-button type="text" class="text"id="tabs"  @click="isShowBody = !isShowBody"><i class="el-icon-arrow-down"></i> Body</el-button>
                   </div>
                 </el-col>
               </el-row>
@@ -219,10 +217,10 @@
         <div v-if="isResponse" class="box">
           <el-form class="status-code" style="display: flex; justify-content: flex-end;">
             <el-form-item>
-              <span class="demo-input-label" style="padding-right: 10px">Status </span>
+              <span class="demo-input-label" style="padding-right: 10px" >Status </span>
             </el-form-item>
             <el-form-item>
-              <el-input v-model="status" :disabled="true"></el-input>
+              <el-input v-model="status" :disabled="true" size="small"></el-input>
             </el-form-item>
           </el-form>
 
