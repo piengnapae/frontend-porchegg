@@ -187,7 +187,7 @@
                <el-row>
                 <el-col :span="24">
                   <div>
-                    <el-button type="text" class="text"id="tabs"  @click="isShowBody = !isShowBody"><i class="el-icon-arrow-down"></i> Body</el-button>
+                    <el-button type="text" class="text" id="tabs"  @click="isShowBody = !isShowBody"><i class="el-icon-arrow-down"></i> Body</el-button>
                   </div>
                 </el-col>
               </el-row>
