@@ -17,7 +17,7 @@
         <el-row>
           <el-col :span="24">
             <div>
-              <el-button type="text" class="el-icon-arrow-down text" @click="isShowing = !isShowing">Request</el-button>
+              <el-button type="text" class="text" @click="isShowing = !isShowing"><i class="el-icon-arrow-down "></i> Request</el-button>
             </div>
           </el-col>
         </el-row>
@@ -56,7 +56,7 @@
               <el-row>
                 <el-col :span="24">
                   <div>
-                    <el-button type="text" class="el-icon-arrow-down text" @click="isShowParam = !isShowParam">Parameters</el-button>
+                    <el-button type="text" class="text" @click="isShowParam = !isShowParam"><i class="el-icon-arrow-down"></i> Parameters</el-button>
                   </div>
                 </el-col>
               </el-row>
@@ -100,7 +100,7 @@
             <el-row>
               <el-col :span="24">
                 <div>
-                  <el-button type="text" class="el-icon-arrow-down text" @click="isShowAuth = !isShowAuth">Authentication</el-button>
+                  <el-button type="text" class="text" @click="isShowAuth = !isShowAuth"><i class="el-icon-arrow-down"></i> Authentication</el-button>
                 </div>
               </el-col>
              </el-row>
@@ -143,14 +143,14 @@
           </div>
           </el-tab-pane>
   
-            <el-tab-pane label="Headers" name="headers">
-               <el-row>
-                <el-col :span="24">
-                  <div>
-                    <el-button type="text" class="el-icon-arrow-down text" @click="isShowHeader = !isShowHeader">Headers</el-button>
-                  </div>
-                </el-col>
-              </el-row>
+          <el-tab-pane label="Headers" name="headers">
+            <el-row>
+            <el-col :span="24">
+              <div>
+                <el-button type="text" class="text" @click="isShowHeader = !isShowHeader"><i class="el-icon-arrow-down"></i> Headers</el-button>
+              </div>
+            </el-col>
+          </el-row>
 
         <div v-if="!isShowHeader" >  
               <el-row :gutter="25">
@@ -189,7 +189,7 @@
                <el-row>
                 <el-col :span="24">
                   <div>
-                    <el-button type="text" class="el-icon-arrow-down text" @click="isShowBody = !isShowBody">Body</el-button>
+                    <el-button type="text" class="text" @click="isShowBody = !isShowBody"><i class="el-icon-arrow-down"></i> Body</el-button>
                   </div>
                 </el-col>
               </el-row>
@@ -211,7 +211,7 @@
         <el-row>
           <el-col :span="24">
             <div>
-              <el-button type="text" class="el-icon-arrow-down text" @click="isResponse = !isResponse"> Response</el-button>
+              <el-button type="text" class="text" @click="isResponse = !isResponse"><i class="el-icon-arrow-down"></i> Response</el-button>
             </div>
           </el-col>
         </el-row>
