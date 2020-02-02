@@ -51,7 +51,7 @@
 
           </el-row>
 
-          <el-tabs v-model="activeTab" @tab-click="paramsTab" >
+          <el-tabs v-model="activeTab" @tab-click="paramsTab" class="tab">
             <el-tab-pane label="Parameters" name="params">
               <el-row>
                 <el-col :span="24">
