@@ -3,6 +3,15 @@
     <el-col :xs="0" :sm="5" class="boxs">
     Aside <br>
     <el-tree :data="folders" @node-click="getData" class="box"
+     @node-drag-start="handleDragStart"
+      @node-drag-enter="handleDragEnter"
+      @node-drag-leave="handleDragLeave"
+      @node-drag-over="handleDragOver"
+      @node-drag-end="handleDragEnd"
+      @node-drop="handleDrop"
+      draggable
+      :allow-drop="allowDrop"
+      :allow-drag="allowDrag"
     ></el-tree>
 
     </el-col>
@@ -390,7 +399,24 @@ import '@/assets/scss/main.scss';
       deleteRowsHeader(indexHeader) {
         this.inputHeader.splice(indexHeader,1)
       },
-      
+       handleDragStart(node, ev) {
+        console.log('drag start', node);
+      },
+      handleDragEnter(draggingNode, dropNode, ev) {
+        console.log('tree drag enter: ', dropNode.label);
+      },
+      handleDragLeave(draggingNode, dropNode, ev) {
+        console.log('tree drag leave: ', dropNode.label);
+      },
+      handleDragOver(draggingNode, dropNode, ev) {
+        console.log('tree drag over: ', dropNode.label);
+      },
+      handleDragEnd(draggingNode, dropNode, dropType, ev) {
+        console.log('tree drag end: ', dropNode && dropNode.label, dropType);
+      },
+      handleDrop(draggingNode, dropNode, dropType, ev) {
+        console.log('tree drop: ', dropNode.label, dropType);
+      },
     }   
   }
 </script>
