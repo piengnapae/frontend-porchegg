@@ -1,7 +1,10 @@
 <template>
   <el-row>
-    <el-col :xs="0" :sm="5">
-    Aside
+    <el-col :xs="0" :sm="5" class="boxs">
+    Aside <br>
+    <el-tree :data="folders" @node-click="getData" class="box"
+    ></el-tree>
+
     </el-col>
     
     <el-col :xs="24" :sm="19">
@@ -17,7 +20,7 @@
         <el-row>
           <el-col :span="24">
             <div>
-              <el-button type="text" class="text" @click="isShowing = !isShowing"><i class="el-icon-arrow-down "></i> Request</el-button>
+              <el-button type="text" class="text" @click="isShowing = !isShowing"><i class="el-icon-arrow-down"></i> Request</el-button>
             </div>
           </el-col>
         </el-row>
@@ -250,6 +253,7 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import AceEditor from "vue2-ace-editor";
 import '@/assets/scss/main.scss';
   export default {
+    
     components: {
       AceEditor,
     },
@@ -314,9 +318,13 @@ import '@/assets/scss/main.scss';
         preview: 'preview',
         status: '',
         statusText: '',
-        paramsInput:''
-      }
+        paramsInput:'',
+        folders :[],
+      };
     },
+     mounted(){
+            this.getData();
+      },
 
     methods: {
       editorInit: function(editor) {
@@ -324,6 +332,17 @@ import '@/assets/scss/main.scss';
         require('brace/theme/chrome')
         //console.log(editor);
       },
+        getData() {
+        axios.get('http://localhost:9000/collections/1/folder-view')
+        .then(res => {
+          this.folders = res.data.data
+          // console.log(res)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      },
+        
       sendRequest() {
         axios({
           method: this.method,
@@ -370,7 +389,8 @@ import '@/assets/scss/main.scss';
       },
       deleteRowsHeader(indexHeader) {
         this.inputHeader.splice(indexHeader,1)
-      }
+      },
+      
     }   
   }
 </script>
