@@ -268,6 +268,7 @@ import '@/assets/scss/main.scss';
     },
     data() {
       return {
+        server_api: env.SERVER_API,
         inputParameter: [],
         inputHeader: [],
         content: '',
@@ -341,7 +342,7 @@ import '@/assets/scss/main.scss';
         //console.log(editor);
       },
         getData() {
-        axios.get('http://localhost:9000/collections/1/folder-view')
+        axios.get(this.server_api+'/collections/1/folder-view')
         .then(res => {
           this.folders = res.data.data
           // console.log(res)
