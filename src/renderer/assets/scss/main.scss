@@ -51,12 +51,21 @@ body {
 
 .box {
   background-color: white; 
-  padding: 20px;
+  padding: 15px;
   border: 2px solid #e5e5e5;
   position: relative;
   .status-code{
     position: absolute;
-    top: 10px;
+    top: 5px;
     right: 20px;
   }
+}
+.el-button{
+  font-family: 'Mitr', sans-serif;
+}
+#tabs{
+  padding-top: 0px;
+}
+.boxs{
+  padding-left: 15px;
 }

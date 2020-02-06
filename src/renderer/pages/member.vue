@@ -1,7 +1,19 @@
 <template>
   <el-row>
-    <el-col :xs="0" :sm="5">
-    Aside
+    <el-col :xs="0" :sm="5" class="boxs">
+    Aside <br>
+    <el-tree :data="folders" @node-click="getData" class="box"
+      @node-drag-start="handleDragStart"
+      @node-drag-enter="handleDragEnter"
+      @node-drag-leave="handleDragLeave"
+      @node-drag-over="handleDragOver"
+      @node-drag-end="handleDragEnd"
+      @node-drop="handleDrop"
+      draggable
+      :allow-drop="allowDrop"
+      :allow-drag="allowDrag"
+    ></el-tree>
+
     </el-col>
     
     <el-col :xs="24" :sm="19">
@@ -17,7 +29,7 @@
         <el-row>
           <el-col :span="24">
             <div>
-              <el-button type="text" class="text" @click="isShowing = !isShowing"><i class="el-icon-arrow-down "></i> Request</el-button>
+              <el-button type="text" class="text" @click="isShowing = !isShowing"><i class="el-icon-arrow-down"></i> Request</el-button>
             </div>
           </el-col>
         </el-row>
@@ -56,19 +68,21 @@
               <el-row>
                 <el-col :span="24">
                   <div>
-                    <el-button type="text" class="text" @click="isShowParam = !isShowParam"><i class="el-icon-arrow-down"></i> Parameters</el-button>
+                    <el-button type="text" class="text" id="tabs" @click="isShowParameter = !isShowParameter"><i class="el-icon-arrow-down"></i> Parameters</el-button>
                   </div>
                 </el-col>
               </el-row>
 
-            <div v-if="isShowParameter"  >  
+            <div v-if="isShowParameter" >  
               <el-row :gutter="25">
                 <el-col :span="11">
                   <el-row>KEY</el-row>
+                    <el-input v-model="keyParameter" size="mini"></el-input>
                 </el-col>
 
                 <el-col :span="11">
                   <el-row>VALUE</el-row>
+                    <el-input v-model="valueParameter" size="mini"></el-input>
                   </el-col>
               </el-row>
             
@@ -76,20 +90,19 @@
                 <div style="margin: 15px;"></div>
                   <el-row :gutter="25"> 
                     <el-col :span="11">
-                        <el-input v-model="input.keyParammeters"></el-input>
+                        <el-input v-model="input.keyParammeters" size="mini"></el-input>
                     </el-col>
                     <el-col :span="11">
-                        <el-input v-model="input.valueParammeters"></el-input>
+                        <el-input v-model="input.valueParammeters" size="mini"></el-input>
                     </el-col>
-                    <el-col :span="2" v-if="inputParameter.length > 1">
-                      <el-button @click="deleteRowParam(indexParameter)" type="danger" circle><i class="el-icon-delete"></i></el-button>
+                    <el-col :span="2">
+                      <el-button @click="deleteRowParam(indexParameter)" type="danger" size="mini" circle><i class="el-icon-delete"></i></el-button>
                     </el-col>
                   </el-row>
               </div>
     
-              <div style="margin: 15px;"></div>
-                <center><el-button class="font" type="text" @click="addRowParameter" ><i class="el-icon-plus"></i> Add New</el-button></center>
-                 
+                <center><el-button  type="text" @click="addRowParameter" ><i class="el-icon-plus"></i> Add New</el-button></center>
+
               </div>       
             </el-tab-pane>
 
@@ -98,7 +111,7 @@
             <el-row>
               <el-col :span="24">
                 <div>
-                  <el-button type="text" class="text" @click="isShowAuth = !isShowAuth"><i class="el-icon-arrow-down"></i> Authentication</el-button>
+                  <el-button type="text" class="text" id="tabs" @click="isShowAuth = !isShowAuth"><i class="el-icon-arrow-down"></i> Authentication</el-button>
                 </div>
               </el-col>
              </el-row>
@@ -107,7 +120,7 @@
             <el-row :gutter="15">
               <el-col :span="4">
                 <el-row>TYPE</el-row>
-                  <el-select v-model="auth">
+                  <el-select v-model="auth" size="mini">
                     <el-option 
                       v-for="auth in optionauth"
                       :key="auth.value"
@@ -120,21 +133,21 @@
             <el-col :xs="18" :sm="20">
               <el-row v-if="auth === 'Bearer Token'">
                 <el-row>TOKEN</el-row>
-                  <el-input v-model="token"></el-input>
+                  <el-input v-model="token" size="mini"></el-input>                 
               </el-row>
             </el-col>
 
             <el-col  :sm="10">
               <el-row v-if="auth === 'Basic Auth'">
                 <el-row>USERNAME</el-row>
-                  <el-input v-model="username"></el-input>
+                  <el-input v-model="username" size="mini"></el-input>
               </el-row>
             </el-col> 
 
             <el-col  :sm="10">
               <el-row v-if="auth === 'Basic Auth'">
                 <el-row>PASSWORD</el-row>
-                  <el-input  v-model="password" show-password></el-input>
+                  <el-input  v-model="password" show-password size="mini"></el-input>
               </el-row>
             </el-col>            
             </el-row>
@@ -143,21 +156,23 @@
   
           <el-tab-pane label="Headers" name="headers">
             <el-row>
-              <el-col :span="24">
-                <div>
-                  <el-button type="text" class="text" @click="isShowHeader = !isShowHeader"><i class="el-icon-arrow-down"></i> Headers</el-button>
-                </div>
-              </el-col>
-            </el-row>
+            <el-col :span="24">
+              <div>
+                <el-button type="text" class="text" id="tabs" @click="isShowHeader = !isShowHeader"><i class="el-icon-arrow-down"></i> Headers</el-button>
+              </div>
+            </el-col>
+          </el-row>
 
             <div v-if="!isShowHeader" >  
               <el-row :gutter="25">
                 <el-col :span="11">
                   <el-row>KEY</el-row>
+                    <el-input v-model="keyHeader" size="mini"></el-input>
                 </el-col>
                 <el-col :span="11">
                   <el-row>VALUE</el-row>
-                </el-col>
+                    <el-input v-model="valueHeader" size="mini"></el-input>
+                  </el-col>
               </el-row>
               <div v-for="(head, indexHeader) in inputHeader" v-bind:key="indexHeader">
                 <div style="margin: 15px;"></div>
@@ -214,10 +229,10 @@
         <div v-if="isResponse" class="box">
           <el-form class="status-code" style="display: flex; justify-content: flex-end;">
             <el-form-item>
-              <span class="demo-input-label" style="padding-right: 10px">Status </span>
+              <span class="demo-input-label" style="padding-right: 10px" >Status </span>
             </el-form-item>
             <el-form-item>
-              <el-input v-model="status" :disabled="true"></el-input>
+              <el-input v-model="status" :disabled="true" size="small"></el-input>
             </el-form-item>
           </el-form>
 
@@ -247,6 +262,7 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import AceEditor from "vue2-ace-editor";
 import '@/assets/scss/main.scss';
   export default {
+    
     components: {
       AceEditor,
     },
@@ -292,7 +308,6 @@ import '@/assets/scss/main.scss';
         token: '',
         username: '',
         password: '',
-        textarea: '',
         isShowHeader: '',
         hideRequest: '',
         isShowing: true,
@@ -307,24 +322,40 @@ import '@/assets/scss/main.scss';
         preview: 'preview',
         status: '',
         statusText: '',
-        paramsInput:''
-      }
+        paramsInput:'',
+        folders :[],
+      };
     },
+     mounted(){
+            this.getData();
+      },
 
     methods: {
       editorInit: function(editor) {
         require('brace/mode/json')
         require('brace/theme/chrome')
       },
+        getData() {
+        axios.get('http://localhost:9000/collections/1/folder-view')
+        .then(res => {
+          this.folders = res.data.data
+          // console.log(res)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      },
+        
       sendRequest() {
         axios({
-          method: this.method,
+            method: this.method,
             url: this.url,
             headers: this.headerArray(),
             data: {
             }
         })
-        .then(res => {
+        .then(res => { 
+          
           this.content = JSON.stringify(res.data, null, 4)
           this.status = res.status+" "+res.statusText
         }).catch(err => {
@@ -384,7 +415,25 @@ import '@/assets/scss/main.scss';
         
         let merged = {...headerData, ...tokenAuth};
         return merged
-      }
+      },
+       handleDragStart(node, ev) {
+        console.log('drag start', node);
+      },
+      handleDragEnter(draggingNode, dropNode, ev) {
+        console.log('tree drag enter: ', dropNode.label);
+      },
+      handleDragLeave(draggingNode, dropNode, ev) {
+        console.log('tree drag leave: ', dropNode.label);
+      },
+      handleDragOver(draggingNode, dropNode, ev) {
+        console.log('tree drag over: ', dropNode.label);
+      },
+      handleDragEnd(draggingNode, dropNode, dropType, ev) {
+        console.log('tree drag end: ', dropNode && dropNode.label, dropType);
+      },
+      handleDrop(draggingNode, dropNode, dropType, ev) {
+        console.log('tree drop: ', dropNode.label, dropType);
+      },
     }   
   }
 </script>
