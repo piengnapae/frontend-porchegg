@@ -27,6 +27,23 @@ body {
   color: #303133
 }
 
+
+.el-tabs__item.is-active {
+  color: #ffb526;
+}
+
+.el-tabs__item:hover {
+  color: #f8e5bf;
+}
+
+.el-tabs__active-bar {
+  background-color: #ffb526;
+}
+
+.el-button:focus, .el-button:hover {
+  color: #303133;
+}
+
 .circle{
   border-radius: 50%;
   padding: 20px;

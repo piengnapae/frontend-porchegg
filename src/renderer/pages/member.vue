@@ -3,7 +3,7 @@
     <el-col :xs="0" :sm="5" class="boxs">
     Aside <br>
     <el-tree :data="folders" @node-click="getData" class="box"
-     @node-drag-start="handleDragStart"
+      @node-drag-start="handleDragStart"
       @node-drag-enter="handleDragEnter"
       @node-drag-leave="handleDragLeave"
       @node-drag-over="handleDragOver"
@@ -63,8 +63,8 @@
 
           </el-row>
 
-          <el-tabs v-model="activeTab" @tab-click="paramsTab" >
-            <el-tab-pane label="Parameters" name="params"  >
+          <el-tabs v-model="activeTab" @tab-click="paramsTab" class="tab">
+            <el-tab-pane label="Parameters" name="params">
               <el-row>
                 <el-col :span="24">
                   <div>
@@ -312,7 +312,6 @@ import '@/assets/scss/main.scss';
         token: '',
         username: '',
         password: '',
-        textarea: '',
         isShowHeader: '',
         hideRequest: '',
         isShowing: true,
@@ -354,8 +353,9 @@ import '@/assets/scss/main.scss';
         
       sendRequest() {
         axios({
-          method: this.method,
+            method: this.method,
             url: this.url,
+            textbody: this.textbody,
             header: {
               'Content-type':'application/json'
             },
@@ -364,7 +364,8 @@ import '@/assets/scss/main.scss';
               'password': '123456'
             }
         })
-        .then(res => {
+        .then(res => { 
+          
           this.content = JSON.stringify(res.data, null, 4)
           this.status = res.status+" "+res.statusText
         }).catch(err => {
