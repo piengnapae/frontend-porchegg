@@ -106,7 +106,7 @@
               </div>       
             </el-tab-pane>
 
-          <el-tab-pane label="Authentication" name="authentication"> 
+          <el-tab-pane label="Authentication" name="authentication">
               
             <el-row>
               <el-col :span="24">
@@ -163,7 +163,7 @@
             </el-col>
           </el-row>
 
-        <div v-if="!isShowHeader" >  
+            <div v-if="!isShowHeader" >  
               <el-row :gutter="25">
                 <el-col :span="11">
                   <el-row>KEY</el-row>
@@ -174,35 +174,35 @@
                     <el-input v-model="valueHeader" size="mini"></el-input>
                   </el-col>
               </el-row>
-            
-             <div v-for="(head, indexHeader) in inputHeader" v-bind:key="indexHeader">
+              <div v-for="(head, indexHeader) in inputHeader" v-bind:key="indexHeader">
                 <div style="margin: 15px;"></div>
-                  <el-row :gutter="25"> 
-                      <el-col :span="11">
-                          <el-input v-model="head.keyHeaders" size="mini"></el-input>
-                      </el-col>
-                      <el-col :span="11">
-                          <el-input v-model="head.valueHeaders" size="mini"></el-input>
-                      </el-col>
-                      <el-col :span="2">
-                          <el-button @click="deleteRowsHeader(indexHeader)" type="danger" size="mini" circle><i class="el-icon-delete"></i></el-button>
-                      </el-col>
-                  </el-row>
-             </div>
-            
-                <center><el-button type="text" @click="addRowsHeader"><i class="el-icon-plus"></i> Add New</el-button></center>
-                 
-            </div>       
+                <el-row :gutter="25"> 
+                  <el-col :span="11">
+                    <el-input v-model="head.keyHeaders"></el-input>
+                  </el-col>
+                  <el-col :span="11">
+                    <el-input v-model="head.valueHeaders"></el-input>
+                  </el-col>
+                  <el-col :span="2" v-if="inputHeader.length > 1">
+                    <el-button @click="deleteRowsHeader(indexHeader)" type="danger" circle><i class="el-icon-delete"></i></el-button>
+                  </el-col>
+                </el-row>
+              </div>
+
+              <div style="margin: 15px;"></div>
+                <center><el-button class="font" type="text" @click="addRowsHeader"><i class="el-icon-plus"></i> Add New</el-button></center>
+                    
+            </div>    
           </el-tab-pane>
 
-            <el-tab-pane label="Body" name="body">
-               <el-row>
-                <el-col :span="24">
-                  <div>
-                    <el-button type="text" class="text" id="tabs"  @click="isShowBody = !isShowBody"><i class="el-icon-arrow-down"></i> Body</el-button>
-                  </div>
-                </el-col>
-              </el-row>
+          <el-tab-pane label="Body" name="body">
+            <el-row>
+              <el-col :span="24">
+                <div>
+                  <el-button type="text" class="text" @click="isShowBody = !isShowBody"><i class="el-icon-arrow-down"></i> Body</el-button>
+                </div>
+              </el-col>
+            </el-row>
 
               <div v-if="isShowBody" class="jsonStyle">  
                 <AceEditor
@@ -269,8 +269,8 @@ import '@/assets/scss/main.scss';
     data() {
       return {
         server_api: env.SERVER_API,
-        inputParameter: [],
-        inputHeader: [],
+        inputParameter: [{"keyParammeters": "", "valueParammeters": ""}],
+        inputHeader: [{"keyHeaders": "", "valueHeaders": ""}],
         content: '',
         textbody: '',
         optionsj: {
@@ -306,10 +306,6 @@ import '@/assets/scss/main.scss';
         auth: 'No Auth',
         method: 'get',
         url: '',
-        keyParameter:'',
-        valueParameter: '',
-        keyHeader: '',
-        valueHeader: '',
         token: '',
         username: '',
         password: '',
@@ -339,7 +335,6 @@ import '@/assets/scss/main.scss';
       editorInit: function(editor) {
         require('brace/mode/json')
         require('brace/theme/chrome')
-        //console.log(editor);
       },
         getData() {
         axios.get(this.server_api+'/collections/1/folder-view')
@@ -356,13 +351,8 @@ import '@/assets/scss/main.scss';
         axios({
             method: this.method,
             url: this.url,
-            textbody: this.textbody,
-            header: {
-              'Content-type':'application/json'
-            },
-            data: {               
-              'username': 'view',
-              'password': '123456'
+            headers: this.headerArray(),
+            data: {
             }
         })
         .then(res => { 
@@ -370,9 +360,10 @@ import '@/assets/scss/main.scss';
           this.content = JSON.stringify(res.data, null, 4)
           this.status = res.status+" "+res.statusText
         }).catch(err => {
-          console.log(err)
+          console.log(err.response)
           this.content = JSON.stringify(err.response.data, null, 4)
           this.status = err.response.status+" "+err.response.statusText
+          console.log(this.headerArray())
         })       
       },
 
@@ -384,10 +375,10 @@ import '@/assets/scss/main.scss';
         console.log(tab, event);
       },
       addRowParameter() {
-      this.inputParameter.push({
-        keyParammeters: '',
-        valuesParammeters: ''
-      })
+        this.inputParameter.push({
+          keyParammeters: '',
+          valuesParammeters: ''
+        })
       },
       deleteRowParam(indexParameter) {
         this.inputParameter.splice(indexParameter,1)
@@ -400,6 +391,31 @@ import '@/assets/scss/main.scss';
       },
       deleteRowsHeader(indexHeader) {
         this.inputHeader.splice(indexHeader,1)
+      },
+      convertToArray(input){
+        let arr = {}
+        input.forEach(header => {
+          var key = header['keyHeaders']
+
+          if(key == ""){
+            return '{}'
+          }
+
+          arr[key] =  header['valueHeaders']
+        })
+        return arr
+      },
+      headerArray(){
+        let headerData = {}
+        let tokenAuth = {}
+
+        headerData = this.convertToArray(this.inputHeader)
+        if(this.token != ''){
+          tokenAuth['authorization'] = 'Bearer '+this.token
+        }
+        
+        let merged = {...headerData, ...tokenAuth};
+        return merged
       },
        handleDragStart(node, ev) {
         console.log('drag start', node);
