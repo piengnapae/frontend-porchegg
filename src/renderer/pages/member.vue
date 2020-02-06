@@ -65,12 +65,10 @@
               <el-row :gutter="25">
                 <el-col :span="11">
                   <el-row>KEY</el-row>
-                    <el-input v-model="keyParameter" ></el-input>
                 </el-col>
 
                 <el-col :span="11">
                   <el-row>VALUE</el-row>
-                    <el-input v-model="valueParameter"></el-input>
                   </el-col>
               </el-row>
             
@@ -83,7 +81,7 @@
                     <el-col :span="11">
                         <el-input v-model="input.valueParammeters"></el-input>
                     </el-col>
-                    <el-col :span="2">
+                    <el-col :span="2" v-if="inputParameter.length > 1">
                       <el-button @click="deleteRowParam(indexParameter)" type="danger" circle><i class="el-icon-delete"></i></el-button>
                     </el-col>
                   </el-row>
@@ -95,7 +93,7 @@
               </div>       
             </el-tab-pane>
 
-          <el-tab-pane label="Authentication" name="authentication"> 
+          <el-tab-pane label="Authentication" name="authentication">
               
             <el-row>
               <el-col :span="24">
@@ -109,7 +107,7 @@
             <el-row :gutter="15">
               <el-col :span="4">
                 <el-row>TYPE</el-row>
-                  <el-select v-model="auth" >
+                  <el-select v-model="auth">
                     <el-option 
                       v-for="auth in optionauth"
                       :key="auth.value"
@@ -122,7 +120,7 @@
             <el-col :xs="18" :sm="20">
               <el-row v-if="auth === 'Bearer Token'">
                 <el-row>TOKEN</el-row>
-                  <el-input v-model="token"></el-input>                 
+                  <el-input v-model="token"></el-input>
               </el-row>
             </el-col>
 
@@ -145,54 +143,51 @@
   
           <el-tab-pane label="Headers" name="headers">
             <el-row>
-            <el-col :span="24">
-              <div>
-                <el-button type="text" class="text" @click="isShowHeader = !isShowHeader"><i class="el-icon-arrow-down"></i> Headers</el-button>
-              </div>
-            </el-col>
-          </el-row>
+              <el-col :span="24">
+                <div>
+                  <el-button type="text" class="text" @click="isShowHeader = !isShowHeader"><i class="el-icon-arrow-down"></i> Headers</el-button>
+                </div>
+              </el-col>
+            </el-row>
 
-        <div v-if="!isShowHeader" >  
+            <div v-if="!isShowHeader" >  
               <el-row :gutter="25">
                 <el-col :span="11">
                   <el-row>KEY</el-row>
-                    <el-input v-model="keyHeader"></el-input>
                 </el-col>
                 <el-col :span="11">
                   <el-row>VALUE</el-row>
-                    <el-input v-model="valueHeader"></el-input>
-                  </el-col>
+                </el-col>
               </el-row>
-            
-             <div v-for="(head, indexHeader) in inputHeader" v-bind:key="indexHeader">
+              <div v-for="(head, indexHeader) in inputHeader" v-bind:key="indexHeader">
                 <div style="margin: 15px;"></div>
-                  <el-row :gutter="25"> 
-                      <el-col :span="11">
-                          <el-input v-model="head.keyHeaders"></el-input>
-                      </el-col>
-                      <el-col :span="11">
-                          <el-input v-model="head.valueHeaders"></el-input>
-                      </el-col>
-                      <el-col :span="2">
-                          <el-button @click="deleteRowsHeader(indexHeader)" type="danger" circle><i class="el-icon-delete"></i></el-button>
-                      </el-col>
-                  </el-row>
-             </div>
+                <el-row :gutter="25"> 
+                  <el-col :span="11">
+                    <el-input v-model="head.keyHeaders"></el-input>
+                  </el-col>
+                  <el-col :span="11">
+                    <el-input v-model="head.valueHeaders"></el-input>
+                  </el-col>
+                  <el-col :span="2" v-if="inputHeader.length > 1">
+                    <el-button @click="deleteRowsHeader(indexHeader)" type="danger" circle><i class="el-icon-delete"></i></el-button>
+                  </el-col>
+                </el-row>
+              </div>
 
               <div style="margin: 15px;"></div>
                 <center><el-button class="font" type="text" @click="addRowsHeader"><i class="el-icon-plus"></i> Add New</el-button></center>
-                 
-            </div>       
+                    
+            </div>    
           </el-tab-pane>
 
-            <el-tab-pane label="Body" name="body">
-               <el-row>
-                <el-col :span="24">
-                  <div>
-                    <el-button type="text" class="text" @click="isShowBody = !isShowBody"><i class="el-icon-arrow-down"></i> Body</el-button>
-                  </div>
-                </el-col>
-              </el-row>
+          <el-tab-pane label="Body" name="body">
+            <el-row>
+              <el-col :span="24">
+                <div>
+                  <el-button type="text" class="text" @click="isShowBody = !isShowBody"><i class="el-icon-arrow-down"></i> Body</el-button>
+                </div>
+              </el-col>
+            </el-row>
 
               <div v-if="isShowBody" class="jsonStyle">  
                 <AceEditor
@@ -257,8 +252,8 @@ import '@/assets/scss/main.scss';
     },
     data() {
       return {
-        inputParameter: [],
-        inputHeader: [],
+        inputParameter: [{"keyParammeters": "", "valueParammeters": ""}],
+        inputHeader: [{"keyHeaders": "", "valueHeaders": ""}],
         content: '',
         textbody: '',
         optionsj: {
@@ -294,10 +289,6 @@ import '@/assets/scss/main.scss';
         auth: 'No Auth',
         method: 'get',
         url: '',
-        keyParameter:'',
-        valueParameter: '',
-        keyHeader: '',
-        valueHeader: '',
         token: '',
         username: '',
         password: '',
@@ -324,27 +315,23 @@ import '@/assets/scss/main.scss';
       editorInit: function(editor) {
         require('brace/mode/json')
         require('brace/theme/chrome')
-        //console.log(editor);
       },
       sendRequest() {
         axios({
           method: this.method,
             url: this.url,
-            header: {
-              'Content-type':'application/json'
-            },
-            data: {               
-              'username': 'view',
-              'password': '123456'
+            headers: this.headerArray(),
+            data: {
             }
         })
         .then(res => {
           this.content = JSON.stringify(res.data, null, 4)
           this.status = res.status+" "+res.statusText
         }).catch(err => {
-          console.log(err)
+          console.log(err.response)
           this.content = JSON.stringify(err.response.data, null, 4)
           this.status = err.response.status+" "+err.response.statusText
+          console.log(this.headerArray())
         })       
       },
 
@@ -356,10 +343,10 @@ import '@/assets/scss/main.scss';
         console.log(tab, event);
       },
       addRowParameter() {
-      this.inputParameter.push({
-        keyParammeters: '',
-        valuesParammeters: ''
-      })
+        this.inputParameter.push({
+          keyParammeters: '',
+          valuesParammeters: ''
+        })
       },
       deleteRowParam(indexParameter) {
         this.inputParameter.splice(indexParameter,1)
@@ -372,6 +359,31 @@ import '@/assets/scss/main.scss';
       },
       deleteRowsHeader(indexHeader) {
         this.inputHeader.splice(indexHeader,1)
+      },
+      convertToArray(input){
+        let arr = {}
+        input.forEach(header => {
+          var key = header['keyHeaders']
+
+          if(key == ""){
+            return '{}'
+          }
+
+          arr[key] =  header['valueHeaders']
+        })
+        return arr
+      },
+      headerArray(){
+        let headerData = {}
+        let tokenAuth = {}
+
+        headerData = this.convertToArray(this.inputHeader)
+        if(this.token != ''){
+          tokenAuth['authorization'] = 'Bearer '+this.token
+        }
+        
+        let merged = {...headerData, ...tokenAuth};
+        return merged
       }
     }   
   }
