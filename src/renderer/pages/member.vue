@@ -271,7 +271,7 @@ import '@/assets/scss/main.scss';
         inputParameter: [],
         inputHeader: [],
         content: '',
-        textbody: '',
+        textbody: '{}',
         optionsj: {
           readOnly: true,
           autoScrollEditorIntoView: true
@@ -352,20 +352,18 @@ import '@/assets/scss/main.scss';
       },
         
       sendRequest() {
+        // console.log(this.textbody)
         axios({
             method: this.method,
             url: this.url,
-            textbody: this.textbody,
             header: {
               'Content-type':'application/json'
             },
-            data: {               
-              'username': 'view',
-              'password': '123456'
-            }
-        })
+           
+            data: JSON.parse(this.textbody)
+                  
+      })
         .then(res => { 
-          
           this.content = JSON.stringify(res.data, null, 4)
           this.status = res.status+" "+res.statusText
         }).catch(err => {
@@ -374,7 +372,6 @@ import '@/assets/scss/main.scss';
           this.status = err.response.status+" "+err.response.statusText
         })       
       },
-
       requestTab(tab, event) {
         console.log(tab, event);
       },
@@ -428,9 +425,6 @@ import '@/assets/scss/main.scss';
       allowDrag(draggingNode) {
         return draggingNode.data.label.indexOf('Level three 3-1-1') === -1;
       }
-    }
-    
-    
-    
+    } 
   }
 </script>
