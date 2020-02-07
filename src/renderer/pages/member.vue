@@ -8,11 +8,11 @@
       @node-drag-leave="handleDragLeave"
       @node-drag-over="handleDragOver"
       @node-drag-end="handleDragEnd"
-      @node-drop="handleDrop"
-      draggable
+       draggable
       :allow-drop="allowDrop"
-      :allow-drag="allowDrag"
-    ></el-tree>
+      :allow-drag="allowDrag">
+      
+    </el-tree>
 
     </el-col>
     
@@ -400,7 +400,7 @@ import '@/assets/scss/main.scss';
       deleteRowsHeader(indexHeader) {
         this.inputHeader.splice(indexHeader,1)
       },
-       handleDragStart(node, ev) {
+      handleDragStart(node, ev) {
         console.log('drag start', node);
       },
       handleDragEnter(draggingNode, dropNode, ev) {
@@ -418,6 +418,19 @@ import '@/assets/scss/main.scss';
       handleDrop(draggingNode, dropNode, dropType, ev) {
         console.log('tree drop: ', dropNode.label, dropType);
       },
-    }   
+      allowDrop(draggingNode, dropNode, type) {
+        if (dropNode.data.label === 'Level two 3-1') {
+          return type !== 'inner';
+        } else {
+          return true;
+        }
+      },
+      allowDrag(draggingNode) {
+        return draggingNode.data.label.indexOf('Level three 3-1-1') === -1;
+      }
+    }
+    
+    
+    
   }
 </script>
