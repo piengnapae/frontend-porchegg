@@ -246,7 +246,7 @@ import '@/assets/scss/main.scss';
     },
     data() {
       return {
-        server_api: env.SERVER_API,
+        server_api: "http://localhost:9000",
         inputParameter: [{"keyParammeters": "", "valueParammeters": ""}],
         inputHeader: [{"keyHeaders": "", "valueHeaders": ""}],
         content: '',
