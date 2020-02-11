@@ -261,6 +261,7 @@ import axios from 'axios';
 import '@fortawesome/fontawesome-free/css/all.css';
 import AceEditor from "vue2-ace-editor";
 import '@/assets/scss/main.scss';
+import querystring from "querystring";
   export default {
     
     components: {
@@ -268,7 +269,7 @@ import '@/assets/scss/main.scss';
     },
     data() {
       return {
-        inputParameter: [],
+        inputParameter: [{"keyParammeters": "", "valueParammeters": ""}],
         inputHeader: [],
         content: '',
         textbody: '{}',
@@ -331,7 +332,7 @@ import '@/assets/scss/main.scss';
       };
     },
      mounted(){
-            this.getData();
+            this.getData();   
       },
 
     methods: {
@@ -350,18 +351,23 @@ import '@/assets/scss/main.scss';
           console.log(err)
         })
       },
-        
+
       sendRequest() {
         // console.log(this.textbody)
+        console.log(this.inputParameter, this.keyParameter, this.valueParameter)
+        
         axios({
             method: this.method,
             url: this.url,
             header: {
               'Content-type':'application/json'
             },
-           
-            data: JSON.parse(this.textbody)
-                  
+            
+            // parameter : querystring.parse(this.inputParameter),
+            // parameter : this.queryString(),
+                 
+            data: JSON.parse(this.textbody)  
+
       })
         .then(res => { 
           this.content = JSON.stringify(res.data, null, 4)
@@ -372,10 +378,61 @@ import '@/assets/scss/main.scss';
           this.status = err.response.status+" "+err.response.statusText
         })       
       },
+        //   queryString() {
+        //   let inputParameter = querystring.parse(this.inputParameter);
+        // },
+
+    //   queryStringToArray(queryString) {
+    //   let queryParsed = querystring.parse(querystring);
+    //   return Object.keys(queryParsed).map(key => ({
+    //     key: inputParameter,
+    //     value: queryParsed[inputParameter]
+    //   }));
+    // },
+
+     // var queryString = Object.keys(params).map(key => key + '=' + params[key]).join('&');
+
+    // queryString() {
+    //   const result = this.params
+    //     .filter(({ key }) => !!key)
+    //     .map(({ key, value }) => `${key}=${encodeURIComponent(value)}`)
+    //     .join("&");
+    //   return result === "" ? "" : `?${result}`;
+    // },
+
+    //   var queryString = Object.keys(params).map((key) => {
+    //   return encodeURIComponent(key) + '=' + encodeURIComponent(params[key])
+    // }).join('&');
+
+
+    // var queryString = Object.keys(params).map(key => key + '=' + params[key]).join('&');
+
+    // params: {
+    //   handler: function(newValue) {
+    //     if (!this.paramsWatchEnabled) {
+    //       this.paramsWatchEnabled = true;
+    //       return;
+    //     }
+    //     let path = this.path;
+    //     let queryString = newValue
+    //       .filter(({ key }) => !!key)
+    //       .map(({ key, value }) => `${key}=${value}`)
+    //       .join("&");
+    //     queryString = queryString === "" ? "" : `?${queryString}`;
+    //     if (path.includes("?")) {
+    //       path = path.slice(0, path.indexOf("?")) + queryString;
+    //     } else {
+    //       path = path + queryString;
+    //     }
+
+    //     this.path = path;
+    //   },
+    //   deep: true
+    // },
+    
       requestTab(tab, event) {
         console.log(tab, event);
       },
-
       paramsTab(tab, event) {
         console.log(tab, event);
       },
