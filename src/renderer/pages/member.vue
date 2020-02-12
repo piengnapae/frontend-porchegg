@@ -1,8 +1,17 @@
 <template>
   <el-row>
-    <el-col :xs="0" :sm="5" class="boxs">
-    Aside <br>
-    <el-tree :data="folders" @node-click="getData" class="box"
+    <el-col :xs="0" :sm="5" width="100%" heigth="100%">
+      <el-main>
+        <el-row>
+          <el-col :span="24">
+            <div>
+              <i class="el-icon-info"></i> COLLECTIONS
+            </div>
+          </el-col>
+        </el-row>
+        <Folder></Folder>
+      </el-main>
+    <!-- <el-tree :data="folders" @node-click="getData" class="box"
       @node-drag-start="handleDragStart"
       @node-drag-enter="handleDragEnter"
       @node-drag-leave="handleDragLeave"
@@ -10,9 +19,8 @@
       @node-drag-end="handleDragEnd"
        draggable
       :allow-drop="allowDrop"
-      :allow-drag="allowDrag">
-      
-    </el-tree>
+      :allow-drag="allowDrag"
+    ></el-tree> -->
 
     </el-col>
     
@@ -73,7 +81,7 @@
                 </el-col>
               </el-row>
 
-            <div v-if="isShowParameter" >
+            <div v-if="isShowParameter" >            
               <div v-for="(input, indexParameter) in inputParameter" v-bind:key="indexParameter">
                 <div style="margin: 15px;"></div>
                   <el-row :gutter="25"> 
@@ -151,7 +159,7 @@
             </el-col>
           </el-row>
 
-            <div v-if="!isShowHeader" >
+            <div v-if="!isShowHeader" >  
               <div v-for="(head, indexHeader) in inputHeader" v-bind:key="indexHeader">
                 <div style="margin: 15px;"></div>
                 <el-row :gutter="25"> 
@@ -162,7 +170,7 @@
                     <el-input v-model="head.valueHeaders" size="mini"></el-input>
                   </el-col>
                   <el-col :span="2" v-if="inputHeader.length > 1">
-                    <el-button @click="deleteRowsHeader(indexHeader)" type="danger" size="mini" circle><i class="el-icon-delete"></i></el-button>
+                    <el-button @click="deleteRowsHeader(indexHeader)" size="mini" type="danger" circle><i class="el-icon-delete"></i></el-button>
                   </el-col>
                 </el-row>
               </div>
@@ -239,11 +247,12 @@ import axios from 'axios';
 import '@fortawesome/fontawesome-free/css/all.css';
 import AceEditor from "vue2-ace-editor";
 import '@/assets/scss/main.scss';
-import querystring from "querystring";
+import Folder from '../components/collection'
   export default {
     
     components: {
       AceEditor,
+      Folder
     },
     data() {
       return {
