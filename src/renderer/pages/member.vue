@@ -87,10 +87,10 @@
                 <div style="margin: 15px;"></div>
                   <el-row :gutter="25"> 
                     <el-col :span="11">
-                        <el-input v-model="input.keyParammeters" size="mini"></el-input>
+                        <el-input v-model="input.keyParams" size="mini"></el-input>
                     </el-col>
                     <el-col :span="11">
-                        <el-input v-model="input.valueParammeters" size="mini"></el-input>
+                        <el-input v-model="input.valueParams" size="mini"></el-input>
                     </el-col>
                     <el-col :span="2" v-if="inputParameter.length > 1">
                       <el-button @click="deleteRowParam(indexParameter)" type="danger" size="mini" circle><i class="el-icon-delete"></i></el-button>
@@ -258,10 +258,10 @@ import Folder from '../components/collection'
     data() {
       return {
         server_api: "http://localhost:9000",
-        inputParameter: [{"keyParammeters": "", "valueParammeters": ""}],
+        inputParameter: [{"keyParams": "", "valueParams": ""}],
         inputHeader: [{"keyHeaders": "", "valueHeaders": ""}],
         content: '',
-        textbody: '',
+        textbody: '{}',
         optionsj: {
           readOnly: true,
           autoScrollEditorIntoView: true
@@ -329,7 +329,6 @@ import Folder from '../components/collection'
         axios.get(this.server_api+'/collections/1/folder-view')
         .then(res => {
           this.folders = res.data.data
-          // console.log(res)
         })
         .catch(err => {
           console.log(err)
@@ -341,8 +340,8 @@ import Folder from '../components/collection'
             method: this.method,
             url: this.url,
             headers: this.headerArray(),
-            data: {
-            }
+            data: JSON.parse(this.textbody),
+            params: this.convertToParams(this.inputParameter)
         })
         .then(res => { 
           this.content = JSON.stringify(res.data, null, 4)
@@ -379,6 +378,19 @@ import Folder from '../components/collection'
       },
       deleteRowsHeader(indexHeader) {
         this.inputHeader.splice(indexHeader,1)
+      },
+      convertToParams(params){
+        let arr = {}
+        params.forEach(params => {
+          var key = params['keyParams']
+
+          if(key == ""){
+            return '{}'
+          }
+
+          arr[key] =  params['valueParams']
+        })
+        return arr
       },
       convertToArray(input){
         let arr = {}
