@@ -19,7 +19,6 @@ export default {
       server_api: "http://localhost:9000",
       folder :[],
       collection:[],
-      test:'123456',
       collection_id: null
     }
   },
@@ -51,9 +50,6 @@ export default {
     showFolder(id) {
       this.test = id
       this.getFolder(id)
-    },
-    testpage(){
-      this.$router.push('/test')
     },
     remove(id) {
         console.log(id)
