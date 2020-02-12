@@ -1,18 +1,26 @@
 <template>
   <el-row>
-    <el-col :xs="0" :sm="5" class="boxs">
-    Aside <br>
-    <el-tree :data="folders" @node-click="getData" class="box"
+    <el-col :xs="0" :sm="5" width="100%" heigth="100%">
+      <el-main>
+        <el-row>
+          <el-col :span="24">
+            <div>
+              <i class="el-icon-info"></i> COLLECTIONS
+            </div>
+          </el-col>
+        </el-row>
+        <Folder></Folder>
+      </el-main>
+    <!-- <el-tree :data="folders" @node-click="getData" class="box"
       @node-drag-start="handleDragStart"
       @node-drag-enter="handleDragEnter"
       @node-drag-leave="handleDragLeave"
       @node-drag-over="handleDragOver"
       @node-drag-end="handleDragEnd"
-      @node-drop="handleDrop"
-      draggable
+       draggable
       :allow-drop="allowDrop"
       :allow-drag="allowDrag"
-    ></el-tree>
+    ></el-tree> -->
 
     </el-col>
     
@@ -73,29 +81,17 @@
                 </el-col>
               </el-row>
 
-            <div v-if="isShowParameter" >  
-              <el-row :gutter="25">
-                <el-col :span="11">
-                  <el-row>KEY</el-row>
-                    <el-input v-model="keyParameter" size="mini"></el-input>
-                </el-col>
-
-                <el-col :span="11">
-                  <el-row>VALUE</el-row>
-                    <el-input v-model="valueParameter" size="mini"></el-input>
-                  </el-col>
-              </el-row>
-            
+            <div v-if="isShowParameter" >            
               <div v-for="(input, indexParameter) in inputParameter" v-bind:key="indexParameter">
                 <div style="margin: 15px;"></div>
                   <el-row :gutter="25"> 
                     <el-col :span="11">
-                        <el-input v-model="input.keyParammeters" size="mini"></el-input>
+                        <el-input v-model="input.keyParams" size="mini"></el-input>
                     </el-col>
                     <el-col :span="11">
-                        <el-input v-model="input.valueParammeters" size="mini"></el-input>
+                        <el-input v-model="input.valueParams" size="mini"></el-input>
                     </el-col>
-                    <el-col :span="2">
+                    <el-col :span="2" v-if="inputParameter.length > 1">
                       <el-button @click="deleteRowParam(indexParameter)" type="danger" size="mini" circle><i class="el-icon-delete"></i></el-button>
                     </el-col>
                   </el-row>
@@ -164,27 +160,17 @@
           </el-row>
 
             <div v-if="!isShowHeader" >  
-              <el-row :gutter="25">
-                <el-col :span="11">
-                  <el-row>KEY</el-row>
-                    <el-input v-model="keyHeader" size="mini"></el-input>
-                </el-col>
-                <el-col :span="11">
-                  <el-row>VALUE</el-row>
-                    <el-input v-model="valueHeader" size="mini"></el-input>
-                  </el-col>
-              </el-row>
               <div v-for="(head, indexHeader) in inputHeader" v-bind:key="indexHeader">
                 <div style="margin: 15px;"></div>
                 <el-row :gutter="25"> 
                   <el-col :span="11">
-                    <el-input v-model="head.keyHeaders"></el-input>
+                    <el-input v-model="head.keyHeaders" size="mini"></el-input>
                   </el-col>
                   <el-col :span="11">
-                    <el-input v-model="head.valueHeaders"></el-input>
+                    <el-input v-model="head.valueHeaders" size="mini"></el-input>
                   </el-col>
                   <el-col :span="2" v-if="inputHeader.length > 1">
-                    <el-button @click="deleteRowsHeader(indexHeader)" type="danger" circle><i class="el-icon-delete"></i></el-button>
+                    <el-button @click="deleteRowsHeader(indexHeader)" size="mini" type="danger" circle><i class="el-icon-delete"></i></el-button>
                   </el-col>
                 </el-row>
               </div>
@@ -261,18 +247,20 @@ import axios from 'axios';
 import '@fortawesome/fontawesome-free/css/all.css';
 import AceEditor from "vue2-ace-editor";
 import '@/assets/scss/main.scss';
+import Folder from '../components/collection'
   export default {
     
     components: {
       AceEditor,
+      Folder
     },
     data() {
       return {
         server_api: "http://localhost:9000",
-        inputParameter: [{"keyParammeters": "", "valueParammeters": ""}],
+        inputParameter: [{"keyParams": "", "valueParams": ""}],
         inputHeader: [{"keyHeaders": "", "valueHeaders": ""}],
         content: '',
-        textbody: '',
+        textbody: '{}',
         optionsj: {
           readOnly: true,
           autoScrollEditorIntoView: true
@@ -328,7 +316,7 @@ import '@/assets/scss/main.scss';
       };
     },
      mounted(){
-            this.getData();
+            this.getData();   
       },
 
     methods: {
@@ -340,37 +328,36 @@ import '@/assets/scss/main.scss';
         axios.get(this.server_api+'/collections/1/folder-view')
         .then(res => {
           this.folders = res.data.data
-          // console.log(res)
         })
         .catch(err => {
           console.log(err)
         })
       },
-        
+
       sendRequest() {
+        console.log(this.convertToParams(this.inputParameter))
+        
         axios({
             method: this.method,
             url: this.url,
-            headers: this.headerArray(),
-            data: {
-            }
+            headers: this.headerArray(),             
+            data: JSON.parse(this.textbody),
+            params: this.convertToParams(this.inputParameter)
         })
         .then(res => { 
-          
           this.content = JSON.stringify(res.data, null, 4)
           this.status = res.status+" "+res.statusText
+          console.log(JSON.parse(this.textbody))
         }).catch(err => {
           console.log(err.response)
           this.content = JSON.stringify(err.response.data, null, 4)
           this.status = err.response.status+" "+err.response.statusText
           console.log(this.headerArray())
         })       
-      },
-
+      },  
       requestTab(tab, event) {
         console.log(tab, event);
       },
-
       paramsTab(tab, event) {
         console.log(tab, event);
       },
@@ -391,6 +378,19 @@ import '@/assets/scss/main.scss';
       },
       deleteRowsHeader(indexHeader) {
         this.inputHeader.splice(indexHeader,1)
+      },
+      convertToParams(params){
+        let arr = {}
+        params.forEach(params => {
+          var key = params['keyParams']
+
+          if(key == ""){
+            return '{}'
+          }
+
+          arr[key] =  params['valueParams']
+        })
+        return arr
       },
       convertToArray(input){
         let arr = {}
@@ -435,6 +435,16 @@ import '@/assets/scss/main.scss';
       handleDrop(draggingNode, dropNode, dropType, ev) {
         console.log('tree drop: ', dropNode.label, dropType);
       },
-    }   
+      allowDrop(draggingNode, dropNode, type) {
+        if (dropNode.data.label === 'Level two 3-1') {
+          return type !== 'inner';
+        } else {
+          return true;
+        }
+      },
+      allowDrag(draggingNode) {
+        return draggingNode.data.label.indexOf('Level three 3-1-1') === -1;
+      }
+    } 
   }
 </script>
