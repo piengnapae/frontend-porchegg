@@ -1,98 +1,93 @@
 <template>
-  <div>
-    <div v-for="(line, index) in lines" v-bind:key="index" class="row">
-      <div class="col-lg-6">
-        <div class="row">
-          <div class="col-2">
-            <q-select
-              v-model="line.countryCode"
-              float-label="Country Code"
-              :options="countryPhoneCodes"
-            />
-          </div>
-          <div class="col-10">
-            <q-field>
-              <q-input
-                v-model="line.number"
-                float-label="Phone Number"
-                numeric-keyboard-toggle
-                placeholder="5551234567"
-                type="text"
-                value=""
-              />
-            </q-field>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-lg-4">
-        <q-select
-          v-model="line.phoneUsageType"
-          float-label="Type of Usage"
-          :options="phoneUsageTypes"
-        />
-      </div>
-
-      <div class="col-lg-2">
-        <div class="block float-right">
-          <q-btn @click="removeLine(index)" icon="delete" round />
-          <q-btn v-if="index + 1 === lines.length" @click="addLine" icon="playlist-plus" round />
-        </div>
-      </div>
-    </div>
+  <div class="custom-tree-container">
+  <div class="block">
+    <button @click="testpage">Test Page</button>
+    <p>Using scoped slot</p>
+    <el-tree
+      :data="tree"
+      node-key="id">
+      <span class="custom-tree-node" slot-scope="{ node, data }">
+        <span>{{ node.label }}</span>
+        <span>
+          <el-button
+            type="text"
+            size="mini"
+            @click="() => remove(node, data)">
+            Delete
+          </el-button>
+        </span>
+      </span>
+    </el-tree>
   </div>
+</div>
 </template>
-
 <script>
-export default {
-  name: 'PhoneNumberLine',
-  data () {
-    return {
-      lines: [],
-      blockRemoval: true,
-      phoneUsageTypes: [
-        {
-          label: 'Home', value: 'home'
+  let id = 1000;
+
+  export default {
+    data() {
+      const tree = [{
+        id: 1,
+        label: 'Level one 1',
+        children: [{
+          id: 4,
+          label: 'Level two 1-1',
+          children: [{
+            id: 9,
+            label: 'Level three 1-1-1'
+          }, {
+            id: 10,
+            label: 'Level three 1-1-2'
+          }]
+        }]
+      }, {
+        id: 2,
+        label: 'Level one 2',
+        children: [{
+          id: 5,
+          label: 'Level two 2-1'
         }, {
-          label: 'Work', value: 'work'
+          id: 6,
+          label: 'Level two 2-2'
+        }]
+      }, {
+        id: 3,
+        label: 'Level one 3',
+        children: [{
+          id: 7,
+          label: 'Level two 3-1'
         }, {
-          label: 'Mobile', value: 'mobile'
-        }, {
-          label: 'Fax', value: 'fax'
-        }
-      ],
-      countryPhoneCodes: [
-        {
-          label: '+90',
-          value: '+90'
-        }, {
-          label: '+1',
-          value: '+1'
-        }
-      ]
-    }
-  },
-  watch: {
-    lines () {
-      this.blockRemoval = this.lines.length <= 1
-    }
-  },
-  methods: {
-    addLine () {
-      let checkEmptyLines = this.lines.filter(line => line.number === null)
-      if (checkEmptyLines.length >= 1 && this.lines.length > 0) return
-      this.lines.push({
-        countryCode: null,
-        number: null,
-        phoneUsageType: null
-      })
+          id: 8,
+          label: 'Level two 3-2'
+        }]
+      }];
+      return {
+        tree: JSON.parse(JSON.stringify(tree)),
+        tree: JSON.parse(JSON.stringify(tree))
+      }
     },
-    removeLine (lineId) {
-      if (!this.blockRemoval) this.lines.splice(lineId, 1)
+
+    methods: {
+      
+      remove(node, data) {
+        const parent = node.parent;
+        console.log(parent)
+      },
+
+      testpage(){
+      this.$router.push('/member')
     }
-  },
-  mounted () {
-    this.addLine()
-  }
-}
+    }
+  };
 </script>
+
+<style>
+  .custom-tree-node {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    padding-right: 8px;
+  }
+</style>

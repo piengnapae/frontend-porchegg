@@ -1,8 +1,17 @@
 <template>
   <el-row>
-    <el-col :xs="0" :sm="5" class="boxs">
-    Aside <br>
-    <el-tree :data="folders" @node-click="getData" class="box"
+    <el-col :xs="0" :sm="5" width="100%" heigth="100%">
+      <el-main>
+        <el-row>
+          <el-col :span="24">
+            <div>
+              <i class="el-icon-info"></i> COLLECTIONS
+            </div>
+          </el-col>
+        </el-row>
+        <Folder></Folder>
+      </el-main>
+    <!-- <el-tree :data="folders" @node-click="getData" class="box"
       @node-drag-start="handleDragStart"
       @node-drag-enter="handleDragEnter"
       @node-drag-leave="handleDragLeave"
@@ -12,7 +21,7 @@
       draggable
       :allow-drop="allowDrop"
       :allow-drag="allowDrag"
-    ></el-tree>
+    ></el-tree> -->
 
     </el-col>
     
@@ -239,10 +248,12 @@ import axios from 'axios';
 import '@fortawesome/fontawesome-free/css/all.css';
 import AceEditor from "vue2-ace-editor";
 import '@/assets/scss/main.scss';
+import Folder from '../components/collection'
   export default {
     
     components: {
       AceEditor,
+      Folder
     },
     data() {
       return {
@@ -334,7 +345,6 @@ import '@/assets/scss/main.scss';
             }
         })
         .then(res => { 
-          
           this.content = JSON.stringify(res.data, null, 4)
           this.status = res.status+" "+res.statusText
         }).catch(err => {
