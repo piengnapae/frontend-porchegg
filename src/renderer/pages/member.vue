@@ -78,10 +78,10 @@
                 <div style="margin: 15px;"></div>
                   <el-row :gutter="25"> 
                     <el-col :span="11">
-                        <el-input v-model="input.keyParammeters" size="mini"></el-input>
+                        <el-input v-model="input.keyParams" size="mini"></el-input>
                     </el-col>
                     <el-col :span="11">
-                        <el-input v-model="input.valueParammeters" size="mini"></el-input>
+                        <el-input v-model="input.valueParams" size="mini"></el-input>
                     </el-col>
                     <el-col :span="2" v-if="inputParameter.length > 1">
                       <el-button @click="deleteRowParam(indexParameter)" type="danger" size="mini" circle><i class="el-icon-delete"></i></el-button>
@@ -248,7 +248,7 @@ import querystring from "querystring";
     data() {
       return {
         server_api: "http://localhost:9000",
-        inputParameter: [{"keyParammeters": "", "valueParammeters": ""}],
+        inputParameter: [{"keyParams": "", "valueParams": ""}],
         inputHeader: [{"keyHeaders": "", "valueHeaders": ""}],
         content: '',
         textbody: '{}',
@@ -319,7 +319,6 @@ import querystring from "querystring";
         axios.get(this.server_api+'/collections/1/folder-view')
         .then(res => {
           this.folders = res.data.data
-          // console.log(res)
         })
         .catch(err => {
           console.log(err)
@@ -327,38 +326,26 @@ import querystring from "querystring";
       },
 
       sendRequest() {
-        // console.log(this.textbody)
-        console.log(this.inputParameter)
+        console.log(this.convertToParams(this.inputParameter))
         
         axios({
             method: this.method,
             url: this.url,
-            header: {
-              'Content-type':'application/json'
-            },
-            
-            // parameter : querystring.parse(this.inputParameter),
-            // parameter : this.queryString(),
-                 
+            headers: this.headerArray(),             
             data: JSON.parse(this.textbody),
-            headers: this.headerArray(),
-            
+            params: this.convertToParams(this.inputParameter)
         })
         .then(res => { 
           this.content = JSON.stringify(res.data, null, 4)
           this.status = res.status+" "+res.statusText
+          console.log(JSON.parse(this.textbody))
         }).catch(err => {
           console.log(err.response)
           this.content = JSON.stringify(err.response.data, null, 4)
           this.status = err.response.status+" "+err.response.statusText
           console.log(this.headerArray())
         })       
-      },
-        //   queryString() {
-        //   let inputParameter = querystring.parse(this.inputParameter);
-        // },
-
-  
+      },  
       requestTab(tab, event) {
         console.log(tab, event);
       },
@@ -382,6 +369,19 @@ import querystring from "querystring";
       },
       deleteRowsHeader(indexHeader) {
         this.inputHeader.splice(indexHeader,1)
+      },
+      convertToParams(params){
+        let arr = {}
+        params.forEach(params => {
+          var key = params['keyParams']
+
+          if(key == ""){
+            return '{}'
+          }
+
+          arr[key] =  params['valueParams']
+        })
+        return arr
       },
       convertToArray(input){
         let arr = {}
