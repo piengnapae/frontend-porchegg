@@ -9,20 +9,9 @@
             </div>
           </el-col>
         </el-row>
+        <el-button @click="test"><i class="el-icon-plus"></i> New Collection</el-button>
         <Folder></Folder>
       </el-main>
-    <!-- <el-tree :data="folders" @node-click="getData" class="box"
-      @node-drag-start="handleDragStart"
-      @node-drag-enter="handleDragEnter"
-      @node-drag-leave="handleDragLeave"
-      @node-drag-over="handleDragOver"
-      @node-drag-end="handleDragEnd"
-      @node-drop="handleDrop"
-      draggable
-      :allow-drop="allowDrop"
-      :allow-drag="allowDrag"
-    ></el-tree> -->
-
     </el-col>
     
     <el-col :xs="24" :sm="19">
@@ -316,25 +305,11 @@ import Folder from '../components/collection'
         folders :[],
       };
     },
-     mounted(){
-            this.getData();
-      },
-
     methods: {
       editorInit: function(editor) {
         require('brace/mode/json')
         require('brace/theme/chrome')
       },
-        getData() {
-        axios.get(this.server_api+'/collections/1/folder-view')
-        .then(res => {
-          this.folders = res.data.data
-        })
-        .catch(err => {
-          console.log(err)
-        })
-      },
-        
       sendRequest() {
         axios({
             method: this.method,
@@ -417,33 +392,8 @@ import Folder from '../components/collection'
         let merged = {...headerData, ...tokenAuth};
         return merged
       },
-       handleDragStart(node, ev) {
-        console.log('drag start', node);
-      },
-      handleDragEnter(draggingNode, dropNode, ev) {
-        console.log('tree drag enter: ', dropNode.label);
-      },
-      handleDragLeave(draggingNode, dropNode, ev) {
-        console.log('tree drag leave: ', dropNode.label);
-      },
-      handleDragOver(draggingNode, dropNode, ev) {
-        console.log('tree drag over: ', dropNode.label);
-      },
-      handleDragEnd(draggingNode, dropNode, dropType, ev) {
-        console.log('tree drag end: ', dropNode && dropNode.label, dropType);
-      },
-      handleDrop(draggingNode, dropNode, dropType, ev) {
-        console.log('tree drop: ', dropNode.label, dropType);
-      },
-     allowDrop(draggingNode, dropNode, type) {
-        if (dropNode.data.label === 'Level two 3-1') {
-          return type !== 'inner';
-        } else {
-          return true;
-        }
-      },
-      allowDrag(draggingNode) {
-        return draggingNode.data.label.indexOf('Level three 3-1-1') === -1;
+      test(){
+        this.$router.push('/test')
       }
     }   
   }

@@ -1,20 +1,46 @@
 <template>
   <div class="custom-tree-container">
   <div class="block">
-    <button @click="testpage">Test Page</button>
     <p>Using scoped slot</p>
+    <el-button @click="test">test</el-button>
     <el-tree
-      :data="tree"
+      :data="collection"
       node-key="id">
       <span class="custom-tree-node" slot-scope="{ node, data }">
-        <span>{{ node.label }}</span>
+        <span>{{ data.name }}</span>
         <span>
-          <el-button
-            type="text"
-            size="mini"
-            @click="() => remove(node, data)">
-            Delete
-          </el-button>
+          <el-dropdown>
+            <span class="el-dropdown-link">
+              <i class="el-icon-more"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item><i class="el-icon-edit"></i> Rename</el-dropdown-item>
+              <el-dropdown-item><i class="el-icon-circle-plus-outline"></i> Add Request</el-dropdown-item>
+              <el-dropdown-item><i class="el-icon-folder"></i> Add Folder</el-dropdown-item>
+              <el-dropdown-item><i class="el-icon-delete"></i> Delete</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </span>
+      </span>
+    </el-tree>
+    <hr>
+    <el-tree
+      :data="folder"
+      node-key="id">
+      <span class="custom-tree-node" slot-scope="{ node, data }">
+        <span><i class="fas fa-folder" v-if="data.type == 'folder'"></i> {{ node.label }}</span>
+        <span>
+          <el-dropdown>
+            <span class="el-dropdown-link">
+              <i class="el-icon-more"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item><i class="fas fa-edit"></i> Rename</el-dropdown-item>
+              <el-dropdown-item v-if="data.type != 'request'"><i class="fas fa-plus-circle"></i> Add Request</el-dropdown-item>
+              <el-dropdown-item v-if="data.type != 'request'"><i class="fas fa-folder-plus"></i> Add Folder</el-dropdown-item>
+              <el-dropdown-item><i class="fas fa-trash-alt"></i> Delete</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </span>
       </span>
     </el-tree>
@@ -22,61 +48,63 @@
 </div>
 </template>
 <script>
+import axios from 'axios';
   let id = 1000;
 
   export default {
     data() {
-      const tree = [{
-        id: 1,
-        label: 'Level one 1',
-        children: [{
-          id: 4,
-          label: 'Level two 1-1',
-          children: [{
-            id: 9,
-            label: 'Level three 1-1-1'
-          }, {
-            id: 10,
-            label: 'Level three 1-1-2'
-          }]
-        }]
-      }, {
-        id: 2,
-        label: 'Level one 2',
-        children: [{
-          id: 5,
-          label: 'Level two 2-1'
-        }, {
-          id: 6,
-          label: 'Level two 2-2'
-        }]
-      }, {
-        id: 3,
-        label: 'Level one 3',
-        children: [{
-          id: 7,
-          label: 'Level two 3-1'
-        }, {
-          id: 8,
-          label: 'Level two 3-2'
-        }]
-      }];
       return {
-        tree: JSON.parse(JSON.stringify(tree)),
-        tree: JSON.parse(JSON.stringify(tree))
+        folder:[],
+        collection:[]
       }
     },
 
+    created:function () {
+      this.getFolder()
+      this.getCollection()
+    },
+
     methods: {
-      
-      remove(node, data) {
-        const parent = node.parent;
-        console.log(parent)
+      append(data) {
+        const newChild = { id: id++, label: 'testtest', children: [] };
+        if (!data.children) {
+          this.$set(data, 'children', []);
+        }
+        data.children.push(newChild);
       },
 
-      testpage(){
-      this.$router.push('/member')
-    }
+      remove(node, data) {
+        const parent = node.parent;
+        const children = parent.data.children || parent.data;
+        const index = children.findIndex(d => d.id === data.id);
+        children.splice(index, 1);
+      },
+
+      getFolder() {
+        axios.get('http://localhost:9000/collections/1/folder-view')
+          .then(res => {
+            this.folder = res.data.data
+            console.log(this.folder)
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      },
+
+      getCollection() {
+        axios.get('http://localhost:9000/collections')
+          .then(res => {
+            this.collection = res.data.data
+            console.log(this.collection)
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      },
+
+      test(){
+        this.$router.push('/member')
+      }
     }
   };
 </script>
@@ -89,5 +117,12 @@
     justify-content: space-between;
     font-size: 14px;
     padding-right: 8px;
+  }
+  .el-dropdown-link {
+    cursor: pointer;
+    color: #409EFF;
+  }
+  .el-icon-arrow-down {
+    font-size: 12px;
   }
 </style>
