@@ -3,6 +3,8 @@
   <div class="block">
     <p>Using scoped slot</p>
     <el-button @click="test">test</el-button>
+    <Folder></Folder>
+    <hr>
     <el-tree
       :data="collection"
       node-key="id">
@@ -49,9 +51,15 @@
 </template>
 <script>
 import axios from 'axios';
+import Folder from '../components/collection';
+
   let id = 1000;
 
   export default {
+     components: {
+      Folder
+    },
+
     data() {
       return {
         folder:[],
