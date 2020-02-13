@@ -311,28 +311,29 @@ import Folder from '../components/collection'
         require('brace/theme/chrome')
       },
       sendRequest() {
+        console.log(this.convertToParams(this.inputParameter))
+        
         axios({
             method: this.method,
             url: this.url,
-            headers: this.headerArray(),
+            headers: this.headerArray(),             
             data: JSON.parse(this.textbody),
             params: this.convertToParams(this.inputParameter)
         })
         .then(res => { 
           this.content = JSON.stringify(res.data, null, 4)
           this.status = res.status+" "+res.statusText
+          console.log(JSON.parse(this.textbody))
         }).catch(err => {
           console.log(err.response)
           this.content = JSON.stringify(err.response.data, null, 4)
           this.status = err.response.status+" "+err.response.statusText
           console.log(this.headerArray())
         })       
-      },
-
+      },  
       requestTab(tab, event) {
         console.log(tab, event);
       },
-
       paramsTab(tab, event) {
         console.log(tab, event);
       },
@@ -395,6 +396,6 @@ import Folder from '../components/collection'
       test(){
         this.$router.push('/test')
       }
-    }   
+    } 
   }
 </script>
