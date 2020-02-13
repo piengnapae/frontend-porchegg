@@ -65,7 +65,20 @@
               </el-button>
             </el-col>
             <el-col :xs="5" :sm="4" style="text-align:right;">
-              <el-button circle><i class="fas fa-save" style="padding: 2px 4px 2px 4px"></i></el-button>
+
+
+              <el-button type="text" @click="open">Click</el-button>
+              
+          <el-button @click="dialogFormVisible = true" :label-position="labelPosition" circle><i class="fas fa-save" style="padding: 2px 4px 2px 4px"></i></el-button>
+          <el-dialog title="New Request" :visible.sync="dialogFormVisible"  style="text-align:left;">
+            <span>Please input new request  </span> <br><br>
+             <el-input v-model="newrequest" autocomplete="off" ></el-input>
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="dialogFormVisible = false">Cancel</el-button>
+              <el-button type="primary" @click="dialogFormVisibles(dialogFormVisible = false)">OK</el-button>
+            </span>
+          </el-dialog>
+
               <el-button circle><i class="fas fa-cloud-download-alt" style="padding: 2px;"></i></el-button>
             </el-col>
 
@@ -255,6 +268,7 @@ import Folder from '../components/collection'
       Folder
     },
     data() {
+
       return {
         server_api: "http://localhost:9000",
         inputParameter: [{"keyParams": "", "valueParams": ""}],
@@ -313,6 +327,17 @@ import Folder from '../components/collection'
         statusText: '',
         paramsInput:'',
         folders :[],
+        dialogFormVisible: false,
+        newrequest:'',
+        rules: {
+          name: [
+            ]},
+        formLabelWidth: '180px',
+        labelPosition: 'left',
+         ruleForm: {
+          name: '',
+         }
+
       };
     },
      mounted(){
@@ -354,7 +379,31 @@ import Folder from '../components/collection'
           this.status = err.response.status+" "+err.response.statusText
           console.log(this.headerArray())
         })       
-      },  
+      }, 
+      
+      dialogFormVisibles(){
+     
+        axios({
+              method: 'post',
+              url: 'http://localhost:9000/requests',
+              header: {
+               'Content-type':'application/json'
+              },
+              data: {
+                'name': this.newrequest,
+                'id_folder': 1,
+	              'method': "post",
+	              'url': "http://google.co.th"
+              }
+            })
+            .then(res => {
+              console.log(this.newrequest)
+              
+            })
+            .catch(err => {
+                 console.log(err)
+            })
+      }, 
       requestTab(tab, event) {
         console.log(tab, event);
       },
@@ -444,6 +493,43 @@ import Folder from '../components/collection'
       },
       allowDrag(draggingNode) {
         return draggingNode.data.label.indexOf('Level three 3-1-1') === -1;
+      },
+      open() {
+        this.$prompt('Please input name request', 'New Request', {
+          confirmButtonText: 'OK',
+          cancelButtonText: 'Cancel',
+          // inputPattern:  value
+          inputPattern:  
+          /[\ A-Za-z0-9~!#@(){}%$*:_+=\-\[\]\:;',\.]+/,
+          inputErrorMessage: 'Please input name request'
+        }).then(( {value} ) => {
+            axios({
+              method: 'post',
+              url: 'http://localhost:9000/requests',
+              header: {
+               'Content-type':'application/json'
+              },
+              data: {
+                'name': value,
+                'id_folder': 1,
+	              'method': "post",
+	              'url': "http://google.co.th"
+              }
+            })
+          console.log(value)
+          this.$message({
+            type: 'success',
+            message: 'Your name request is : ' + value,
+            
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Input canceled'
+          });       
+        });
+      
+         
       }
     } 
   }
