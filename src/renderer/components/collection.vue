@@ -23,28 +23,66 @@
           </td>
         </tr>
       </table>
-      
-      <!-- tree area -->
       <el-tree
-      :data="folder"
-      node-key="id">
-      <span class="custom-tree-node" slot-scope="{ node, data }">
-        <span><i class="fas fa-folder" v-if="data.type == 'folder'"></i> {{ node.label }}</span>
-        <span>
-          <el-dropdown>
-            <span class="el-dropdown-link">
-              <i class="el-icon-more"></i>
+        :data="folder"
+        node-key="id"
+        v-if="folder != '' && collection.id == collection_id"
+        @node-drag-start="handleDragStart"
+        @node-drag-enter="handleDragEnter"
+        @node-drag-leave="handleDragLeave"
+        @node-drag-over="handleDragOver"
+        @node-drag-end="handleDragEnd"
+        @node-drop="handleDrop"
+        draggable
+        :allow-drop="allowDrop"
+        :allow-drag="allowDrag">
+
+        <span class="custom-tree-node" slot-scope="{ node, data }">
+          <span><i class="fas fa-folder" v-if="data.type == 'folder'"></i> {{ node.label }}</span>
+          <span>
+            <el-dropdown>
+              <span class="el-dropdown-link">
+                <i class="el-icon-more"></i>
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>
+                  <el-button type="text"><i class="fas fa-edit"></i> Rename </el-button>
+                </el-dropdown-item>
+                <el-dropdown-item v-if="data.type != 'request'">
+                  <el-button type="text" @click="formRequest(data.folder_id)" ><i class="fas fa-plus-circle"></i> Add Request </el-button>
+                </el-dropdown-item>
+                <el-dropdown-item v-if="data.type != 'request'">
+                  <el-button type="text"><i class="fas fa-folder-plus"></i> Add Folder </el-button>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <el-button type="text"><i class="fas fa-trash-alt"></i> Delete </el-button>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </span>
+
+          <el-dialog title="Add Request" :visible.sync="addRequestDialog">
+            <el-form :model="request">
+              <el-form-item label="Folder ID : " :label-width="formLabelWidth" hidden>
+                <el-input v-model="request.id" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="Request Name : " :label-width="formLabelWidth">
+                <el-input v-model="request.name" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="Method : " :label-width="formLabelWidth">
+                <el-input v-model="request.method" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="URL : " :label-width="formLabelWidth">
+                <el-input v-model="request.url" autocomplete="off"></el-input>
+              </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+              <el-button type="danger" @click="addRequestDialog = false">CANCLE</el-button>
+              <el-button type="success" @click="addRequest('request')">SAVE</el-button>
             </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item><i class="fas fa-edit"></i> Rename</el-dropdown-item>
-              <el-dropdown-item v-if="data.type != 'request'"><i class="fas fa-plus-circle"></i> Add Request</el-dropdown-item>
-              <el-dropdown-item v-if="data.type != 'request'"><i class="fas fa-folder-plus"></i> Add Folder</el-dropdown-item>
-              <el-dropdown-item><i class="fas fa-trash-alt"></i> Delete</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+          </el-dialog>
         </span>
-      </span>
-    </el-tree>
+      </el-tree>
     </div>
   </div>
 </template>
