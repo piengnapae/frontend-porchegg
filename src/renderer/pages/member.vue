@@ -9,7 +9,8 @@
             </div>
           </el-col>
         </el-row>
-        <el-button @click="test"><i class="el-icon-plus"></i> New Collection</el-button>
+        <!-- <el-button @click="test">test</el-button> -->
+        <Collection></Collection>
         <Folder></Folder>
       </el-main>
     </el-col>
@@ -248,12 +249,14 @@ import axios from 'axios';
 import '@fortawesome/fontawesome-free/css/all.css';
 import AceEditor from "vue2-ace-editor";
 import '@/assets/scss/main.scss';
-import Folder from '../components/collection'
+import Collection from '../components/collection'
+import Folder from '../components/folder'
   export default {
     
     components: {
       AceEditor,
-      Folder
+      Folder,
+      Collection
     },
     data() {
 
@@ -320,8 +323,8 @@ import Folder from '../components/collection'
         labelPosition: 'left',
         saverequest: {
           name: ''
-         }
-
+        }
+        
       };
     },
     methods: {
@@ -330,9 +333,8 @@ import Folder from '../components/collection'
         require('brace/theme/chrome')
       },
       sendRequest() {
-        console.log(this.convertToParams(this.inputParameter))
-        
-        axios({
+        console.log(this.convertToParams(this.inputParameter))  
+      axios({
           method: this.method,
           url: this.url,
           headers: this.headerArray(),             
@@ -350,7 +352,6 @@ import Folder from '../components/collection'
           console.log(this.headerArray())
         })       
       }, 
-      
       dialogFormVisibles(){
           axios.post(this.server_api+'/requests/', {
           name: this.saverequest.name,
@@ -369,7 +370,7 @@ import Folder from '../components/collection'
           .catch(err => {
           this.$message({
           message: 'Failed',
-          type: 'info'
+          type: 'error'
         })
           console.log(err)
         })
