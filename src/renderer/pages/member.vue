@@ -9,19 +9,9 @@
             </div>
           </el-col>
         </el-row>
+        <el-button @click="test"><i class="el-icon-plus"></i> New Collection</el-button>
         <Folder></Folder>
       </el-main>
-    <!-- <el-tree :data="folders" @node-click="getData" class="box"
-      @node-drag-start="handleDragStart"
-      @node-drag-enter="handleDragEnter"
-      @node-drag-leave="handleDragLeave"
-      @node-drag-over="handleDragOver"
-      @node-drag-end="handleDragEnd"
-       draggable
-      :allow-drop="allowDrop"
-      :allow-drag="allowDrag"
-    ></el-tree> -->
-
     </el-col>
     
     <el-col :xs="24" :sm="19">
@@ -66,22 +56,20 @@
             </el-col>
             <el-col :xs="5" :sm="4" style="text-align:right;">
 
-
-              <el-button type="text" @click="open">Click</el-button>
-              
           <el-button @click="dialogFormVisible = true" :label-position="labelPosition" circle><i class="fas fa-save" style="padding: 2px 4px 2px 4px"></i></el-button>
           <el-dialog title="New Request" :visible.sync="dialogFormVisible"  style="text-align:left;">
-            <span>Please input new request  </span> <br><br>
-             <el-input v-model="newrequest" autocomplete="off" ></el-input>
+             <el-form :model="saverequest">
+              <el-form-item label="Please input new request" >
+                <el-input v-model="saverequest.name" autocomplete="off"></el-input>
+              </el-form-item>
+             </el-form> 
             <span slot="footer" class="dialog-footer">
               <el-button @click="dialogFormVisible = false">Cancel</el-button>
-              <el-button type="primary" @click="dialogFormVisibles(dialogFormVisible = false)">OK</el-button>
+              <el-button type="primary" @click="dialogFormVisibles()">OK</el-button>
             </span>
-          </el-dialog>
-
+          </el-dialog> 
               <el-button circle><i class="fas fa-cloud-download-alt" style="padding: 2px;"></i></el-button>
             </el-col>
-
           </el-row>
 
           <el-tabs v-model="activeTab" @tab-click="paramsTab" class="tab">
@@ -328,46 +316,28 @@ import Folder from '../components/collection'
         paramsInput:'',
         folders :[],
         dialogFormVisible: false,
-        newrequest:'',
-        rules: {
-          name: [
-            ]},
         formLabelWidth: '180px',
         labelPosition: 'left',
-         ruleForm: {
-          name: '',
+        saverequest: {
+          name: ''
          }
 
       };
     },
-     mounted(){
-            this.getData();   
-      },
-
     methods: {
       editorInit: function(editor) {
         require('brace/mode/json')
         require('brace/theme/chrome')
       },
-        getData() {
-        axios.get(this.server_api+'/collections/1/folder-view')
-        .then(res => {
-          this.folders = res.data.data
-        })
-        .catch(err => {
-          console.log(err)
-        })
-      },
-
       sendRequest() {
         console.log(this.convertToParams(this.inputParameter))
         
         axios({
-            method: this.method,
-            url: this.url,
-            headers: this.headerArray(),             
-            data: JSON.parse(this.textbody),
-            params: this.convertToParams(this.inputParameter)
+          method: this.method,
+          url: this.url,
+          headers: this.headerArray(),             
+          data: JSON.parse(this.textbody),
+          params: this.convertToParams(this.inputParameter)
         })
         .then(res => { 
           this.content = JSON.stringify(res.data, null, 4)
@@ -382,27 +352,28 @@ import Folder from '../components/collection'
       }, 
       
       dialogFormVisibles(){
-     
-        axios({
-              method: 'post',
-              url: 'http://localhost:9000/requests',
-              header: {
-               'Content-type':'application/json'
-              },
-              data: {
-                'name': this.newrequest,
-                'id_folder': 1,
-	              'method': "post",
-	              'url': "http://google.co.th"
-              }
-            })
-            .then(res => {
-              console.log(this.newrequest)
-              
-            })
-            .catch(err => {
-                 console.log(err)
-            })
+          axios.post(this.server_api+'/requests/', {
+          name: this.saverequest.name,
+          id_folder: 1,
+	        method: "post",
+	        url: "http://google.co.th"
+          }
+        )
+          .then(res => {
+          this.$message({
+          message: 'Success',
+          type: 'success'
+          })
+          console.log(res.data.data)
+        })
+          .catch(err => {
+          this.$message({
+          message: 'Failed',
+          type: 'info'
+        })
+          console.log(err)
+        })
+          this.dialogFormVisible = false
       }, 
       requestTab(tab, event) {
         console.log(tab, event);
@@ -466,70 +437,8 @@ import Folder from '../components/collection'
         let merged = {...headerData, ...tokenAuth};
         return merged
       },
-       handleDragStart(node, ev) {
-        console.log('drag start', node);
-      },
-      handleDragEnter(draggingNode, dropNode, ev) {
-        console.log('tree drag enter: ', dropNode.label);
-      },
-      handleDragLeave(draggingNode, dropNode, ev) {
-        console.log('tree drag leave: ', dropNode.label);
-      },
-      handleDragOver(draggingNode, dropNode, ev) {
-        console.log('tree drag over: ', dropNode.label);
-      },
-      handleDragEnd(draggingNode, dropNode, dropType, ev) {
-        console.log('tree drag end: ', dropNode && dropNode.label, dropType);
-      },
-      handleDrop(draggingNode, dropNode, dropType, ev) {
-        console.log('tree drop: ', dropNode.label, dropType);
-      },
-      allowDrop(draggingNode, dropNode, type) {
-        if (dropNode.data.label === 'Level two 3-1') {
-          return type !== 'inner';
-        } else {
-          return true;
-        }
-      },
-      allowDrag(draggingNode) {
-        return draggingNode.data.label.indexOf('Level three 3-1-1') === -1;
-      },
-      open() {
-        this.$prompt('Please input name request', 'New Request', {
-          confirmButtonText: 'OK',
-          cancelButtonText: 'Cancel',
-          // inputPattern:  value
-          inputPattern:  
-          /[\ A-Za-z0-9~!#@(){}%$*:_+=\-\[\]\:;',\.]+/,
-          inputErrorMessage: 'Please input name request'
-        }).then(( {value} ) => {
-            axios({
-              method: 'post',
-              url: 'http://localhost:9000/requests',
-              header: {
-               'Content-type':'application/json'
-              },
-              data: {
-                'name': value,
-                'id_folder': 1,
-	              'method': "post",
-	              'url': "http://google.co.th"
-              }
-            })
-          console.log(value)
-          this.$message({
-            type: 'success',
-            message: 'Your name request is : ' + value,
-            
-          });
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: 'Input canceled'
-          });       
-        });
-      
-         
+      test(){
+        this.$router.push('/test')
       }
     } 
   }
