@@ -56,10 +56,21 @@
               </el-button>
             </el-col>
             <el-col :xs="5" :sm="4" style="text-align:right;">
-              <el-button circle><i class="fas fa-save" style="padding: 2px 4px 2px 4px"></i></el-button>
+
+          <el-button @click="dialogFormVisible = true" :label-position="labelPosition" circle><i class="fas fa-save" style="padding: 2px 4px 2px 4px"></i></el-button>
+          <el-dialog title="New Request" :visible.sync="dialogFormVisible"  style="text-align:left;">
+             <el-form :model="saverequest">
+              <el-form-item label="Please input new request" >
+                <el-input v-model="saverequest.name" autocomplete="off"></el-input>
+              </el-form-item>
+             </el-form> 
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="dialogFormVisible = false">Cancel</el-button>
+              <el-button type="primary" @click="dialogFormVisibles()">OK</el-button>
+            </span>
+          </el-dialog> 
               <el-button circle><i class="fas fa-cloud-download-alt" style="padding: 2px;"></i></el-button>
             </el-col>
-
           </el-row>
 
           <el-tabs v-model="activeTab" @tab-click="paramsTab" class="tab">
@@ -248,6 +259,7 @@ import Folder from '../components/folder'
       Collection
     },
     data() {
+
       return {
         server_api: "http://localhost:9000",
         inputParameter: [{"keyParams": "", "valueParams": ""}],
@@ -306,6 +318,13 @@ import Folder from '../components/folder'
         statusText: '',
         paramsInput:'',
         folders :[],
+        dialogFormVisible: false,
+        formLabelWidth: '180px',
+        labelPosition: 'left',
+        saverequest: {
+          name: ''
+        }
+        
       };
     },
     methods: {
@@ -314,14 +333,13 @@ import Folder from '../components/folder'
         require('brace/theme/chrome')
       },
       sendRequest() {
-        console.log(this.convertToParams(this.inputParameter))
-        
-        axios({
-            method: this.method,
-            url: this.url,
-            headers: this.headerArray(),             
-            data: JSON.parse(this.textbody),
-            params: this.convertToParams(this.inputParameter)
+        console.log(this.convertToParams(this.inputParameter))  
+      axios({
+          method: this.method,
+          url: this.url,
+          headers: this.headerArray(),             
+          data: JSON.parse(this.textbody),
+          params: this.convertToParams(this.inputParameter)
         })
         .then(res => { 
           this.content = JSON.stringify(res.data, null, 4)
@@ -333,7 +351,31 @@ import Folder from '../components/folder'
           this.status = err.response.status+" "+err.response.statusText
           console.log(this.headerArray())
         })       
-      },  
+      }, 
+      dialogFormVisibles(){
+          axios.post(this.server_api+'/requests/', {
+          name: this.saverequest.name,
+          id_folder: 1,
+	        method: "post",
+	        url: "http://google.co.th"
+          }
+        )
+          .then(res => {
+          this.$message({
+          message: 'Success',
+          type: 'success'
+          })
+          console.log(res.data.data)
+        })
+          .catch(err => {
+          this.$message({
+          message: 'Failed',
+          type: 'error'
+        })
+          console.log(err)
+        })
+          this.dialogFormVisible = false
+      }, 
       requestTab(tab, event) {
         console.log(tab, event);
       },
