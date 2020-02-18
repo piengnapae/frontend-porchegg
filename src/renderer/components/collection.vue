@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-button @click="addCollectionDialog = true">New Collection</el-button>
+    <el-button @click="addCollectionDialog = true"><i class="el-icon-plus"></i> New Collection</el-button>
 
     <el-dialog title="Add Collection" :visible.sync="addCollectionDialog">
       <el-form :model="collection">
@@ -9,7 +9,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="addCollectionDialog = false">CANCLE</el-button>
+        <el-button type="danger" @click="addCollectionDialog = false">CANCEL</el-button>
         <el-button type="success" @click="addCollection('request')">SAVE</el-button>
       </span>
     </el-dialog>
@@ -18,11 +18,12 @@
 
 <script>
 import axios from 'axios';
+import {env} from '../nuxt.config'
 
 export default {
   data() {
     return {
-      server_api: "http://localhost:9000",
+      server_api: env.SERVER_API,
       addCollectionDialog: false,
       collection: {
         name: ''

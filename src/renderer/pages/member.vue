@@ -1,7 +1,20 @@
 <template>
-  <el-row>
-    <el-col :xs="0" :sm="5" width="100%" heigth="100%">
-      <el-main>
+  <el-container>
+    <el-header :height="50">
+      <!--- Header ---->
+       <el-row>
+          <el-col :span="12">
+            PorchEGG
+          </el-col>
+          <el-col :span="12" style="textAlign: right;">
+            Hi, Administrator ทดสอบผู้ใช้ระบบ 
+            <el-button icon="el-icon-switch-button" circle></el-button>
+          </el-col>
+       </el-row>
+    </el-header>
+    <el-container>
+      <!--- left sidebar --->
+      <el-aside width="220px">
         <el-row>
           <el-col :span="24">
             <div>
@@ -9,13 +22,9 @@
             </div>
           </el-col>
         </el-row>
-        <!-- <el-button @click="test">test</el-button> -->
         <Collection></Collection>
         <Folder></Folder>
-      </el-main>
-    </el-col>
-    
-    <el-col :xs="24" :sm="19">
+      </el-aside>
       <el-main>
         <el-row>
           <el-col :span="24">
@@ -26,6 +35,7 @@
         </el-row>
 
         <el-row>
+          <!--- content --->
           <el-col :span="24">
             <div>
               <el-button type="text" class="text" @click="isShowing = !isShowing"><i class="el-icon-arrow-down"></i> Request</el-button>
@@ -51,7 +61,7 @@
               <el-input v-model="url"></el-input>
             </el-col>
             <el-col :span="4">
-              <el-button type="warning" style="width:100%;" class="button" @click="sendRequest">SEND 
+              <el-button type="warning" style="width:100%;" class="button" @click="send">SEND 
                 <i class="el-icon-position"></i>
               </el-button>
             </el-col>
@@ -225,7 +235,18 @@
           </el-form>
 
           <el-tabs v-model="activeName" @tab-click="requestTab">
-            <el-tab-pane label="Pretty" name="first">
+            <el-tab-pane label="Pretty" name="first" v-if="loading">
+              <AceEditor
+                v-model="content"
+                @init="editorInit"
+                lang="json"
+                theme="chrome"
+                height="500px"
+                :options="optionsj"
+                v-loading="loading"
+              ></AceEditor>
+            </el-tab-pane>
+            <el-tab-pane label="Pretty" name="first" v-else>
                 <AceEditor
                   v-model="content"
                   @init="editorInit"
@@ -238,10 +259,10 @@
             <el-tab-pane label="Raw" name="second">{{raw}}</el-tab-pane>
             <el-tab-pane label="Preview" name="third">{{preview}}</el-tab-pane>
           </el-tabs>
-        </div>        
+        </div>   
       </el-main>
-    </el-col>
-  </el-row>
+    </el-container>
+  </el-container>
 </template>
 
 <script>
@@ -251,6 +272,8 @@ import AceEditor from "vue2-ace-editor";
 import '@/assets/scss/main.scss';
 import Collection from '../components/collection'
 import Folder from '../components/folder'
+import {env} from '../nuxt.config'
+
   export default {
     
     components: {
@@ -261,7 +284,6 @@ import Folder from '../components/folder'
     data() {
 
       return {
-        server_api: "http://localhost:9000",
         inputParameter: [{"keyParams": "", "valueParams": ""}],
         inputHeader: [{"keyHeaders": "", "type": "text","valueHeaders": ""}],
         content: '',
@@ -318,6 +340,7 @@ import Folder from '../components/folder'
         statusText: '',
         paramsInput:'',
         folders :[],
+        loading: false,
         dialogFormVisible: false,
         formLabelWidth: '180px',
         labelPosition: 'left',
@@ -332,6 +355,12 @@ import Folder from '../components/folder'
         require('brace/mode/json')
         require('brace/theme/chrome')
       },
+
+      send(){
+        this.loading = true
+        this.sendRequest()
+      },
+
       sendRequest() {
         console.log(this.convertToParams(this.inputParameter))  
       axios({
@@ -345,13 +374,16 @@ import Folder from '../components/folder'
           this.content = JSON.stringify(res.data, null, 4)
           this.status = res.status+" "+res.statusText
           console.log(JSON.parse(this.textbody))
+          this.loading = false
         }).catch(err => {
           console.log(err.response)
           this.content = JSON.stringify(err.response.data, null, 4)
           this.status = err.response.status+" "+err.response.statusText
+          this.loading = false
           console.log(this.headerArray())
-        })       
-      }, 
+        })
+      },
+      
       dialogFormVisibles(){
           axios.post(this.server_api+'/requests/', {
           name: this.saverequest.name,
@@ -380,22 +412,27 @@ import Folder from '../components/folder'
           console.log(err)
         })
           this.dialogFormVisible = false
-      }, 
+      },
+      
       requestTab(tab, event) {
         console.log(tab, event);
       },
+
       paramsTab(tab, event) {
         console.log(tab, event);
       },
+
       addRowParameter() {
         this.inputParameter.push({
           keyParammeters: '',
           valuesParammeters: ''
         })
       },
+
       deleteRowParam(indexParameter) {
         this.inputParameter.splice(indexParameter,1)
       },
+
       addRowsHeader() {
         this.inputHeader.push({
           keyHeaders: '',
@@ -403,9 +440,11 @@ import Folder from '../components/folder'
           "type": "text"
         })
       },
+
       deleteRowsHeader(indexHeader) {
         this.inputHeader.splice(indexHeader,1)
       },
+
       convertToParams(params){
         let arr = {}
         params.forEach(params => {
@@ -419,6 +458,7 @@ import Folder from '../components/folder'
         })
         return arr
       },
+
       convertToArray(input){
         let arr = {}
         input.forEach(header => {
@@ -432,6 +472,7 @@ import Folder from '../components/folder'
         })
         return arr
       },
+
       headerArray(){
         let headerData = {}
         let tokenAuth = {}
@@ -444,6 +485,7 @@ import Folder from '../components/folder'
         let merged = {...headerData, ...tokenAuth};
         return merged
       },
+
       test(){
         this.$router.push('/test')
       }

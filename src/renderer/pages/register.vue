@@ -130,9 +130,6 @@ import '@/assets/scss/register.scss';
         
         this.$refs[formName].validate((valid) => {
           if (valid) {
-
-            //  this.$router.replace({ name: "next" });
-
             axios({
               method: 'post',
               url: this.server_api+'/register',
@@ -146,7 +143,8 @@ import '@/assets/scss/register.scss';
               }
             })
             .then(res => {
-              this.$router.replace({ name: "login" });
+              // this.$router.replace({ name: "login" });
+              console.log(res)
             })
             .catch(err => {
               if(err.response.data.email && err.response.data.username){

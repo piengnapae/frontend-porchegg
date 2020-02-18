@@ -2,15 +2,27 @@
 
 @import url('https://fonts.googleapis.com/css?family=Mitr&display=swap');
 
+$primary-bg: #ffb526;
+
 body {
   font-family: 'Mitr', sans-serif;
   background-color: #eeeeee;
 }
-
+.el-header {
+  background-color: $primary-bg;
+  color: #fff;
+  line-height: 50px;
+  text-shadow: 2px 2px 5px rgba(0,0,5,0.5);
+  .el-button{
+    color: $primary-bg;
+    border:0px;
+    box-shadow: 2px 2px 5px rgba(0,0,5,0.5);
+  }
+}
 .button{
-  background-color: #ffb526;
+  background-color: $primary-bg;
   color: white;
-  border: 2px solid #ffb526;
+  border: 2px solid $primary-bg;
   &:hover {
     background-color: #f8e5bf;
     color: #ffb526;
