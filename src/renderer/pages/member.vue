@@ -235,7 +235,18 @@
           </el-form>
 
           <el-tabs v-model="activeName" @tab-click="requestTab">
-            <el-tab-pane label="Pretty" name="first">
+            <el-tab-pane label="Pretty" name="first" v-if="loading">
+              <AceEditor
+                v-model="content"
+                @init="editorInit"
+                lang="json"
+                theme="chrome"
+                height="500px"
+                :options="optionsj"
+                v-loading="loading"
+              ></AceEditor>
+            </el-tab-pane>
+            <el-tab-pane label="Pretty" name="first" v-else>
                 <AceEditor
                   v-model="content"
                   @init="editorInit"
