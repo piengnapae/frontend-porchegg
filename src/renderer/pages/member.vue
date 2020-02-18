@@ -56,10 +56,21 @@
               </el-button>
             </el-col>
             <el-col :xs="5" :sm="4" style="text-align:right;">
-              <el-button circle><i class="fas fa-save" style="padding: 2px 4px 2px 4px"></i></el-button>
+
+          <el-button @click="dialogFormVisible = true" :label-position="labelPosition" circle><i class="fas fa-save" style="padding: 2px 4px 2px 4px"></i></el-button>
+          <el-dialog title="New Request" :visible.sync="dialogFormVisible"  style="text-align:left;">
+             <el-form :model="saverequest">
+              <el-form-item label="Please input new request" >
+                <el-input v-model="saverequest.name" autocomplete="off"></el-input>
+              </el-form-item>
+             </el-form> 
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="dialogFormVisible = false">Cancel</el-button>
+              <el-button type="primary" @click="dialogFormVisibles()">OK</el-button>
+            </span>
+          </el-dialog> 
               <el-button circle><i class="fas fa-cloud-download-alt" style="padding: 2px;"></i></el-button>
             </el-col>
-
           </el-row>
 
           <el-tabs v-model="activeTab" @tab-click="paramsTab" class="tab">
@@ -250,6 +261,7 @@ import {env} from '../nuxt.config'
       Collection
     },
     data() {
+
       return {
         inputParameter: [{"keyParams": "", "valueParams": ""}],
         inputHeader: [{"keyHeaders": "", "valueHeaders": ""}],
@@ -322,14 +334,13 @@ import {env} from '../nuxt.config'
       },
 
       sendRequest() {
-        console.log(this.convertToParams(this.inputParameter))
-        
-        axios({
-            method: this.method,
-            url: this.url,
-            headers: this.headerArray(),             
-            data: JSON.parse(this.textbody),
-            params: this.convertToParams(this.inputParameter)
+        console.log(this.convertToParams(this.inputParameter))  
+      axios({
+          method: this.method,
+          url: this.url,
+          headers: this.headerArray(),             
+          data: JSON.parse(this.textbody),
+          params: this.convertToParams(this.inputParameter)
         })
         .then(res => { 
           this.content = JSON.stringify(res.data, null, 4)
