@@ -61,7 +61,7 @@
               <el-input v-model="url"></el-input>
             </el-col>
             <el-col :span="4">
-              <el-button type="warning" style="width:100%;" class="button" @click="sendRequest">SEND 
+              <el-button type="warning" style="width:100%;" class="button" @click="send">SEND 
                 <i class="el-icon-position"></i>
               </el-button>
             </el-col>
@@ -261,6 +261,8 @@ import AceEditor from "vue2-ace-editor";
 import '@/assets/scss/main.scss';
 import Collection from '../components/collection'
 import Folder from '../components/folder'
+import {env} from '../nuxt.config'
+
   export default {
     
     components: {
@@ -271,7 +273,6 @@ import Folder from '../components/folder'
     data() {
 
       return {
-        server_api: "http://localhost:9000",
         inputParameter: [{"keyParams": "", "valueParams": ""}],
         inputHeader: [{"keyHeaders": "", "valueHeaders": ""}],
         content: '',
@@ -328,6 +329,7 @@ import Folder from '../components/folder'
         statusText: '',
         paramsInput:'',
         folders :[],
+        loading: false,
         dialogFormVisible: false,
         formLabelWidth: '180px',
         labelPosition: 'left',
@@ -342,6 +344,12 @@ import Folder from '../components/folder'
         require('brace/mode/json')
         require('brace/theme/chrome')
       },
+
+      send(){
+        this.loading = true
+        this.sendRequest()
+      },
+
       sendRequest() {
         console.log(this.convertToParams(this.inputParameter))  
       axios({
@@ -355,13 +363,16 @@ import Folder from '../components/folder'
           this.content = JSON.stringify(res.data, null, 4)
           this.status = res.status+" "+res.statusText
           console.log(JSON.parse(this.textbody))
+          this.loading = false
         }).catch(err => {
           console.log(err.response)
           this.content = JSON.stringify(err.response.data, null, 4)
           this.status = err.response.status+" "+err.response.statusText
+          this.loading = false
           console.log(this.headerArray())
-        })       
-      }, 
+        })
+      },
+      
       dialogFormVisibles(){
           axios.post(this.server_api+'/requests/', {
           name: this.saverequest.name,
@@ -385,31 +396,38 @@ import Folder from '../components/folder'
           console.log(err)
         })
           this.dialogFormVisible = false
-      }, 
+      },
+      
       requestTab(tab, event) {
         console.log(tab, event);
       },
+
       paramsTab(tab, event) {
         console.log(tab, event);
       },
+
       addRowParameter() {
         this.inputParameter.push({
           keyParammeters: '',
           valuesParammeters: ''
         })
       },
+
       deleteRowParam(indexParameter) {
         this.inputParameter.splice(indexParameter,1)
       },
+
       addRowsHeader() {
         this.inputHeader.push({
           keyHeaders: '',
           valueHeaders: ''
         })
       },
+
       deleteRowsHeader(indexHeader) {
         this.inputHeader.splice(indexHeader,1)
       },
+
       convertToParams(params){
         let arr = {}
         params.forEach(params => {
@@ -423,6 +441,7 @@ import Folder from '../components/folder'
         })
         return arr
       },
+
       convertToArray(input){
         let arr = {}
         input.forEach(header => {
@@ -436,6 +455,7 @@ import Folder from '../components/folder'
         })
         return arr
       },
+
       headerArray(){
         let headerData = {}
         let tokenAuth = {}
@@ -448,6 +468,7 @@ import Folder from '../components/folder'
         let merged = {...headerData, ...tokenAuth};
         return merged
       },
+
       test(){
         this.$router.push('/test')
       }
