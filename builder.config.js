@@ -43,9 +43,9 @@ const macOS = {
 
 module.exports = {
   asar: false,
-  productName: 'My browser',
-  appId: 'org.michalzarach.my-browser',
-  artifactName: 'my-browser-${version}.${ext}',
+  productName: 'PorchEGG',
+  appId: 'com.eggdigitial.porchegg',
+  artifactName: 'porch-egg-${version}.${ext}',
   directories: {
     output: 'build'
   },
