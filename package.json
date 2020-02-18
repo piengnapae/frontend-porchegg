@@ -1,5 +1,5 @@
 {
-  "name": "porchegg-client",
+  "name": "PorchEGG",
   "version": "0.0.1",
   "description": "Internal project",
   "main": "./dist/main/index.js",
@@ -10,7 +10,7 @@
     "postinstall": "electron-builder install-app-deps "
   },
   "keywords": [],
-  "author": "Nipitpon Chantada <nipitpon.cha@ascendcorp.com>",
+  "author": "EGG Digital Co, Ltd. <nipitpon.cha@ascendcorp.com>",
   "license": "MIT",
   "homepage": "https://github.com/michalzaq12/electron-nuxt/blob/master/README.md",
   "engines": {
