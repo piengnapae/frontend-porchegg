@@ -319,7 +319,14 @@ import {env} from '../nuxt.config'
         statusText: '',
         paramsInput:'',
         folders :[],
-        loading: false
+        loading: false,
+        dialogFormVisible: false,
+        formLabelWidth: '180px',
+        labelPosition: 'left',
+        saverequest: {
+          name: ''
+        }
+        
       };
     },
     methods: {
@@ -355,7 +362,32 @@ import {env} from '../nuxt.config'
           console.log(this.headerArray())
         })
       },
-
+      
+      dialogFormVisibles(){
+          axios.post(this.server_api+'/requests/', {
+          name: this.saverequest.name,
+          id_folder: 1,
+	        method: "post",
+	        url: "http://google.co.th"
+          }
+        )
+          .then(res => {
+          this.$message({
+          message: 'Success',
+          type: 'success'
+          })
+          console.log(res.data.data)
+        })
+          .catch(err => {
+          this.$message({
+          message: 'Failed',
+          type: 'error'
+        })
+          console.log(err)
+        })
+          this.dialogFormVisible = false
+      },
+      
       requestTab(tab, event) {
         console.log(tab, event);
       },
