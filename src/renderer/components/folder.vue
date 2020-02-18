@@ -1,10 +1,10 @@
 <template>  
-  <div>
+  <div v-loading="loading">
     <div v-for="(collection, index) in collection" v-bind:key="index">
       <table style="width:100%">
         <tr>
           <td width="90%">
-            <el-button type="text" @click="showFolder(collection.id)">{{ collection.name }}</el-button>
+            <el-button type="text" @click="collectionBt(collection.id)">{{ collection.name }}</el-button>
           </td>
           <td width="10%" align="center">
             <span>
@@ -14,9 +14,18 @@
                 </span>
 
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item><i class="fas fa-edit"></i> Rename</el-dropdown-item>
-                  <el-dropdown-item><i class="fas fa-folder-plus"></i> Add Folder</el-dropdown-item>
-                  <el-dropdown-item><i class="fas fa-trash-alt"></i> Delete</el-dropdown-item>
+                  <el-dropdown-item>
+                    <el-button type="text"><i class="fas fa-edit"></i> Rename </el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <el-button type="text"><i class="fas fa-folder-plus"></i> Add Folder </el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <el-button type="text"><i class="fas fa-file-export"></i> Export </el-button>
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <el-button type="text"><i class="fas fa-trash-alt"></i> Delete </el-button>
+                  </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </span>
@@ -88,11 +97,12 @@
 </template>
 <script>
 import axios from 'axios';
+import {env} from '../nuxt.config'
 
 export default {
   data() {
     return {
-      server_api: "http://localhost:9000",
+      server_api: env.SERVER_API,
       folder :[],
       collection:[],
       collection_id: null,
@@ -103,10 +113,10 @@ export default {
         method:'',
         url:''
       },
-      formLabelWidth: '150px'
+      formLabelWidth: '150px',
+      loading: false
     }
   },
-
   created:function () {
     this.getCollection()
   },
@@ -117,9 +127,11 @@ export default {
         .then(res => {
           this.folder = res.data.data
           this.collection_id = id
+          this.loading = false
           console.log(this.folder)
         })
         .catch(err => {
+          this.loading = false
           console.log(err)
         })
     },
@@ -149,6 +161,11 @@ export default {
       this.addRequestDialog = true
     },
 
+    collectionBt(id) {
+      this.loading = true
+      this.showFolder(id)
+    },
+
     addRequest(request) {
       axios.post(this.server_api+'/requests/', {
         id_folder: this.request.id,
@@ -172,13 +189,6 @@ export default {
       })
 
       this.addRequestDialog = false
-    },
-    
-    handleCommand(command, id) {
-      this.$message({
-          message: 'Congrats, this is a success message.',
-          type: 'success'
-        })
     },
 
     remove(id) {

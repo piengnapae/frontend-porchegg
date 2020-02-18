@@ -53,7 +53,6 @@ import '@/assets/scss/login.scss';
 
     head() {
     return {
-      server_api: env.SERVER_API,
       bodyAttrs: {
         class: 'register'
       }
@@ -82,10 +81,9 @@ import '@/assets/scss/login.scss';
           callback();
         }
       };
-    
 
-    
       return {
+        server_api: env.SERVER_API,
         errorMessage : '',
         visible: true ,
         ruleForm: {
@@ -111,9 +109,6 @@ import '@/assets/scss/login.scss';
         
         this.$refs[formName].validate((valid) => {
           if (valid) {
-
-            //  this.$router.replace({ name: "next" });
-
            axios({
               method: 'post',
               url: this.server_api+'/login',
@@ -122,7 +117,7 @@ import '@/assets/scss/login.scss';
               },
               data: {               
                 'username': this.ruleForm.username,
-                'password': this.ruleForm.password
+                'password': this.ruleForm.pass
               }
             })
             .then(res => {
