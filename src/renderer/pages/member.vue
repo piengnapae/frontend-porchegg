@@ -263,7 +263,7 @@ import Folder from '../components/folder'
       return {
         server_api: "http://localhost:9000",
         inputParameter: [{"keyParams": "", "valueParams": ""}],
-        inputHeader: [{"keyHeaders": "", "valueHeaders": ""}],
+        inputHeader: [{"keyHeaders": "", "type": "text","valueHeaders": ""}],
         content: '',
         textbody: '{}',
         optionsj: {
@@ -361,7 +361,8 @@ import Folder from '../components/folder'
           body : this.textbody,
           response : this.content,
           auth : this.auth,
-          header : this.indexHeader
+          header : this.inputHeader,
+          // params : this.inputParameter
           }
         )
           .then(res => {
@@ -398,7 +399,8 @@ import Folder from '../components/folder'
       addRowsHeader() {
         this.inputHeader.push({
           keyHeaders: '',
-          valueHeaders: ''
+          valueHeaders: '',
+          "type": "text"
         })
       },
       deleteRowsHeader(indexHeader) {
