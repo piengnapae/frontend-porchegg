@@ -356,8 +356,12 @@ import Folder from '../components/folder'
           axios.post(this.server_api+'/requests/', {
           name: this.saverequest.name,
           id_folder: 1,
-	        method: "post",
-	        url: "http://google.co.th"
+	        method: this.method,
+          url: this.url,
+          body : this.textbody,
+          response : this.content,
+          auth : this.auth,
+          header : this.indexHeader
           }
         )
           .then(res => {
