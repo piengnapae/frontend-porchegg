@@ -1,7 +1,20 @@
 <template>
-  <el-row>
-    <el-col :xs="0" :sm="5" width="100%" heigth="100%">
-      <el-main>
+  <el-container>
+    <el-header :height="50">
+      <!--- Header ---->
+       <el-row>
+          <el-col :span="12">
+            PorchEGG
+          </el-col>
+          <el-col :span="12" style="textAlign: right;">
+            Hi, Administrator ทดสอบผู้ใช้ระบบ 
+            <el-button icon="el-icon-switch-button" circle></el-button>
+          </el-col>
+       </el-row>
+    </el-header>
+    <el-container>
+      <!--- left sidebar --->
+      <el-aside width="220px">
         <el-row>
           <el-col :span="24">
             <div>
@@ -9,13 +22,9 @@
             </div>
           </el-col>
         </el-row>
-        <!-- <el-button @click="test">test</el-button> -->
         <Collection></Collection>
         <Folder></Folder>
-      </el-main>
-    </el-col>
-    
-    <el-col :xs="24" :sm="19">
+      </el-aside>
       <el-main>
         <el-row>
           <el-col :span="24">
@@ -26,6 +35,7 @@
         </el-row>
 
         <el-row>
+          <!--- content --->
           <el-col :span="24">
             <div>
               <el-button type="text" class="text" @click="isShowing = !isShowing"><i class="el-icon-arrow-down"></i> Request</el-button>
@@ -238,10 +248,10 @@
             <el-tab-pane label="Raw" name="second">{{raw}}</el-tab-pane>
             <el-tab-pane label="Preview" name="third">{{preview}}</el-tab-pane>
           </el-tabs>
-        </div>        
+        </div>   
       </el-main>
-    </el-col>
-  </el-row>
+    </el-container>
+  </el-container>
 </template>
 
 <script>
