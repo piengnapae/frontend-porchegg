@@ -353,30 +353,7 @@ import Folder from '../components/folder'
         })       
       }, 
       dialogFormVisibles(){
-       let inputHead = this.inputHeader  
-       inputHead[0]['type'] = 'text'
-       let inputAuth =  {}
-        if(this.auth == "Bearer Token"){
-        inputAuth = 
-       {
-        "auth": {
-         "type": "Bearer Token",
-         "bearer": [
-          {
-           "key": "token",
-           "value": this.token,
-           "type": "string"
-          }
-         ]
-        }
-       }   
-      }else  
-      inputAuth = 
-       {
-        "auth": {}
-       }  
-      
-          axios.post(this.server_api+'/requests/', {
+          axios.post(this.server_api+'/V1/requests/', {
           name: this.saverequest.name,
           id_folder: 1,
 	        method: this.method,
