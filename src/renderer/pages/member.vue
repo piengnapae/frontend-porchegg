@@ -385,7 +385,7 @@ import {env} from '../nuxt.config'
       },
       
       dialogFormVisibles(){
-          axios.post(this.server_api+'/requests/', {
+          axios.post(this.server_api+'/V1/requests/', {
           name: this.saverequest.name,
           id_folder: 1,
 	        method: "post",
