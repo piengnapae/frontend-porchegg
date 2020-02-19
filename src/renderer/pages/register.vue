@@ -143,7 +143,6 @@ import '@/assets/scss/register.scss';
               }
             })
             .then(res => {
-              // this.$router.replace({ name: "login" });
               console.log(res)
             })
             .catch(err => {
