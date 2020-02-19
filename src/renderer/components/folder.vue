@@ -131,14 +131,11 @@ export default {
           console.log(this.folder)
         })
         .catch(err => {
-<<<<<<< HEAD
           this.$message({
           message: 'Folder Failed',
           type: 'error'
         })
-=======
           this.loading = false
->>>>>>> origin/master
           console.log(err)
         })
     },

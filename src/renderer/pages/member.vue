@@ -1,20 +1,7 @@
 <template>
-  <el-container>
-    <el-header :height="50">
-      <!--- Header ---->
-       <el-row>
-          <el-col :span="12">
-            PorchEGG
-          </el-col>
-          <el-col :span="12" style="textAlign: right;">
-            Hi, Administrator ทดสอบผู้ใช้ระบบ 
-            <el-button icon="el-icon-switch-button" circle></el-button>
-          </el-col>
-       </el-row>
-    </el-header>
-    <el-container>
-      <!--- left sidebar --->
-      <el-aside width="220px">
+  <el-row>
+    <el-col :xs="0" :sm="5" width="100%" heigth="100%">
+      <el-main>
         <el-row>
           <el-col :span="24">
             <div>
@@ -22,9 +9,14 @@
             </div>
           </el-col>
         </el-row>
+        <!-- <el-button @click="test">test</el-button> -->
         <Collection></Collection>
         <Folder></Folder>
-      </el-aside>
+      </el-main>
+    </el-col>
+    
+    <el-col :xs="24" :sm="19">
+      <!-- {{inputParameter}} -->
       <el-main>
         <el-row>
           <el-col :span="24">
@@ -35,7 +27,6 @@
         </el-row>
 
         <el-row>
-          <!--- content --->
           <el-col :span="24">
             <div>
               <el-button type="text" class="text" @click="isShowing = !isShowing"><i class="el-icon-arrow-down"></i> Request</el-button>
@@ -61,7 +52,7 @@
               <el-input v-model="url"></el-input>
             </el-col>
             <el-col :span="4">
-              <el-button type="warning" style="width:100%;" class="button" @click="send">SEND 
+              <el-button type="warning" style="width:100%;" class="button" @click="sendRequest">SEND 
                 <i class="el-icon-position"></i>
               </el-button>
             </el-col>
@@ -235,18 +226,7 @@
           </el-form>
 
           <el-tabs v-model="activeName" @tab-click="requestTab">
-            <el-tab-pane label="Pretty" name="first" v-if="loading">
-              <AceEditor
-                v-model="content"
-                @init="editorInit"
-                lang="json"
-                theme="chrome"
-                height="500px"
-                :options="optionsj"
-                v-loading="loading"
-              ></AceEditor>
-            </el-tab-pane>
-            <el-tab-pane label="Pretty" name="first" v-else>
+            <el-tab-pane label="Pretty" name="first">
                 <AceEditor
                   v-model="content"
                   @init="editorInit"
@@ -259,10 +239,10 @@
             <el-tab-pane label="Raw" name="second">{{raw}}</el-tab-pane>
             <el-tab-pane label="Preview" name="third">{{preview}}</el-tab-pane>
           </el-tabs>
-        </div>   
+        </div>        
       </el-main>
-    </el-container>
-  </el-container>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
@@ -272,8 +252,6 @@ import AceEditor from "vue2-ace-editor";
 import '@/assets/scss/main.scss';
 import Collection from '../components/collection'
 import Folder from '../components/folder'
-import {env} from '../nuxt.config'
-
   export default {
     
     components: {
@@ -282,10 +260,10 @@ import {env} from '../nuxt.config'
       Collection
     },
     data() {
-
       return {
-        inputParameter: [{"keyParams": "", "valueParams": ""}],
-        inputHeader: [{"keyHeaders": "", "type": "text","valueHeaders": ""}],
+        server_api: "http://localhost:9000",
+        inputParameter: [{}], 
+        inputHeader: [{}] , 
         content: '',
         textbody: '{}',
         optionsj: {
@@ -340,13 +318,12 @@ import {env} from '../nuxt.config'
         statusText: '',
         paramsInput:'',
         folders :[],
-        loading: false,
         dialogFormVisible: false,
         formLabelWidth: '180px',
         labelPosition: 'left',
         saverequest: {
           name: ''
-        }
+        },
         
       };
     },
@@ -355,12 +332,6 @@ import {env} from '../nuxt.config'
         require('brace/mode/json')
         require('brace/theme/chrome')
       },
-
-      send(){
-        this.loading = true
-        this.sendRequest()
-      },
-
       sendRequest() {
         console.log(this.convertToParams(this.inputParameter))  
       axios({
@@ -374,17 +345,37 @@ import {env} from '../nuxt.config'
           this.content = JSON.stringify(res.data, null, 4)
           this.status = res.status+" "+res.statusText
           console.log(JSON.parse(this.textbody))
-          this.loading = false
         }).catch(err => {
           console.log(err.response)
           this.content = JSON.stringify(err.response.data, null, 4)
           this.status = err.response.status+" "+err.response.statusText
-          this.loading = false
           console.log(this.headerArray())
-        })
-      },
-      
+        })       
+      }, 
       dialogFormVisibles(){
+       let inputHead = this.inputHeader  
+       inputHead[0]['type'] = 'text'
+       let inputAuth =  {}
+        if(this.auth == "Bearer Token"){
+        inputAuth = 
+       {
+        "auth": {
+         "type": "Bearer Token",
+         "bearer": [
+          {
+           "key": "token",
+           "value": this.token,
+           "type": "string"
+          }
+         ]
+        }
+       }   
+      }else  
+      inputAuth = 
+       {
+        "auth": {}
+       }  
+      
           axios.post(this.server_api+'/requests/', {
           name: this.saverequest.name,
           id_folder: 1,
@@ -392,9 +383,9 @@ import {env} from '../nuxt.config'
           url: this.url,
           body : this.textbody,
           response : this.content,
-          auth : this.auth,
-          header : this.inputHeader,
-          // params : this.inputParameter
+          auth : inputAuth,
+          header : inputHead,
+          params : this.inputParameter
           }
         )
           .then(res => {
@@ -412,39 +403,32 @@ import {env} from '../nuxt.config'
           console.log(err)
         })
           this.dialogFormVisible = false
-      },
-      
+      }, 
       requestTab(tab, event) {
         console.log(tab, event);
       },
-
       paramsTab(tab, event) {
         console.log(tab, event);
       },
-
       addRowParameter() {
         this.inputParameter.push({
-          keyParammeters: '',
-          valuesParammeters: ''
+          // keyParammeters: '',
+          // valuesParammeters: ''
         })
       },
-
       deleteRowParam(indexParameter) {
         this.inputParameter.splice(indexParameter,1)
       },
-
       addRowsHeader() {
         this.inputHeader.push({
-          keyHeaders: '',
-          valueHeaders: '',
+          // keyHeaders: '',
+          // valueHeaders: '',
           "type": "text"
         })
       },
-
       deleteRowsHeader(indexHeader) {
         this.inputHeader.splice(indexHeader,1)
       },
-
       convertToParams(params){
         let arr = {}
         params.forEach(params => {
@@ -458,7 +442,6 @@ import {env} from '../nuxt.config'
         })
         return arr
       },
-
       convertToArray(input){
         let arr = {}
         input.forEach(header => {
@@ -472,7 +455,6 @@ import {env} from '../nuxt.config'
         })
         return arr
       },
-
       headerArray(){
         let headerData = {}
         let tokenAuth = {}
@@ -485,7 +467,6 @@ import {env} from '../nuxt.config'
         let merged = {...headerData, ...tokenAuth};
         return merged
       },
-
       test(){
         this.$router.push('/test')
       }
