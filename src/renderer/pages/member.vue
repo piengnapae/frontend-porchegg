@@ -1,7 +1,20 @@
 <template>
-  <el-row>
-    <el-col :xs="0" :sm="5" width="100%" heigth="100%">
-      <el-main>
+  <el-container>
+    <el-header height="50">
+      <!--- Header ---->
+       <el-row>
+          <el-col :span="12">
+            PorchEGG
+          </el-col>
+          <el-col :span="12" style="textAlign: right;">
+            Hi, Administrator ทดสอบผู้ใช้ระบบ 
+            <el-button icon="el-icon-switch-button" circle></el-button>
+          </el-col>
+       </el-row>
+    </el-header>
+    <el-container>
+      <!--- left sidebar --->
+      <el-aside width="220px">
         <el-row>
           <el-col :span="24">
             <div>
@@ -9,14 +22,9 @@
             </div>
           </el-col>
         </el-row>
-        <!-- <el-button @click="test">test</el-button> -->
         <Collection></Collection>
         <Folder></Folder>
-      </el-main>
-    </el-col>
-    
-    <el-col :xs="24" :sm="19">
-      <!-- {{inputParameter}} -->
+      </el-aside>
       <el-main>
         <el-row>
           <el-col :span="24">
@@ -27,6 +35,7 @@
         </el-row>
 
         <el-row>
+          <!--- content --->
           <el-col :span="24">
             <div>
               <el-button type="text" class="text" @click="isShowing = !isShowing"><i class="el-icon-arrow-down"></i> Request</el-button>
@@ -226,7 +235,18 @@
           </el-form>
 
           <el-tabs v-model="activeName" @tab-click="requestTab">
-            <el-tab-pane label="Pretty" name="first">
+            <el-tab-pane label="Pretty" name="first" v-if="loading">
+              <AceEditor
+                v-model="content"
+                @init="editorInit"
+                lang="json"
+                theme="chrome"
+                height="500px"
+                :options="optionsj"
+                v-loading="loading"
+              ></AceEditor>
+            </el-tab-pane>
+            <el-tab-pane label="Pretty" name="first" v-else>
                 <AceEditor
                   v-model="content"
                   @init="editorInit"
@@ -239,10 +259,10 @@
             <el-tab-pane label="Raw" name="second">{{raw}}</el-tab-pane>
             <el-tab-pane label="Preview" name="third">{{preview}}</el-tab-pane>
           </el-tabs>
-        </div>        
+        </div>   
       </el-main>
-    </el-col>
-  </el-row>
+    </el-container>
+  </el-container>
 </template>
 
 <script>
@@ -252,6 +272,8 @@ import AceEditor from "vue2-ace-editor";
 import '@/assets/scss/main.scss';
 import Collection from '../components/collection'
 import Folder from '../components/folder'
+import {env} from '../nuxt.config'
+
   export default {
     
     components: {
@@ -260,10 +282,11 @@ import Folder from '../components/folder'
       Collection
     },
     data() {
+
       return {
         server_api: "http://localhost:9000",
-        inputParameter: [{}], 
-        inputHeader: [{}] , 
+        inputParameter: [{}],
+        inputHeader: [{}],
         content: '',
         textbody: '{}',
         optionsj: {
@@ -318,12 +341,13 @@ import Folder from '../components/folder'
         statusText: '',
         paramsInput:'',
         folders :[],
+        loading: false,
         dialogFormVisible: false,
         formLabelWidth: '180px',
         labelPosition: 'left',
         saverequest: {
           name: ''
-        },
+        }
         
       };
     },
@@ -332,6 +356,12 @@ import Folder from '../components/folder'
         require('brace/mode/json')
         require('brace/theme/chrome')
       },
+
+      send(){
+        this.loading = true
+        this.sendRequest()
+      },
+
       sendRequest() {
         console.log(this.convertToParams(this.inputParameter))  
       axios({
@@ -345,90 +375,92 @@ import Folder from '../components/folder'
           this.content = JSON.stringify(res.data, null, 4)
           this.status = res.status+" "+res.statusText
           console.log(JSON.parse(this.textbody))
+          this.loading = false
         }).catch(err => {
           console.log(err.response)
           this.content = JSON.stringify(err.response.data, null, 4)
           this.status = err.response.status+" "+err.response.statusText
+          this.loading = false
           console.log(this.headerArray())
-        })       
-      }, 
-      dialogFormVisibles(){
-       let inputHead = this.inputHeader  
-       inputHead[0]['type'] = 'text'
-       let inputAuth =  {}
-        if(this.auth == "Bearer Token"){
-        inputAuth = 
-       {
-        "auth": {
-         "type": "Bearer Token",
-         "bearer": [
-          {
-           "key": "token",
-           "value": this.token,
-           "type": "string"
-          }
-         ]
-        }
-       }   
-      }else  
-      inputAuth = 
-       {
-        "auth": {}
-       }  
+        })
+      },
       
+      dialogFormVisibles(){
+        let inputHead = this.inputHeader  
+        inputHead[0]['type'] = 'text'
+        let inputAuth =  {}
+        if(this.auth == "Bearer Token"){
+          inputAuth = {
+                        "auth": {
+                        "type": "Bearer Token",
+                        "bearer": [
+                          {
+                          "key": "token",
+                          "value": this.token,
+                          "type": "string"
+                          }
+                        ]
+                        }
+                      }   
+        } else  
+          inputAuth = {
+                        "auth": {}
+                      }  
           axios.post(this.server_api+'/requests/', {
-          name: this.saverequest.name,
-          id_folder: 1,
-	        method: this.method,
-          url: this.url,
-          body : this.textbody,
-          response : this.content,
-          auth : inputAuth,
-          header : inputHead,
-          params : this.inputParameter
-          }
-        )
-          .then(res => {
-          this.$message({
-          message: 'Success',
-          type: 'success'
+            name: this.saverequest.name,
+            id_folder: 1,
+            method: this.method,
+            url: this.url,
+            body : this.textbody,
+            response : this.content,
+            auth : inputAuth,
+            header : inputHead,
+            params : this.inputParameter
+          }).then(res => {
+            this.$message({
+            message: 'Success',
+            type: 'success'
+            })
+            console.log(res.data.data)
+          }).catch(err => {
+            this.$message({
+            message: 'Failed',
+            type: 'error'
           })
-          console.log(res.data.data)
-        })
-          .catch(err => {
-          this.$message({
-          message: 'Failed',
-          type: 'error'
-        })
-          console.log(err)
         })
           this.dialogFormVisible = false
-      }, 
+      },       
+      
       requestTab(tab, event) {
         console.log(tab, event);
       },
+
       paramsTab(tab, event) {
         console.log(tab, event);
       },
+
       addRowParameter() {
         this.inputParameter.push({
-          // keyParammeters: '',
-          // valuesParammeters: ''
+          keyParammeters: '',
+          valuesParammeters: ''
         })
       },
+
       deleteRowParam(indexParameter) {
         this.inputParameter.splice(indexParameter,1)
       },
+
       addRowsHeader() {
         this.inputHeader.push({
-          // keyHeaders: '',
-          // valueHeaders: '',
-          "type": "text"
+          keyHeaders: '',
+          valueHeaders: ''
         })
       },
+
       deleteRowsHeader(indexHeader) {
         this.inputHeader.splice(indexHeader,1)
       },
+
       convertToParams(params){
         let arr = {}
         params.forEach(params => {
@@ -442,6 +474,7 @@ import Folder from '../components/folder'
         })
         return arr
       },
+
       convertToArray(input){
         let arr = {}
         input.forEach(header => {
@@ -455,6 +488,7 @@ import Folder from '../components/folder'
         })
         return arr
       },
+
       headerArray(){
         let headerData = {}
         let tokenAuth = {}
@@ -467,6 +501,7 @@ import Folder from '../components/folder'
         let merged = {...headerData, ...tokenAuth};
         return merged
       },
+
       test(){
         this.$router.push('/test')
       }
