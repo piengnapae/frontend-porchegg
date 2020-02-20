@@ -131,6 +131,10 @@ export default {
           console.log(this.folder)
         })
         .catch(err => {
+          this.$message({
+          message: 'Folder Failed',
+          type: 'error'
+        })
           this.loading = false
           console.log(err)
         })
