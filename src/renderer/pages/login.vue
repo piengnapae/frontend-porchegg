@@ -111,7 +111,7 @@ import '@/assets/scss/login.scss';
           if (valid) {
            axios({
               method: 'post',
-              url: this.server_api+'/V1/login',
+              url: this.server_api+'/login',
               header: {
                'Content-type':'application/json'
               },

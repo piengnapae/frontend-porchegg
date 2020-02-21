@@ -132,7 +132,7 @@ import '@/assets/scss/register.scss';
           if (valid) {
             axios({
               method: 'post',
-              url: this.server_api+'/V1/register',
+              url: this.server_api+'/register',
               header: {
                'Content-type':'application/json'
               },
@@ -143,13 +143,12 @@ import '@/assets/scss/register.scss';
               }
             })
             .then(res => {
-              // this.$router.replace({ name: "login" });
-              // console.log(res)
               this.$message({
                 message: 'ลงทะเบียนสำเร็จ',
                 type: 'success'
               })
               this.$router.push('/login')
+              console.log(res)
             })
             .catch(err => {
               if(err.response.data.email && err.response.data.username){

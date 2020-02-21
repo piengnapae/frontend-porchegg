@@ -1,15 +1,16 @@
 <template>
  <el-container>
-    <el-header :height="50">
+    <el-header >
+       <!-- :height="50" -->
       <!--- Header ---->
        <el-row>
           <el-col :span="12">
             PorchEGG
           </el-col>
-          <el-col :span="12" style="textAlign: right;">
+          <el-col :span="11" style="textAlign: right;">
             Hi, Administrator ทดสอบผู้ใช้ระบบ 
-            <el-button icon="el-icon-switch-button" circle></el-button>
           </el-col>
+          <el-button icon="el-icon-switch-button"  style="padding-right: 10px" circle></el-button> 
        </el-row>
     </el-header>
     <el-container>
@@ -27,16 +28,17 @@
         <Collection></Collection>
         <Folder></Folder>
         </el-aside>
-   
-    
-   
-     
-      <el-main>
+  
+      <el-main style="position: relative;">
+        <div class="positionenv"> 
+          <Environment></Environment> 
+        </div>
         <el-row>
           <el-col :span="24">
             <div>
-              <i class="el-icon-info"></i> Title Request
-            </div>
+              <i class="el-icon-info"></i> Title Request  
+            </div>      
+               
           </el-col>
         </el-row>
 
@@ -177,7 +179,7 @@
             </el-col>
           </el-row>
 
-            <div v-if="!isShowHeader" >  
+            
               <div v-for="(head, indexHeader) in inputHeader" v-bind:key="indexHeader">
                 <div style="margin: 15px;"></div>
                 <el-row :gutter="25"> 
@@ -191,7 +193,7 @@
                     <el-button @click="deleteRowsHeader(indexHeader)" size="mini" type="danger" circle><i class="el-icon-delete"></i></el-button>
                   </el-col>
                 </el-row>
-              </div>
+            
 
               <div style="margin: 15px;"></div>
                 <center><el-button class="font" type="text" @click="addRowsHeader"><i class="el-icon-plus"></i> Add New</el-button></center>
@@ -267,12 +269,16 @@ import AceEditor from "vue2-ace-editor";
 import '@/assets/scss/main.scss';
 import Collection from '../components/collection'
 import Folder from '../components/folder'
+import Environment from '../components/Environment'
+
   export default {
     
     components: {
       AceEditor,
       Folder,
-      Collection
+      Collection,
+      Environment
+     
     },
     data() {
       return {
@@ -391,7 +397,7 @@ import Folder from '../components/folder'
         "auth": {}
        }  
       
-          axios.post(this.server_api+'/requests/', {
+          axios.post(this.server_api+'/V1/requests/', {
           name: this.saverequest.name,
           id_folder: 1,
 	        method: this.method,
