@@ -143,7 +143,11 @@ import '@/assets/scss/register.scss';
               }
             })
             .then(res => {
-              console.log(res)
+              this.$message({
+                message: 'ลงทะเบียนสำเร็จ',
+                type: 'success'
+              })
+              this.$router.push('/login')
             })
             .catch(err => {
               if(err.response.data.email && err.response.data.username){
