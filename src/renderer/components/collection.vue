@@ -34,7 +34,7 @@ export default {
 
   methods: {
     addCollection(collection) {
-      axios.post(this.server_api+'/collections', {
+      axios.post(this.server_api+'/V1/collections', {
         name: this.collection.name
       })
       .then(res => {
@@ -53,6 +53,7 @@ export default {
       })
 
       this.addCollectionDialog = false
+      this.collection.name = ''
     }
   }
 }

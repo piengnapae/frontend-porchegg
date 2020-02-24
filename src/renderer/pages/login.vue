@@ -8,20 +8,20 @@
     </el-row>
 
     <el-row>     
-        <el-form-item  label="Username" prop="username" >
+        <el-form-item  label="Username">
           <el-input id="input" type="text"  prefix-icon="fas fa-user" placeholder="myname112" v-model="ruleForm.username" ></el-input>
         </el-form-item> 
     </el-row>
 
     <el-row>
 
-        <el-form-item v-if="visible" label="Password" prop="pass" >
+        <el-form-item v-if="visible" label="Password" >
           <el-input type="password" v-model="ruleForm.pass" placeholder="eg.WeebnK" prefix-icon="fas fa-lock" >
             <i slot="suffix"  @click="changePass('show')"  class="fa fa-eye-slash"></i>
           </el-input>
         </el-form-item>
 
-        <el-form-item v-else label="Password" prop="pass">
+        <el-form-item v-else label="Password">
           <el-input type="text" v-model="ruleForm.pass" placeholder="eg.WeebnK" prefix-icon="fas fa-lock" >
             <i slot="suffix" @click="changePass('hide')" class="fa fa-eye"></i>
           </el-input>

@@ -143,8 +143,6 @@ import '@/assets/scss/register.scss';
               }
             })
             .then(res => {
-              // this.$router.replace({ name: "login" });
-              // console.log(res)
               this.$message({
                 message: 'ลงทะเบียนสำเร็จ',
                 type: 'success'
