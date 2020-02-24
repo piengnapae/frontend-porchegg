@@ -96,7 +96,6 @@ import {env} from '../nuxt.config';
           content: 'New Tab content'
         });
         this.editableTabsValue = newTabName
-        console.log('tab: '+this.editableTabsValue)
       },
 
       removeTab(targetName) {

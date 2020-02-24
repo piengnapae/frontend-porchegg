@@ -4,13 +4,12 @@
 
     <el-tabs v-model="tabs" type="card" closable @tab-remove="removeTab" class="box">
       <el-tab-pane
-        v-for="(item, index) in array"
+        v-for="(item) in array"
         :key="item.name"
         :label="item.title"
         :name="item.name"
       >
         <!-- {{item.content}} -->
-        {{index}}
         
         <Request :data="item.content"></Request>  
       </el-tab-pane>
