@@ -47,7 +47,8 @@
         :allow-drag="allowDrag">
 
         <span class="custom-tree-node" slot-scope="{ node, data }">
-          <span><i class="fas fa-folder" v-if="data.type == 'folder'"></i> {{ node.label }}</span>
+          <span v-if="data.type == 'folder'"><i class="fas fa-folder"></i> {{ node.label }}</span>
+          <span v-else @click="openTabRequest(data.request_id)">{{ node.label }}</span>
           <span>
             <el-dropdown>
               <span class="el-dropdown-link">
@@ -58,7 +59,9 @@
                   <el-button type="text"><i class="fas fa-edit"></i> Rename </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item v-if="data.type != 'request'">
-                  <el-button type="text" @click="formRequest(data.folder_id)" ><i class="fas fa-plus-circle"></i> Add Request </el-button>
+                  <el-button type="text" @click="formRequest(data.folder_id)" >
+                    <i class="fas fa-plus-circle"></i> Add Request 
+                  </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item v-if="data.type != 'request'">
                   <el-button type="text"><i class="fas fa-folder-plus"></i> Add Folder </el-button>
@@ -72,14 +75,22 @@
 
           <el-dialog title="Add Request" :visible.sync="addRequestDialog">
             <el-form :model="request">
-              <el-form-item label="Folder ID : " :label-width="formLabelWidth" hidden>
-                <el-input v-model="request.id" autocomplete="off"></el-input>
+              <el-form-item label="Folder ID : " :label-width="formLabelWidth">
+                <el-input v-model="request.id" autocomplete="off" hidden></el-input>
               </el-form-item>
               <el-form-item label="Request Name : " :label-width="formLabelWidth">
                 <el-input v-model="request.name" autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item label="Method : " :label-width="formLabelWidth">
-                <el-input v-model="request.method" autocomplete="off"></el-input>
+                <el-select v-model="request.method" style="width:100%">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
               </el-form-item>
               <el-form-item label="URL : " :label-width="formLabelWidth">
                 <el-input v-model="request.url" autocomplete="off"></el-input>
@@ -100,6 +111,7 @@ import axios from 'axios';
 import {env} from '../nuxt.config'
 
 export default {
+
   data() {
     return {
       server_api: env.SERVER_API,
@@ -110,25 +122,44 @@ export default {
       request: {
         id: '',
         name: '',
-        method:'',
+        method:'get',
         url:''
       },
       formLabelWidth: '150px',
-      loading: false
+      loading: false,
+      options: [
+        {
+          value: 'get',
+          label: 'GET'
+        }, {
+          value: 'post',
+          label: 'POST'
+        }, {
+          value: 'put',
+          label: 'PUT'
+        }, {
+          value: 'delete',
+          label: 'DELETE'
+        }
+      ],
     }
   },
+
   created:function () {
+    this.getCollection()
+  },
+
+  updated: function () {
     this.getCollection()
   },
 
   methods: {
     getFolder(id) {
-      axios.get(this.server_api+'/collections/'+id+'/folder-view')
+      axios.get(this.server_api+'/V1/collections/'+id+'/folder-view')
         .then(res => {
           this.folder = res.data.data
           this.collection_id = id
           this.loading = false
-          console.log(this.folder)
         })
         .catch(err => {
           this.loading = false
@@ -137,10 +168,9 @@ export default {
     },
 
     getCollection() {
-      axios.get(this.server_api+'/collections')
+      axios.get(this.server_api+'/V1/collections')
         .then(res => {
           this.collection = res.data.data
-          console.log(this.collection)
         })
         .catch(err => {
           console.log(err)
@@ -167,8 +197,8 @@ export default {
     },
 
     addRequest(request) {
-      axios.post(this.server_api+'/requests/', {
-        id_folder: this.request.id,
+      axios.post(this.server_api+'/V1/requests', {
+        id_folder: 1,
         name: this.request.name,
         method: this.request.method,
         url: this.request.url
@@ -189,6 +219,19 @@ export default {
       })
 
       this.addRequestDialog = false
+      this.request.id = ''
+      this.request.name = ''
+      this.request.method = 'get'
+      this.request.url = ''
+    },
+
+    openTabRequest(id){
+      this.$message({
+        message: id,
+        type: 'primary'
+      })
+
+      this.$emit('requestId', id)
     },
 
     remove(id) {

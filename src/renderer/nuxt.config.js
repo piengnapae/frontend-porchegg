@@ -16,6 +16,6 @@ module.exports = {
     
   ],
   env: {
-    SERVER_API: 'http://localhost:9000/V1',
+    SERVER_API: 'http://localhost:9000',
   }
 };
