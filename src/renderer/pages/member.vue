@@ -33,7 +33,7 @@
         >
           ADD NEW TAB
         </el-button> -->
-        <Tab :array="myArray" :tabsValue.sync="editableTabsValue" @remove="removeTab"></Tab>
+        <Tab :data="editableTabs" :tabsValue="editableTabsValue" @remove="removeTab"></Tab>
       </el-main>
     </el-container>
   </el-container>
@@ -61,7 +61,7 @@ import {env} from '../nuxt.config';
     data() {
       return {
         server_api: env.SERVER_API,
-        myArray: [{
+        editableTabs: [{
           title: 'New Tab',
           name: '1',
           content: 'New Tab content'
@@ -76,7 +76,7 @@ import {env} from '../nuxt.config';
         axios.get(this.server_api+'/V1/requests/'+id)
           .then(res => {
             let newTabName = ++this.tabIndex + ''
-            this.myArray.push({
+            this.editableTabs.push({
               title: res.data.name,
               name: newTabName,
               content: res.data
@@ -90,7 +90,7 @@ import {env} from '../nuxt.config';
 
       addTab(targetName) {
         let newTabName = ++this.tabIndex + ''
-        this.myArray.push({
+        this.editableTabs.push({
           title: 'New Tab',
           name: newTabName,
           content: 'New Tab content'
@@ -99,7 +99,7 @@ import {env} from '../nuxt.config';
       },
 
       removeTab(targetName) {
-        let tabs = this.myArray
+        let tabs = this.editableTabs
         let activeName = this.editableTabsValue
         if (activeName === targetName) {
           tabs.forEach((tab, index) => {
@@ -113,7 +113,7 @@ import {env} from '../nuxt.config';
         }
         
         this.editableTabsValue = activeName
-        this.myArray = tabs.filter(tab => tab.name !== targetName)
+        this.editableTabs = tabs.filter(tab => tab.name !== targetName)
       },
 
       test(){
