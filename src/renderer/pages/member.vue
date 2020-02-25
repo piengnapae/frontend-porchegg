@@ -27,13 +27,13 @@
       </el-aside>
       <!--- right sidebar --->
       <el-main>
-        <el-button
-        size="small"
-        @click="addTab(editableTabsValue)"
-      >
-        ADD NEW TAB
-      </el-button>
-        <Tab :array="myArray" :tabsValue="editableTabsValue" @remove="removeTab"></Tab>
+        <!-- <el-button
+          size="small"
+          @click="addTab(editableTabsValue)"
+        >
+          ADD NEW TAB
+        </el-button> -->
+        <Tab :array="myArray" :tabsValue.sync="editableTabsValue" @remove="removeTab"></Tab>
       </el-main>
     </el-container>
   </el-container>

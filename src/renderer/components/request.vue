@@ -2,8 +2,12 @@
   <div>
     <el-row>
       <el-col :span="24">
-        <div>
-          <i class="el-icon-info"></i> Title Request
+        <div v-if="data.name != null">
+          <i class="el-icon-info"></i> {{data.name}}
+        </div>
+
+        <div v-else>
+          <i class="el-icon-info"></i> Untitled Request
         </div>
       </el-col>
     </el-row>
@@ -20,16 +24,7 @@
     <div v-if="isShowing" class="box">
       <el-row :gutter="15">
         <el-col :span="4">
-          <el-select v-if="method != null" v-model="method" style="width:100%">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-          <el-select v-else v-model="methoddefault" style="width:100%">
+          <el-select v-model="method" style="width:100%">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -313,8 +308,7 @@ export default {
         }
       ],
       auth: 'No Auth',
-      method: this.data.method,
-      methoddefault: 'get',
+      method: 'get',
       url: this.data.url,
       token: '',
       username: '',
