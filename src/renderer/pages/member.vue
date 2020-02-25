@@ -340,7 +340,6 @@ import Environment from '../components/Environment'
         paramsInput:'',
         folders :[],
         dialogFormVisible: false,
-        formLabelWidth: '180px',
         labelPosition: 'left',
         saverequest: {
           name: ''
@@ -396,7 +395,6 @@ import Environment from '../components/Environment'
        {
         "auth": {}
        }  
-      
           axios.post(this.server_api+'/V1/requests/', {
           name: this.saverequest.name,
           id_folder: 1,
@@ -433,8 +431,6 @@ import Environment from '../components/Environment'
       },
       addRowParameter() {
         this.inputParameter.push({
-          // keyParammeters: '',
-          // valuesParammeters: ''
         })
       },
       deleteRowParam(indexParameter) {
@@ -442,8 +438,6 @@ import Environment from '../components/Environment'
       },
       addRowsHeader() {
         this.inputHeader.push({
-          // keyHeaders: '',
-          // valueHeaders: '',
           "type": "text"
         })
       },
