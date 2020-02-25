@@ -72,37 +72,40 @@
               </el-dropdown-menu>
             </el-dropdown>
           </span>
-
-          <el-dialog title="Add Request" :visible.sync="addRequestDialog">
-            <el-form :model="request">
-              <el-form-item label="Folder ID : " :label-width="formLabelWidth">
-                <el-input v-model="request.id" autocomplete="off" hidden></el-input>
-              </el-form-item>
-              <el-form-item label="Request Name : " :label-width="formLabelWidth">
-                <el-input v-model="request.name" autocomplete="off"></el-input>
-              </el-form-item>
-              <el-form-item label="Method : " :label-width="formLabelWidth">
-                <el-select v-model="request.method" style="width:100%">
-                  <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="URL : " :label-width="formLabelWidth">
-                <el-input v-model="request.url" autocomplete="off"></el-input>
-              </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-              <el-button type="danger" @click="addRequestDialog = false">CANCLE</el-button>
-              <el-button type="success" @click="addRequest('request')">SAVE</el-button>
-            </span>
-          </el-dialog>
         </span>
       </el-tree>
+
+      <el-dialog title="Add Request" :visible.sync="addRequestDialog">
+        <el-form :model="request">
+          <el-form-item label="Folder ID : " :label-width="formLabelWidth" hidden>
+            <el-input v-model="request.id" autocomplete="off"></el-input>
+          </el-form-item>
+
+          <el-form-item label="Request Name : " :label-width="formLabelWidth">
+            <el-input v-model="request.name" autocomplete="off"></el-input>
+          </el-form-item>
+          
+          <el-form-item label="Method : " :label-width="formLabelWidth">
+            <el-select v-model="request.method" style="width:100%">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="URL : " :label-width="formLabelWidth">
+            <el-input v-model="request.url" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="danger" @click="addRequestDialog = false">CANCLE</el-button>
+          <el-button type="success" @click="addRequest('request')">SAVE</el-button>
+        </span>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -230,11 +233,6 @@ export default {
     },
 
     openTabRequest(id){
-      this.$message({
-        message: id,
-        type: 'primary'
-      })
-
       this.$emit('requestId', id)
     },
 

@@ -2,7 +2,7 @@
   <div>
     <!-- {{array}} -->
 
-    <el-tabs v-model="tabs" type="card" closable @tab-remove="removeTab" class="box">
+    <el-tabs v-model="tabsValue" type="card" closable @tab-remove="removeTab" class="box">
       <el-tab-pane
         v-for="(item) in array"
         :key="item.name"
@@ -29,27 +29,19 @@ export default {
     'tabsValue'
   ],
 
+  components: {
+    Request
+  },
+
   data () {
     return {
       tabs: this.tabsValue
     }
   },
-
-  components: {
-    Request
-  },
-
-  updated: function () {
-    this.tabUpdate()
-  },
-
+  
   methods: {
     removeTab(targetName) {
       this.$emit('remove', targetName)
-    },
-
-    tabUpdate() {
-      this.tabs = this.tabsValue
     }
   }
 }
