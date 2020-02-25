@@ -67,12 +67,14 @@ import {env} from '../nuxt.config';
           content: 'New Tab content'
         }],
         tabIndex: 1,
-        editableTabsValue: '1'
+        editableTabsValue: '1',
+        dialog: null,
         }
     },
     
     methods: {
       clickFolder (id) {
+        this.openMessageLoading()
         axios.get(this.server_api+'/V1/requests/'+id)
           .then(res => {
             let newTabName = ++this.tabIndex + ''
@@ -82,6 +84,7 @@ import {env} from '../nuxt.config';
               content: res.data
             });
             this.editableTabsValue = newTabName;
+            this.closeMessageLoading()
           })
           .catch(err => {
             console.log(err)
@@ -118,6 +121,15 @@ import {env} from '../nuxt.config';
 
       test(){
         this.$router.push('/test')
+      },
+      openMessageLoading(){
+        this.dialog = this.$message({
+          message: 'Loading...',
+          duration: 0,
+        });
+      },
+      closeMessageLoading(){
+        this.dialog.close()
       }
     }
   }
