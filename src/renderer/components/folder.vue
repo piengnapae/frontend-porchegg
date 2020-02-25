@@ -28,7 +28,9 @@
                     <el-button type="text"><i class="fas fa-file-export"></i> Export </el-button>
                   </el-dropdown-item>
                   <el-dropdown-item>
-                    <el-button type="text"><i class="fas fa-trash-alt"></i> Delete </el-button>
+                    <el-button type="text" @click="remove(collection.name, 'collection', collection.id)">
+                      <i class="fas fa-trash-alt"></i> Delete
+                    </el-button>
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -73,7 +75,12 @@
                   </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item>
-                  <el-button type="text"><i class="fas fa-trash-alt"></i> Delete </el-button>
+                  <el-button v-if="data.type == 'folder'" type="text" @click="remove(data.label, data.type, data.folder_id)">
+                    <i class="fas fa-trash-alt"></i> Delete
+                  </el-button>
+                  <el-button v-else type="text" @click="remove(data.label, data.type, data.request_id)">
+                    <i class="fas fa-trash-alt"></i> Delete
+                  </el-button>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -90,7 +97,7 @@
           </el-form-item>
 
           <el-form-item label="Request Name : " :label-width="formLabelWidth">
-            <el-input v-model="request.name" autocomplete="off"></el-input>
+            <el-input v-model="request.name" autocomplete="off" required></el-input>
           </el-form-item>
           
           <el-form-item label="Method : " :label-width="formLabelWidth">
@@ -106,7 +113,7 @@
           </el-form-item>
 
           <el-form-item label="URL : " :label-width="formLabelWidth">
-            <el-input v-model="request.url" autocomplete="off"></el-input>
+            <el-input v-model="request.url" autocomplete="off" required></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -210,6 +217,18 @@ export default {
 
   updated: function () {
     this.getCollection()
+    if(this.addFolderDialog == false){
+      this.folder.name = ''
+    }
+
+    if(this.addRequestDialog == false){
+      this.request.name = ''
+      this.request.url = ''
+    }
+
+    if(this.renameCollection == false){
+      this.name_collection = ''
+    }
   },
 
   methods: {
@@ -352,44 +371,71 @@ export default {
       this.$emit('requestId', id)
     },
 
-    remove(id) {
-      console.log(id)
+    remove(name, type, id) {
+
+      this.$confirm('Do you want to delete ' + type + ': ' + name +'?', 'Delete '+ type, {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          
+          // children.splice(index, 1)
+          axios.delete(this.server_api+'/V1/' + type + 's/' + id)
+            .then(res => {
+                this.$message({
+                type: 'success',
+                message: 'Delete completed'
+              })
+            })
+            .catch(err => {
+              this.$message({
+                message: "Can't Delete, please try again!",
+                type: 'error'
+              })
+              console.log(err)
+            })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled'
+          })
+        })
     },
 
     handleDragStart(node, ev) {
-      console.log('drag start', node);
+      console.log('drag start', node)
     },
 
     handleDragEnter(draggingNode, dropNode, ev) {
-      console.log('tree drag enter: ', dropNode.label);
+      console.log('tree drag enter: ', dropNode.label)
     },
 
     handleDragLeave(draggingNode, dropNode, ev) {
-      console.log('tree drag leave: ', dropNode.label);
+      console.log('tree drag leave: ', dropNode.label)
     },
 
     handleDragOver(draggingNode, dropNode, ev) {
-      console.log('tree drag over: ', dropNode.label);
+      console.log('tree drag over: ', dropNode.label)
     },
 
     handleDragEnd(draggingNode, dropNode, dropType, ev) {
-      console.log('tree drag end: ', dropNode && dropNode.label, dropType);
+      console.log('tree drag end: ', dropNode && dropNode.label, dropType)
     },
 
     handleDrop(draggingNode, dropNode, dropType, ev) {
-      console.log('tree drop: ', dropNode.label, dropType);
+      console.log('tree drop: ', dropNode.label, dropType)
     },
 
     allowDrop(draggingNode, dropNode, type) {
       if (dropNode.data.label === 'Level two 3-1') {
-        return type !== 'inner';
+        return type !== 'inner'
       } else {
-        return true;
+        return true
       }
     },
 
     allowDrag(draggingNode) {
-      return draggingNode.data.label.indexOf('Level three 3-1-1') === -1;
+      return draggingNode.data.label.indexOf('Level three 3-1-1') === -1
     }
   }
 }
