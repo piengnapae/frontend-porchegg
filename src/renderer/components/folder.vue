@@ -1,6 +1,6 @@
 <template>  
   <div v-loading="loading">
-    <div v-for="(collection, index) in collection" v-bind:key="index">
+    <div v-for="(collection, index) in collections" v-bind:key="index">
       <table style="width:100%">
         <tr>
           <td width="90%">
@@ -15,10 +15,14 @@
 
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item>
-                    <el-button type="text"><i class="fas fa-edit"></i> Rename </el-button>
+                    <el-button type="text" @click="renameCollection(collection.id, collection.name)">
+                      <i class="fas fa-edit"></i> Rename 
+                    </el-button>
                   </el-dropdown-item>
                   <el-dropdown-item>
-                    <el-button type="text"><i class="fas fa-folder-plus"></i> Add Folder </el-button>
+                    <el-button type="text" @click="formFolder(collection.id)">
+                      <i class="fas fa-folder-plus"></i> Add Folder 
+                    </el-button>
                   </el-dropdown-item>
                   <el-dropdown-item>
                     <el-button type="text"><i class="fas fa-file-export"></i> Export </el-button>
@@ -33,9 +37,9 @@
         </tr>
       </table>
       <el-tree
-        :data="folder"
+        :data="folders"
         node-key="id"
-        v-if="folder != '' && collection.id == collection_id"
+        v-if="folders != '' && collection.id == collection_id"
         @node-drag-start="handleDragStart"
         @node-drag-enter="handleDragEnter"
         @node-drag-leave="handleDragLeave"
@@ -59,12 +63,14 @@
                   <el-button type="text"><i class="fas fa-edit"></i> Rename </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item v-if="data.type != 'request'">
-                  <el-button type="text" @click="formRequest(data.folder_id)" >
+                  <el-button type="text" @click="formRequest(data.folder_id, null)" >
                     <i class="fas fa-plus-circle"></i> Add Request 
                   </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item v-if="data.type != 'request'">
-                  <el-button type="text"><i class="fas fa-folder-plus"></i> Add Folder </el-button>
+                  <el-button type="text" @click="formFolder(collection.id, data.folder_id)">
+                    <i class="fas fa-folder-plus"></i> Add Folder 
+                  </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item>
                   <el-button type="text"><i class="fas fa-trash-alt"></i> Delete </el-button>
@@ -75,10 +81,12 @@
         </span>
       </el-tree>
 
+       <!-- dialog request -->
+
       <el-dialog title="Add Request" :visible.sync="addRequestDialog">
         <el-form :model="request">
           <el-form-item label="Folder ID : " :label-width="formLabelWidth" hidden>
-            <el-input v-model="request.id" autocomplete="off"></el-input>
+            <el-input v-model="request.id_folder" :disabled="true"></el-input>
           </el-form-item>
 
           <el-form-item label="Request Name : " :label-width="formLabelWidth">
@@ -106,6 +114,46 @@
           <el-button type="success" @click="addRequest('request')">SAVE</el-button>
         </span>
       </el-dialog>
+
+      <!-- dialog folder -->
+
+        <el-dialog title="Add Folder" :visible.sync="addFolderDialog">
+        <el-form :model="folder">
+          <el-form-item label="Collection ID : " :label-width="formLabelWidth" hidden>
+            <el-input v-model="folder.id_collection" :disabled="true"></el-input>
+          </el-form-item>
+
+          <el-form-item label="Parent ID : " :label-width="formLabelWidth" hidden>
+            <el-input v-model="folder.parent_id" :disabled="true"></el-input>
+          </el-form-item>
+
+          <el-form-item label="Folder Name : " :label-width="formLabelWidth">
+            <el-input v-model="folder.name" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="danger" @click="addFolderDialog = false">CANCLE</el-button>
+          <el-button type="success" @click="addFolder('folder')">SAVE</el-button>
+        </span>
+      </el-dialog>
+
+      <!-- dialog rename collection -->
+
+        <el-dialog title="Rename Collection" :visible.sync="renameCollectionDialog">
+        <el-form :model="folder">
+          <el-form-item label="Collection ID : " :label-width="formLabelWidth" hidden>
+            <el-input v-model="collection_id" :disabled="true"></el-input>
+          </el-form-item>
+
+          <el-form-item label="Name : " :label-width="formLabelWidth">
+            <el-input v-model="name_collection" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="danger" @click="renameCollectionDialog = false">CANCLE</el-button>
+          <el-button type="success" @click="updateCollection">SAVE</el-button>
+        </span>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -118,15 +166,23 @@ export default {
   data() {
     return {
       server_api: env.SERVER_API,
-      folder :[],
-      collection:[],
+      folders :[],
+      collections:[],
       collection_id: null,
       addRequestDialog: false,
+      addFolderDialog: false,
+      renameCollectionDialog: false,
+      name_collection: '',
       request: {
-        id: '',
+        id_folder: '',
         name: '',
         method:'get',
         url:''
+      },
+      folder: {
+        id_collection: '',
+        name: '',
+        parent_id: null
       },
       formLabelWidth: '150px',
       loading: false,
@@ -160,7 +216,7 @@ export default {
     getFolder(id) {
       axios.get(this.server_api+'/V1/collections/'+id+'/folder-view')
         .then(res => {
-          this.folder = res.data.data
+          this.folders = res.data.data
           this.collection_id = id
           this.loading = false
         })
@@ -174,10 +230,39 @@ export default {
         })
     },
 
+    renameCollection(id, name) {
+      this.renameCollectionDialog = true
+      this.collection_id = id
+      this.name_collection = name
+    },
+
+    updateCollection() {
+      axios.put(this.server_api+'/V1/collections/' + this.collection_id, {
+        name: this.name_collection
+      })
+      .then(res => {
+       this.$message({
+          message: 'Rename Success!',
+          type: 'success'
+        })
+      })
+      .catch(err => {
+        this.$message({
+          message: "Can't rename collection, please try again!",
+          type: 'error'
+        })
+        console.log(err)
+      })
+
+      this.renameCollectionDialog = false
+      this.collection_id = null
+      this.name_collection = ''
+    },
+
     getCollection() {
       axios.get(this.server_api+'/V1/collections')
         .then(res => {
-          this.collection = res.data.data
+          this.collections = res.data.data
         })
         .catch(err => {
           console.log(err)
@@ -194,7 +279,7 @@ export default {
     },
 
     formRequest(id){
-      this.request.id = id
+      this.request.id_folder = id
       this.addRequestDialog = true
     },
 
@@ -203,23 +288,54 @@ export default {
       this.showFolder(id)
     },
 
+    formFolder(collection, parent){
+      this.folder.id_collection = collection
+      this.folder.parent_id = parent
+      this.addFolderDialog = true
+    },
+
+    addFolder(folder) {
+      axios.post(this.server_api+'/V1/folders', {
+        id_collection: this.folder.id_collection,
+        name: this.folder.name,
+        parent_id: this.folder.parent_id
+      })
+      .then(res => {
+       this.$message({
+          message: 'Added New Folder',
+          type: 'success'
+        })
+      })
+      .catch(err => {
+        this.$message({
+          message: "Can't add the new folder, please try again!",
+          type: 'error'
+        })
+        console.log(err)
+      })
+
+      this.addFolderDialog = false
+      this.folder.id_collection = ''
+      this.folder.name = ''
+      this.folder.parent_id = null
+    },
+
     addRequest(request) {
       axios.post(this.server_api+'/V1/requests', {
-        id_folder: 1,
+        id_folder: this.request.id_folder,
         name: this.request.name,
         method: this.request.method,
         url: this.request.url
       })
       .then(res => {
        this.$message({
-          message: 'Success!!',
+          message: 'Added New Request',
           type: 'success'
         })
-        console.log(res.data.data)
       })
       .catch(err => {
         this.$message({
-          message: 'Failed!!',
+          message: "Can't add the new request, please try again!",
           type: 'error'
         })
         console.log(err)
