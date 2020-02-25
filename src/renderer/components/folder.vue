@@ -1,6 +1,6 @@
 <template>  
   <div v-loading="loading">
-    <div v-for="(collection, index) in collection" v-bind:key="index">
+    <div v-for="(collection, index) in collections" v-bind:key="index">
       <table style="width:100%">
         <tr>
           <td width="90%">
@@ -15,7 +15,9 @@
 
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item>
-                    <el-button type="text"><i class="fas fa-edit"></i> Rename </el-button>
+                    <el-button type="text" @click="renameCollection(collection.id, collection.name)">
+                      <i class="fas fa-edit"></i> Rename 
+                    </el-button>
                   </el-dropdown-item>
                   <el-dropdown-item>
                     <el-button type="text" @click="formFolder(collection.id)">
@@ -84,7 +86,7 @@
       <el-dialog title="Add Request" :visible.sync="addRequestDialog">
         <el-form :model="request">
           <el-form-item label="Folder ID : " :label-width="formLabelWidth" hidden>
-            <el-input v-model="request.id_folder" autocomplete="off"></el-input>
+            <el-input v-model="request.id_folder" :disabled="true"></el-input>
           </el-form-item>
 
           <el-form-item label="Request Name : " :label-width="formLabelWidth">
@@ -118,11 +120,11 @@
         <el-dialog title="Add Folder" :visible.sync="addFolderDialog">
         <el-form :model="folder">
           <el-form-item label="Collection ID : " :label-width="formLabelWidth" hidden>
-            <el-input v-model="folder.id_collection" autocomplete="off"></el-input>
+            <el-input v-model="folder.id_collection" :disabled="true"></el-input>
           </el-form-item>
 
           <el-form-item label="Parent ID : " :label-width="formLabelWidth" hidden>
-            <el-input v-model="folder.parent_id" autocomplete="off"></el-input>
+            <el-input v-model="folder.parent_id" :disabled="true"></el-input>
           </el-form-item>
 
           <el-form-item label="Folder Name : " :label-width="formLabelWidth">
@@ -132,6 +134,24 @@
         <span slot="footer" class="dialog-footer">
           <el-button type="danger" @click="addFolderDialog = false">CANCLE</el-button>
           <el-button type="success" @click="addFolder('folder')">SAVE</el-button>
+        </span>
+      </el-dialog>
+
+      <!-- dialog rename collection -->
+
+        <el-dialog title="Rename Collection" :visible.sync="renameCollectionDialog">
+        <el-form :model="folder">
+          <el-form-item label="Collection ID : " :label-width="formLabelWidth" hidden>
+            <el-input v-model="collection_id" :disabled="true"></el-input>
+          </el-form-item>
+
+          <el-form-item label="Name : " :label-width="formLabelWidth">
+            <el-input v-model="name_collection" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="danger" @click="renameCollectionDialog = false">CANCLE</el-button>
+          <el-button type="success" @click="updateCollection">SAVE</el-button>
         </span>
       </el-dialog>
     </div>
@@ -147,10 +167,12 @@ export default {
     return {
       server_api: env.SERVER_API,
       folders :[],
-      collection:[],
+      collections:[],
       collection_id: null,
       addRequestDialog: false,
       addFolderDialog: false,
+      renameCollectionDialog: false,
+      name_collection: '',
       request: {
         id_folder: '',
         name: '',
@@ -208,10 +230,39 @@ export default {
         })
     },
 
+    renameCollection(id, name) {
+      this.renameCollectionDialog = true
+      this.collection_id = id
+      this.name_collection = name
+    },
+
+    updateCollection() {
+      axios.put(this.server_api+'/V1/collections/' + this.collection_id, {
+        name: this.name_collection
+      })
+      .then(res => {
+       this.$message({
+          message: 'Rename Success!',
+          type: 'success'
+        })
+      })
+      .catch(err => {
+        this.$message({
+          message: "Can't rename collection, please try again!",
+          type: 'error'
+        })
+        console.log(err)
+      })
+
+      this.renameCollectionDialog = false
+      this.collection_id = null
+      this.name_collection = ''
+    },
+
     getCollection() {
       axios.get(this.server_api+'/V1/collections')
         .then(res => {
-          this.collection = res.data.data
+          this.collections = res.data.data
         })
         .catch(err => {
           console.log(err)
