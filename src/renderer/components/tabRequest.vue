@@ -1,10 +1,9 @@
 <template>
   <div>
     <!-- {{array}} -->
-
-    <el-tabs v-model="tabsValue" type="card" closable @tab-remove="removeTab" class="box">
+    <el-tabs v-model="tabs" type="card" closable @tab-remove="removeTab" class="box">
       <el-tab-pane
-        v-for="(item) in array"
+        v-for="(item) in data"
         :key="item.name"
         :label="item.title"
         :name="item.name"
@@ -25,7 +24,7 @@ import {env} from '../nuxt.config';
 export default {
 
   props: [
-    'array',
+    'data',
     'tabsValue'
   ],
 
@@ -35,7 +34,7 @@ export default {
 
   data () {
     return {
-      tabs: this.tabsValue
+      tabs: this.tabsValue,
     }
   },
   
