@@ -1,6 +1,6 @@
 <template>  
-  <div v-loading="loading">
-    <div v-for="(collection, index) in collections" v-bind:key="index">
+  <div v-loading="loading" style="min-height: 400px">
+    <div v-for="(collection, index) in collection" v-bind:key="index">
       <table style="width:100%">
         <tr>
           <td width="90%">
@@ -193,6 +193,7 @@ export default {
       },
       formLabelWidth: '150px',
       loading: false,
+      collectionLoading: false,
       options: [
         {
           value: 'get',
@@ -230,9 +231,9 @@ export default {
       this.name_collection = ''
     }
   },
-
   methods: {
     getFolder(id) {
+      this.loading = true
       axios.get(this.server_api+'/V1/collections/'+id+'/folder-view')
         .then(res => {
           this.folders = res.data.data
@@ -244,7 +245,7 @@ export default {
           message: 'Folder Failed',
           type: 'error'
         })
-          this.loading = false
+          // this.loading = false
           console.log(err)
         })
     },
@@ -279,9 +280,11 @@ export default {
     },
 
     getCollection() {
+      this.loading = true
       axios.get(this.server_api+'/V1/collections')
         .then(res => {
-          this.collections = res.data.data
+          this.collection = res.data.data
+          this.loading = false
         })
         .catch(err => {
           console.log(err)
@@ -303,7 +306,6 @@ export default {
     },
 
     collectionBt(id) {
-      this.loading = true
       this.showFolder(id)
     },
 
