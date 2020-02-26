@@ -261,7 +261,7 @@ export default {
       this.loading = true
       axios.get(this.server_api+'/V1/collections')
         .then(res => {
-          this.collection = res.data.data
+          this.collections = res.data.data
           this.loading = false
         })
         .catch(err => {
