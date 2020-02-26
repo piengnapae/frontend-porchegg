@@ -98,6 +98,8 @@ import {env} from '../nuxt.config';
           .catch(err => {
             console.log(err)
           })
+        }else{
+          this.closeMessageLoading()
         }
       },
 
