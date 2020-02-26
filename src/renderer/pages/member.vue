@@ -99,7 +99,6 @@ import {env} from '../nuxt.config';
             console.log(err)
           })
         }
-        this.closeMessageLoading()
       },
 
       addTab(targetName) {
