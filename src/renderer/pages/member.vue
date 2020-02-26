@@ -64,7 +64,8 @@ import {env} from '../nuxt.config';
         editableTabs: [{
           title: 'New Tab',
           name: '1',
-          content: 'New Tab content'
+          content: 'New Tab content',
+          id: 0
         }],
         tabIndex: 1,
         editableTabsValue: '1',
@@ -75,13 +76,21 @@ import {env} from '../nuxt.config';
     methods: {
       clickFolder (id) {
         this.openMessageLoading()
-        axios.get(this.server_api+'/V1/requests/'+id)
+        let arrId = []
+
+        this.editableTabs.forEach(tab => {
+          arrId.push(tab['id_request'])
+        })
+
+        if(!arrId.includes(id)){
+          axios.get(this.server_api+'/V1/requests/'+id)
           .then(res => {
             let newTabName = ++this.tabIndex + ''
             this.editableTabs.push({
               title: res.data.name,
               name: newTabName,
-              content: res.data
+              content: res.data,
+              id_request: id
             });
             this.editableTabsValue = newTabName;
             this.closeMessageLoading()
@@ -89,6 +98,8 @@ import {env} from '../nuxt.config';
           .catch(err => {
             console.log(err)
           })
+        }
+        this.closeMessageLoading()
       },
 
       addTab(targetName) {

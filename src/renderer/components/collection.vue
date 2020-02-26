@@ -48,6 +48,7 @@ export default {
           message: 'Success Added Collection!!',
           type: 'success'
         })
+        // this.$emit()
       })
       .catch(err => {
         this.$message({
