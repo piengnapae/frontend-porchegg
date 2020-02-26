@@ -207,7 +207,7 @@ export default {
 
     addRequest(request) {
       axios.post(this.server_api+'/V1/requests', {
-        id_folder: 1,
+        id_folder: this.request.id,
         name: this.request.name,
         method: this.request.method,
         url: this.request.url
@@ -217,14 +217,13 @@ export default {
           message: 'Success!!',
           type: 'success'
         })
-        console.log(res.data.data)
       })
       .catch(err => {
         this.$message({
           message: 'Failed!!',
           type: 'error'
         })
-        console.log(err)
+        console.log(err.response.data)
       })
 
       this.addRequestDialog = false

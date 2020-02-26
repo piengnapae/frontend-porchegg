@@ -42,7 +42,7 @@ export default {
           message: 'Success Added Collection!!',
           type: 'success'
         })
-        console.log(res.data.data)
+        // this.$emit()
       })
       .catch(err => {
         this.$message({

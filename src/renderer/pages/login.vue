@@ -121,7 +121,6 @@ import '@/assets/scss/login.scss';
               }
             })
             .then(res => {
-              console.log(res)
               this.$router.push('/member')
             })
             .catch(err =>{
