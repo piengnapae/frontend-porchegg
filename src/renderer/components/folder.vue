@@ -123,7 +123,7 @@ export default {
       collection_id: null,
       addRequestDialog: false,
       request: {
-        id: '',
+        id_folder: '',
         name: '',
         method:'get',
         url:''
@@ -197,7 +197,7 @@ export default {
     },
 
     formRequest(id){
-      this.request.id = id
+      this.request.id_folder = id
       this.addRequestDialog = true
     },
 
@@ -207,7 +207,7 @@ export default {
 
     addRequest(request) {
       axios.post(this.server_api+'/V1/requests', {
-        id_folder: this.request.id,
+        id_folder: this.request.id_folder,
         name: this.request.name,
         method: this.request.method,
         url: this.request.url
