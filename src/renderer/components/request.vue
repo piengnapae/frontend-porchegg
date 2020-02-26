@@ -362,14 +362,12 @@ export default {
       .then(res => { 
         this.content = JSON.stringify(res.data, null, 4)
         this.status = res.status+" "+res.statusText
-        console.log(JSON.parse(this.textbody))
         this.loading = false
       }).catch(err => {
         console.log(err.response)
         this.content = JSON.stringify(err.response.data, null, 4)
         this.status = err.response.status+" "+err.response.statusText
         this.loading = false
-        console.log(this.headerArray())
       })
     },
       

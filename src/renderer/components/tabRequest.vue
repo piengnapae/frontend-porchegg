@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- {{array}} -->
-    <el-tabs v-model="tabs" type="card" closable @tab-remove="removeTab" class="box">
+    <el-tabs v-model="tabsValue" type="card" closable @tab-remove="removeTab" class="box">
       <el-tab-pane
         v-for="(item) in data"
         :key="item.name"
