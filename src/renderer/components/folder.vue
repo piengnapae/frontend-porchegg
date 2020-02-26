@@ -215,7 +215,7 @@ export default {
       this.loading = true
       axios.get(this.server_api+'/V1/collections/'+id+'/folder-view')
         .then(res => {
-          this.folder = res.data.data
+          this.folders = res.data.data
           this.collection_id = id
           this.loading = false
         })
