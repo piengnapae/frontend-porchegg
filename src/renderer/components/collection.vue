@@ -5,7 +5,7 @@
     <el-dialog title="Add Collection" :visible.sync="addCollectionDialog">
       <el-form :model="collection">
         <el-form-item label="Collection Name : " :label-width="formLabelWidth">
-          <el-input v-model="collection.name" autocomplete="off"></el-input>
+          <el-input v-model="collection.name"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -29,6 +29,12 @@ export default {
         name: ''
       },
       formLabelWidth: '150px'
+    }
+  },
+
+  updated: function () {
+    if(this.addCollectionDialog == false){
+      this.collection.name = ''
     }
   },
 
