@@ -312,7 +312,7 @@ export default {
       ],
       auth: 'No Auth',
       method: this.data.method || 'get',
-      url: this.data.url,
+      url: this.data.url || '',
       token: '',
       username: '',
       password: '',
