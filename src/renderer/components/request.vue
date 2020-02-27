@@ -311,7 +311,7 @@ export default {
         }
       ],
       auth: 'No Auth',
-      method: 'get',
+      method: this.data.method,
       url: this.data.url,
       token: '',
       username: '',
