@@ -128,7 +128,6 @@ export default {
           this.folder = res.data.data
           this.collection_id = id
           this.loading = false
-          console.log(this.folder)
         })
         .catch(err => {
           this.$message({
@@ -144,7 +143,6 @@ export default {
       axios.get(this.server_api+'/collections')
         .then(res => {
           this.collection = res.data.data
-          console.log(this.collection)
         })
         .catch(err => {
           console.log(err)
@@ -182,7 +180,6 @@ export default {
           message: 'Success!!',
           type: 'success'
         })
-        console.log(res.data.data)
       })
       .catch(err => {
         this.$message({

@@ -30,15 +30,14 @@
         </el-aside>
   
       <el-main style="position: relative;">
-        <div class="positionenv"> 
-          <Environment></Environment> 
-        </div>
         <el-row>
           <el-col :span="24">
             <div>
               <i class="el-icon-info"></i> Title Request  
             </div>      
-               
+               <div class="positionenv"> 
+          <Environment></Environment> 
+        </div>
           </el-col>
         </el-row>
 
@@ -412,7 +411,6 @@ import Environment from '../components/Environment'
           message: 'Success',
           type: 'success'
           })
-          console.log(res.data.data)
         })
           .catch(err => {
           this.$message({

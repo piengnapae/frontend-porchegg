@@ -1,31 +1,48 @@
 <template>
   <div>
-    <el-select v-model="environments" placeholder="Select">
-      <el-option
-        v-for="(createEnvironment, index) in createEnvironment" v-bind:key="index"
-        :label="createEnvironment.name"
-        :value="createEnvironment.name">
+    <el-select v-if="createEnvironment.length > 0" v-model="environments" >
+      <el-option label="No Environment" value="No Environment">
       </el-option>
-  </el-select>
+      <el-option
+        v-for="(createEnvironment, index) in createEnvironment" v-bind:key="index" 
+        :label="createEnvironment.name" 
+        :value="createEnvironment.name"
+        >
+      </el-option>
+    </el-select>
+
+    <el-select v-else v-model="environments" >
+      <el-option :label="environments" :value="environments">
+      </el-option>
+    </el-select>
 
     <el-button circle><i class="el-icon-view" ></i></el-button>
-    <el-button  icon="el-icon-setting"   @click="addEnvironmentDialog = true" circle></el-button>     
+    <el-button  icon="el-icon-setting" @click="addEnvironmentDialog = true" circle></el-button>     
     <el-dialog title="Environment" :visible.sync="addEnvironmentDialog">
       <div  v-for="(createEnvironment, index) in createEnvironment" v-bind:key="index">
         {{ createEnvironment.name }}
-        <el-button style="position: absolute; right: 275px;" icon="el-icon-copy-document" ></el-button>
-        <el-button style="position: absolute; right: 200px;"  icon="fas fa-edit" @click="openEditBox(createEnvironment.id)"></el-button>
-        <el-button style="position: absolute; right: 125px;" icon="fas fa-trash-alt" @click="remove(createEnvironment.id)" ></el-button>
-        <el-button  style="position: absolute; right: 50px;" icon="fas fa-file-export" ></el-button>
-          <el-divider></el-divider>
+        <el-button style="position: absolute; right: 275px;" 
+          icon="el-icon-copy-document" @click="duplicateEnvironment(createEnvironment.id)">
+        </el-button>
+        <el-button style="position: absolute; right: 200px;"  
+          icon="fas fa-edit" @click="openEditBox(createEnvironment.id)">
+        </el-button>
+        <el-button style="position: absolute; right: 125px;" 
+          icon="fas fa-trash-alt" @click="remove(createEnvironment.id)" >
+        </el-button>
+        <el-button  style="position: absolute; right: 50px;" 
+          icon="fas fa-file-export" >
+        </el-button>
+        
+        <el-divider></el-divider> 
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="danger" @click="addEnvironmentDialog = false">Cancel</el-button>
-        <el-button type="success" @click="CreateEnvironmentDialog = true">Create</el-button>
+        <el-button type="success" @click="createEnvironmentDialog = true">Create</el-button>
       </span>
     </el-dialog>
-
-    <el-dialog title="Edit Environment" :visible.sync="EditEnvironmentDialog ">
+  
+    <el-dialog title="Edit Environment" :visible.sync="editEnvironmentDialog ">
       <el-form :model="editEnvironment">
         <el-form-item label="NAME ENVIRONMENT" >
           <el-input v-model="editEnvironment.name" autocomplete="off" ></el-input>
@@ -43,21 +60,20 @@
                     <el-input v-model="input.value"></el-input>
                   </el-col>
                   <el-col :span="2" v-if="inputEditEnvironment.length > 1">
-                    <el-button @click="deleteRowsEditEnvironment(index)"  type="danger" circle><i class="el-icon-delete"></i></el-button>
+                    <el-button @click="deleteRowsEditEnvironment(index)" type="danger" circle><i class="el-icon-delete"></i></el-button>
                   </el-col>
                 </el-row>   
               </div>
-                
               <div style="margin: 15px;"></div>
               <center><el-button class="font" type="text" @click="addRowsEditEnvironment"><i class="el-icon-plus"></i> Add New</el-button></center>
                
       <span slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="EditEnvironmentDialog = false">Cancel</el-button>
+        <el-button type="danger" @click="editEnvironmentDialog = false">Cancel</el-button>
         <el-button type="success" @click="EditEnvironment(editEnvironment.id) ">Submit</el-button>
       </span>
     </el-dialog>
 
-     <el-dialog title="Create Environment" :visible.sync="CreateEnvironmentDialog">
+     <el-dialog title="Create Environment" :visible.sync="createEnvironmentDialog">
         <el-form :model="environment">
           <el-form-item label="NAME ENVIRONMENT" >
             <el-input v-model="environment.name" autocomplete="off"></el-input>
@@ -69,13 +85,13 @@
                 <div style="margin: 15px;"></div>
                 <el-row :gutter="25"> 
                   <el-col :span="11">  
-                    <el-input v-model="env.keyEnvironment" ></el-input>
+                    <el-input v-model="env.variable"  ></el-input>
                   </el-col>
                   <el-col :span="11">      
-                    <el-input v-model="env.valueEnvironment" ></el-input>
+                    <el-input v-model="env.value" ></el-input>
                   </el-col>
                   <el-col :span="2" v-if="inputEnvironment.length > 1">
-                    <el-button @click="deleteRowsEnvironment(indexEnvironment)"  type="danger" circle><i class="el-icon-delete"></i></el-button>
+                    <el-button @click="deleteRowsEnvironment(indexEnvironment)" type="danger" circle><i class="el-icon-delete"></i></el-button>
                   </el-col>
                 </el-row>   
               </div>
@@ -84,8 +100,8 @@
                 <center><el-button class="font" type="text" @click="addRowsEnvironment"><i class="el-icon-plus"></i> Add New</el-button></center>
       
       <span slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="CreateEnvironmentDialog = false">Cancel</el-button>
-        <el-button type="success" @click="CreateEnvironment('createEnvironment') ">Create</el-button>
+        <el-button type="danger" @click="createEnvironmentDialog = false">Cancel</el-button>
+        <el-button type="success" @click="CreateEnvironment() ">Create</el-button>
       </span>
     </el-dialog>
   </div>
@@ -100,26 +116,30 @@ export default {
     return {
         server_api: env.SERVER_API,
         addEnvironmentDialog: false,
-        CreateEnvironmentDialog : false,
-        EditEnvironmentDialog : false,
+        createEnvironmentDialog : false,
+        editEnvironmentDialog : false,
+        removeEnvironmentDialog : false,
         environments : 'No Environment',
         createEnvironment: {
         name: ''
         },
         environment: {
-          name: ''
+        name: ''
         },
         editEnvironment: {
         id : null,
         name: '',
         values: []
         },
-        inputEnvironment: [{}],
+        inputEnvironment: [{variable : "" , value : ""}],
         inputEditEnvironment: [{}]
     }  
   },
    updated:function () {
     this.getEnvironment()
+    if(this.createEnvironmentDialog == false){
+      this.environment.name = ''
+    }
   },
 
   created:function () {
@@ -141,11 +161,11 @@ export default {
         deleteRowsEditEnvironment(indexEditEnvironment) {
         this.inputEditEnvironment.splice(indexEditEnvironment,1)
       },
-        CreateEnvironment(createEnvironment) {
+        CreateEnvironment() {
           axios.post(this.server_api+'/environment', {
           id_user : 1,
           name: this.environment.name,
-          values: this.convertToEnvironment(this.inputEnvironment) 
+          values: this.inputEnvironment
       })
           .then(res => {
           this.$message({
@@ -160,12 +180,12 @@ export default {
         })
           console.log(err)
       })
-          this.CreateEnvironmentDialog = false
+          this.createEnvironmentDialog = false
       },
         convertToEnvironment(env){
           let arrayenv = []
           env.forEach(element => {
-            const temp = {'variable' : element['keyEnvironment'] , 'value': element['valueEnvironment']}
+            const temp = {'variable' : element['variable'] , 'value': element['value']}
             arrayenv.push(temp)
         });
           return arrayenv
@@ -184,8 +204,8 @@ export default {
           .then(res => {
             this.editEnvironment.name = res.data.name
             this.editEnvironment.id = res.data.id
-            this.inputEditEnvironment =JSON.parse(res.data.values)
-            this.EditEnvironmentDialog = true
+            this.inputEditEnvironment = JSON.parse(res.data.values)
+            this.editEnvironmentDialog = true
         })
           .catch(err => {
             console.log(err)
@@ -207,17 +227,22 @@ export default {
           .catch(err => {
             console.log(err)
         })
-        this.EditEnvironmentDialog = false   
+        this.editEnvironmentDialog = false
+        
       },
-        remove(id) {
-        axios.delete(this.server_api+'/environment/'+id, {
+    remove(id) {
+        this.$confirm('Are you want to delete this environment? ', 'Delete Environment', {
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+            axios.delete(this.server_api+'/environment/'+id, {
       })
-        .then(res => {
+         .then(res => {
           this.$message({
           message: 'Success Deleted Environment!!',
           type: 'success'
         })
-          console.log("Success Deleted Environment!!")
       })
         .catch(err => {
           this.$message({
@@ -226,8 +251,33 @@ export default {
         })
           console.log(err)
       })
-      this.addEnvironmentDialog = false
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled'
+          });          
+        });
     },
+    duplicateEnvironment(id){
+       axios.post(this.server_api+'/environment/'+id, {
+          id_user : 1,
+          name: this.environment.name,
+          values: this.convertToEnvironment(this.inputEnvironment) 
+      })
+          .then(res => {
+          this.$message({
+          message: 'Success Duplicated Environment!!',
+          type: 'success'
+        })
+      })
+          .catch(err => {
+          this.$message({
+          message: 'Failed!!',
+          type: 'error'
+        })
+          console.log(err)
+      })
+    }
   }
 }
 </script>
