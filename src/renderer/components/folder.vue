@@ -216,18 +216,18 @@ export default {
 
   updated: function () {
     this.getCollection()
-    // if(this.addFolderDialog == false){
-    //   this.folder.name = ''
-    // }
+    if(this.addFolderDialog == false){
+      this.folder.name = ''
+    }
 
-    // if(this.addRequestDialog == false){
-    //   this.request.name = ''
-    //   this.request.url = ''
-    // }
+    if(this.addRequestDialog == false){
+      this.request.name = ''
+      this.request.url = ''
+    }
 
-    // if(this.renameCollection == false){
-    //   this.name_collection = ''
-    // }
+    if(this.renameCollection == false){
+      this.name_collection = ''
+    }
   },
   methods: {
     getFolder(id) {
