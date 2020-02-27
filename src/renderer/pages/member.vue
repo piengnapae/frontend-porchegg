@@ -33,6 +33,10 @@
         >
           ADD NEW TAB
         </el-button> -->
+        <div class="positionEnv">
+          <Environment></Environment>
+        </div>
+        
         <Tab :data="editableTabs" :tabsValue="editableTabsValue" @remove="removeTab"></Tab>
       </el-main>
     </el-container>
@@ -47,6 +51,7 @@ import Collection from '../components/collection';
 import Folder from '../components/folder';
 import Request from '../components/request';
 import axios from 'axios';
+import Environment from '../components/environment'
 import {env} from '../nuxt.config';
 
   export default {
@@ -55,7 +60,8 @@ import {env} from '../nuxt.config';
       Tab,
       Folder,
       Collection,
-      Request
+      Request,
+      Environment,
     },
 
     data() {
