@@ -132,7 +132,7 @@ import '@/assets/scss/register.scss';
           if (valid) {
             axios({
               method: 'post',
-              url: this.server_api+'/V1/register',
+              url: this.server_api+'/register',
               header: {
                'Content-type':'application/json'
               },
