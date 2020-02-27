@@ -311,8 +311,8 @@ export default {
         }
       ],
       auth: 'No Auth',
-      method: 'get',
-      url: this.data.url,
+      method: this.data.method || 'get',
+      url: this.data.url || '',
       token: '',
       username: '',
       password: '',
