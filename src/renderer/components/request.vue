@@ -7,7 +7,7 @@
         </div>
 
         <div v-else>
-          <i class="el-icon-info"></i> Untitled Request
+          <i class="el-icon-info"></i> Untitled Request 
         </div>
       </el-col>
     </el-row>
@@ -46,20 +46,23 @@
         </el-col>
         
         <el-col :xs="5" :sm="4" style="text-align:right;">
-          <el-button @click="dialogFormVisible = true" :label-position="labelPosition" circle>
+          <el-button @click="save(data.id)" :label-position="labelPosition" circle>
             <i class="fas fa-save" style="padding: 2px 4px 2px 4px"></i>
           </el-button>
+
+          <!-- Dialog Save -->
           <el-dialog title="New Request" :visible.sync="dialogFormVisible"  style="text-align:left;">
-             <el-form :model="saverequest">
+            <el-form :model="saverequest">
               <el-form-item label="Please input new request" >
                 <el-input v-model="saverequest.name" autocomplete="off"></el-input>
               </el-form-item>
-             </el-form> 
+            </el-form>
             <span slot="footer" class="dialog-footer">
               <el-button @click="dialogFormVisible = false">Cancel</el-button>
               <el-button type="primary" @click="dialogFormVisibles()">OK</el-button>
             </span>
-          </el-dialog> 
+          </el-dialog>
+ 
           <el-button circle><i class="fas fa-cloud-download-alt" style="padding: 2px;"></i></el-button>
         </el-col>
       </el-row>
@@ -328,14 +331,16 @@ export default {
       status: '',
       statusText: '',
       paramsInput:'',
-      folders :[],
       loading: false,
       dialogFormVisible: false,
       formLabelWidth: '180px',
       labelPosition: 'left',
       saverequest: {
-        name: ''
-      }
+        name: '',
+        id_folder: null
+      },
+      collections: [],
+      folders: []
     }
   },
     
@@ -348,6 +353,28 @@ export default {
     send(){
       this.loading = true
       this.sendRequest()
+    },
+
+    save(id){
+      axios.put(this.server_api+'/V1/requests/'+id, {
+        name: this.data.name,
+        id_folder: this.data.id_folder,
+        method: this.method,
+        url: this.url
+      })
+      .then(res => {
+        this.$message({
+          message: 'Success',
+          type: 'success'
+        })
+      })
+      .catch(err => {
+        this.$message({
+          message: 'Failed',
+          type: 'error'
+        })
+        console.log(err)
+      })
     },
 
     sendRequest() {
@@ -373,17 +400,16 @@ export default {
       
     dialogFormVisibles(){
       axios.post(this.server_api+'/V1/requests/', {
-      name: this.saverequest.name,
-      id_folder: 1,
-	    method: "post",
-	    url: "http://google.co.th"
+        name: this.saverequest.name,
+        id_folder: this.saverequest.id_folder,
+        method: this.method,
+        url: this.url
       })
       .then(res => {
         this.$message({
           message: 'Success',
           type: 'success'
         })
-        console.log(res.data.data)
       })
       .catch(err => {
         this.$message({
