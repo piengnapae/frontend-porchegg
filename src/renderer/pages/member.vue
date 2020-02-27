@@ -1,7 +1,7 @@
 <template>
  <el-container>
     <el-header >
-       height="50"
+       <!-- height="50" -->
       <!--- Header ---->
        <el-row>
           <el-col :span="12">

@@ -1,6 +1,6 @@
 <template>  
-  <div v-loading="loading">
-    <div v-for="(collection, index) in collection" v-bind:key="index">
+  <div v-loading="loading" style="min-height: 400px">
+    <div v-for="(collection, index) in collections" v-bind:key="index">
       <table style="width:100%">
         <tr>
           <td width="90%">
@@ -15,16 +15,22 @@
 
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item>
-                    <el-button type="text"><i class="fas fa-edit"></i> Rename </el-button>
+                    <el-button type="text" @click="renameCollection(collection.id, collection.name)">
+                      <i class="fas fa-edit"></i> Rename 
+                    </el-button>
                   </el-dropdown-item>
                   <el-dropdown-item>
-                    <el-button type="text"><i class="fas fa-folder-plus"></i> Add Folder </el-button>
+                    <el-button type="text" @click="formFolder(collection.id)">
+                      <i class="fas fa-folder-plus"></i> Add Folder 
+                    </el-button>
                   </el-dropdown-item>
                   <el-dropdown-item>
                     <el-button type="text"><i class="fas fa-file-export"></i> Export </el-button>
                   </el-dropdown-item>
                   <el-dropdown-item>
-                    <el-button type="text"><i class="fas fa-trash-alt"></i> Delete </el-button>
+                    <el-button type="text" @click="remove(collection.name, 'collection', collection.id)">
+                      <i class="fas fa-trash-alt"></i> Delete
+                    </el-button>
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -33,9 +39,9 @@
         </tr>
       </table>
       <el-tree
-        :data="folder"
+        :data="folders"
         node-key="id"
-        v-if="folder != '' && collection.id == collection_id"
+        v-if="folders != '' && collection.id == collection_id"
         @node-drag-start="handleDragStart"
         @node-drag-enter="handleDragEnter"
         @node-drag-leave="handleDragLeave"
@@ -47,7 +53,8 @@
         :allow-drag="allowDrag">
 
         <span class="custom-tree-node" slot-scope="{ node, data }">
-          <span><i class="fas fa-folder" v-if="data.type == 'folder'"></i> {{ node.label }}</span>
+          <span v-if="data.type == 'folder'"><i class="fas fa-folder"></i> {{ node.label }}</span>
+          <span v-else @click="openTabRequest(data.request_id)">{{ node.label }}</span>
           <span>
             <el-dropdown>
               <span class="el-dropdown-link">
@@ -58,40 +65,100 @@
                   <el-button type="text"><i class="fas fa-edit"></i> Rename </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item v-if="data.type != 'request'">
-                  <el-button type="text" @click="formRequest(data.folder_id)" ><i class="fas fa-plus-circle"></i> Add Request </el-button>
+                  <el-button type="text" @click="formRequest(data.folder_id, null)" >
+                    <i class="fas fa-plus-circle"></i> Add Request 
+                  </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item v-if="data.type != 'request'">
-                  <el-button type="text"><i class="fas fa-folder-plus"></i> Add Folder </el-button>
+                  <el-button type="text" @click="formFolder(collection.id, data.folder_id)">
+                    <i class="fas fa-folder-plus"></i> Add Folder 
+                  </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item>
-                  <el-button type="text"><i class="fas fa-trash-alt"></i> Delete </el-button>
+                  <el-button v-if="data.type == 'folder'" type="text" @click="remove(data.label, data.type, data.folder_id)">
+                    <i class="fas fa-trash-alt"></i> Delete
+                  </el-button>
+                  <el-button v-else type="text" @click="remove(data.label, data.type, data.request_id)">
+                    <i class="fas fa-trash-alt"></i> Delete
+                  </el-button>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </span>
-
-          <el-dialog title="Add Request" :visible.sync="addRequestDialog">
-            <el-form :model="request">
-              <el-form-item label="Folder ID : " :label-width="formLabelWidth" hidden>
-                <el-input v-model="request.id" autocomplete="off"></el-input>
-              </el-form-item>
-              <el-form-item label="Request Name : " :label-width="formLabelWidth">
-                <el-input v-model="request.name" autocomplete="off"></el-input>
-              </el-form-item>
-              <el-form-item label="Method : " :label-width="formLabelWidth">
-                <el-input v-model="request.method" autocomplete="off"></el-input>
-              </el-form-item>
-              <el-form-item label="URL : " :label-width="formLabelWidth">
-                <el-input v-model="request.url" autocomplete="off"></el-input>
-              </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-              <el-button type="danger" @click="addRequestDialog = false">CANCLE</el-button>
-              <el-button type="success" @click="addRequest('request')">SAVE</el-button>
-            </span>
-          </el-dialog>
         </span>
       </el-tree>
+
+      <el-dialog title="Add Request" :visible.sync="addRequestDialog">
+        <el-form :model="request">
+          <el-form-item label="Folder ID : " :label-width="formLabelWidth" hidden>
+            <el-input v-model="request.id_folder" :disabled="true"></el-input>
+          </el-form-item>
+
+          <el-form-item label="Request Name : " :label-width="formLabelWidth">
+            <el-input v-model="request.name" autocomplete="off" required></el-input>
+          </el-form-item>
+          
+          <el-form-item label="Method : " :label-width="formLabelWidth">
+            <el-select v-model="request.method" style="width:100%">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="URL : " :label-width="formLabelWidth">
+            <el-input v-model="request.url" autocomplete="off" required></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="danger" @click="addRequestDialog = false">CANCLE</el-button>
+          <el-button type="success" @click="addRequest('request')">SAVE</el-button>
+        </span>
+      </el-dialog>
+
+      <!-- dialog folder -->
+
+        <el-dialog title="Add Folder" :visible.sync="addFolderDialog">
+        <el-form :model="folder">
+          <el-form-item label="Collection ID : " :label-width="formLabelWidth" hidden>
+            <el-input v-model="folder.id_collection" :disabled="true"></el-input>
+          </el-form-item>
+
+          <el-form-item label="Parent ID : " :label-width="formLabelWidth" hidden>
+            <el-input v-model="folder.parent_id" :disabled="true"></el-input>
+          </el-form-item>
+
+          <el-form-item label="Folder Name : " :label-width="formLabelWidth">
+            <el-input v-model="folder.name" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="danger" @click="addFolderDialog = false">CANCLE</el-button>
+          <el-button type="success" @click="addFolder('folder')">SAVE</el-button>
+        </span>
+      </el-dialog>
+
+      <!-- dialog rename collection -->
+
+        <el-dialog title="Rename Collection" :visible.sync="renameCollectionDialog">
+        <el-form :model="folder">
+          <el-form-item label="Collection ID : " :label-width="formLabelWidth" hidden>
+            <el-input v-model="collection_id" :disabled="true"></el-input>
+          </el-form-item>
+
+          <el-form-item label="Name : " :label-width="formLabelWidth">
+            <el-input v-model="name_collection" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="danger" @click="renameCollectionDialog = false">CANCLE</el-button>
+          <el-button type="success" @click="updateCollection">SAVE</el-button>
+        </span>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -100,32 +167,74 @@ import axios from 'axios';
 import {env} from '../nuxt.config'
 
 export default {
+
   data() {
     return {
       server_api: env.SERVER_API,
-      folder :[],
-      collection:[],
+      folders :[],
+      collections:[],
       collection_id: null,
       addRequestDialog: false,
+      addFolderDialog: false,
+      renameCollectionDialog: false,
+      name_collection: '',
       request: {
-        id: '',
+        id_folder: '',
         name: '',
-        method:'',
+        method:'get',
         url:''
       },
+      folder: {
+        id_collection: '',
+        name: '',
+        parent_id: null
+      },
       formLabelWidth: '150px',
-      loading: false
+      loading: false,
+      collectionLoading: false,
+      options: [
+        {
+          value: 'get',
+          label: 'GET'
+        }, {
+          value: 'post',
+          label: 'POST'
+        }, {
+          value: 'put',
+          label: 'PUT'
+        }, {
+          value: 'delete',
+          label: 'DELETE'
+        }
+      ],
     }
   },
+
   created:function () {
     this.getCollection()
   },
 
+  updated: function () {
+    this.getCollection()
+    // if(this.addFolderDialog == false){
+    //   this.folder.name = ''
+    // }
+
+    // if(this.addRequestDialog == false){
+    //   this.request.name = ''
+    //   this.request.url = ''
+    // }
+
+    // if(this.renameCollection == false){
+    //   this.name_collection = ''
+    // }
+  },
   methods: {
     getFolder(id) {
-      axios.get(this.server_api+'/collections/'+id+'/folder-view')
+      this.loading = true
+      axios.get(this.server_api+'/V1/collections/'+id+'/folder-view')
         .then(res => {
-          this.folder = res.data.data
+          this.folders = res.data.data
           this.collection_id = id
           this.loading = false
         })
@@ -138,15 +247,46 @@ export default {
           console.log(err)
         })
     },
+    renameCollection(id, name) {
+      this.renameCollectionDialog = true
+      this.collection_id = id
+      this.name_collection = name
+    },
+
+    updateCollection() {
+      axios.put(this.server_api+'/V1/collections/' + this.collection_id, {
+        name: this.name_collection
+      })
+      .then(res => {
+       this.$message({
+          message: 'Rename Success!',
+          type: 'success'
+        })
+      })
+      .catch(err => {
+        this.$message({
+          message: "Can't rename collection, please try again!",
+          type: 'error'
+        })
+        console.log(err)
+      })
+
+      this.renameCollectionDialog = false
+      this.collection_id = null
+      this.name_collection = ''
+    },
 
     getCollection() {
-      axios.get(this.server_api+'/collections')
+      // this.loading = true
+      axios.get(this.server_api+'/V1/collections')
         .then(res => {
-          this.collection = res.data.data
+          this.collections = res.data.data
+          this.loading = false
         })
         .catch(err => {
           console.log(err)
         })
+      // this.loading = false
     },
 
     showFolder(id) {
@@ -159,7 +299,7 @@ export default {
     },
 
     formRequest(id){
-      this.request.id = id
+      this.request.id_folder = id
       this.addRequestDialog = true
     },
 
@@ -167,69 +307,135 @@ export default {
       this.loading = true
       this.showFolder(id)
     },
+    formFolder(collection, parent){
+      this.folder.id_collection = collection
+      this.folder.parent_id = parent
+      this.addFolderDialog = true
+    },
+
+    addFolder(folder) {
+      axios.post(this.server_api+'/V1/folders', {
+        id_collection: this.folder.id_collection,
+        name: this.folder.name,
+        parent_id: this.folder.parent_id
+      })
+      .then(res => {
+       this.$message({
+          message: 'Added New Folder',
+          type: 'success'
+        })
+      })
+      .catch(err => {
+        this.$message({
+          message: "Can't add the new folder, please try again!",
+          type: 'error'
+        })
+        console.log(err)
+      })
+
+      this.addFolderDialog = false
+      this.folder.id_collection = ''
+      this.folder.name = ''
+      this.folder.parent_id = null
+    },
 
     addRequest(request) {
-      axios.post(this.server_api+'/requests/', {
-        id_folder: this.request.id,
+      axios.post(this.server_api+'/V1/requests', {
+        id_folder: this.request.id_folder,
         name: this.request.name,
         method: this.request.method,
         url: this.request.url
       })
       .then(res => {
        this.$message({
-          message: 'Success!!',
+          message: 'Added New Request',
           type: 'success'
         })
       })
       .catch(err => {
         this.$message({
-          message: 'Failed!!',
+          message: 'Can\'t add the new request, please try again!',
           type: 'error'
         })
         console.log(err)
       })
 
       this.addRequestDialog = false
+      this.request.id = ''
+      this.request.name = ''
+      this.request.method = 'get'
+      this.request.url = ''
     },
 
-    remove(id) {
-      console.log(id)
+    openTabRequest(id){
+      this.$emit('requestId', id)
+    },
+
+    remove(name, type, id) {
+
+      this.$confirm('Do you want to delete ' + type + ': ' + name +'?', 'Delete '+ type, {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          
+          // children.splice(index, 1)
+          axios.delete(this.server_api+'/V1/' + type + 's/' + id)
+            .then(res => {
+                this.$message({
+                type: 'success',
+                message: 'Delete completed'
+              })
+            })
+            .catch(err => {
+              this.$message({
+                message: "Can't Delete, please try again!",
+                type: 'error'
+              })
+              console.log(err)
+            })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled'
+          })
+        })
     },
 
     handleDragStart(node, ev) {
-      console.log('drag start', node);
+      console.log('drag start', node)
     },
 
     handleDragEnter(draggingNode, dropNode, ev) {
-      console.log('tree drag enter: ', dropNode.label);
+      console.log('tree drag enter: ', dropNode.label)
     },
 
     handleDragLeave(draggingNode, dropNode, ev) {
-      console.log('tree drag leave: ', dropNode.label);
+      console.log('tree drag leave: ', dropNode.label)
     },
 
     handleDragOver(draggingNode, dropNode, ev) {
-      console.log('tree drag over: ', dropNode.label);
+      console.log('tree drag over: ', dropNode.label)
     },
 
     handleDragEnd(draggingNode, dropNode, dropType, ev) {
-      console.log('tree drag end: ', dropNode && dropNode.label, dropType);
+      console.log('tree drag end: ', dropNode && dropNode.label, dropType)
     },
 
     handleDrop(draggingNode, dropNode, dropType, ev) {
-      console.log('tree drop: ', dropNode.label, dropType);
+      console.log('tree drop: ', dropNode.label, dropType)
     },
 
     allowDrop(draggingNode, dropNode, type) {
       if (dropNode.data.label === 'Level two 3-1') {
-        return type !== 'inner';
+        return type !== 'inner'
       } else {
-        return true;
+        return true
       }
     },
 
     allowDrag(draggingNode) {
-      return draggingNode.data.label.indexOf('Level three 3-1-1') === -1;
+      return draggingNode.data.label.indexOf('Level three 3-1-1') === -1
     }
   }
 }

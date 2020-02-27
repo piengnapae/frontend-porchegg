@@ -148,7 +148,6 @@ import '@/assets/scss/register.scss';
                 type: 'success'
               })
               this.$router.push('/login')
-              console.log(res)
             })
             .catch(err => {
               if(err.response.data.email && err.response.data.username){

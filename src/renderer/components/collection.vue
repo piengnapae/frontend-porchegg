@@ -5,7 +5,7 @@
     <el-dialog title="Add Collection" :visible.sync="addCollectionDialog">
       <el-form :model="collection">
         <el-form-item label="Collection Name : " :label-width="formLabelWidth">
-          <el-input v-model="collection.name" autocomplete="off"></el-input>
+          <el-input v-model="collection.name"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -32,9 +32,15 @@ export default {
     }
   },
 
+  updated: function () {
+    if(this.addCollectionDialog == false){
+      this.collection.name = ''
+    }
+  },
+
   methods: {
     addCollection(collection) {
-      axios.post(this.server_api+'/collections', {
+      axios.post(this.server_api+'/V1/collections', {
         name: this.collection.name
       })
       .then(res => {
@@ -42,6 +48,7 @@ export default {
           message: 'Success Added Collection!!',
           type: 'success'
         })
+        // this.$emit()
       })
       .catch(err => {
         this.$message({
@@ -52,6 +59,7 @@ export default {
       })
 
       this.addCollectionDialog = false
+      this.collection.name = ''
     }
   }
 }
