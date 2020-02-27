@@ -17,7 +17,6 @@
       <!--- left sidebar --->
       <el-aside width="220px">
   <el-row>
-  
           <el-col :span="24">
             <div>
               <i class="el-icon-info"></i> COLLECTIONS

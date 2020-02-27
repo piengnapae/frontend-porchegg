@@ -162,7 +162,7 @@ export default {
         this.inputEditEnvironment.splice(indexEditEnvironment,1)
       },
         CreateEnvironment() {
-          axios.post(this.server_api+'/environment', {
+          axios.post(this.server_api+'/V1/environment', {
           id_user : 1,
           name: this.environment.name,
           values: this.inputEnvironment
@@ -191,7 +191,7 @@ export default {
           return arrayenv
       },
         getEnvironment(id) {
-          axios.get(this.server_api+'/environment')
+          axios.get(this.server_api+'/V1/environment')
           .then(res => {
             this.createEnvironment = res.data.data
         })
@@ -200,7 +200,7 @@ export default {
         })
       },
         openEditBox(id){
-          axios.get(this.server_api+'/environment/'+id)
+          axios.get(this.server_api+'/V1/environment/'+id)
           .then(res => {
             this.editEnvironment.name = res.data.name
             this.editEnvironment.id = res.data.id
@@ -212,7 +212,7 @@ export default {
         })
       },
         EditEnvironment(id){
-          axios.put(this.server_api+'/environment/'+id,{
+          axios.put(this.server_api+'/V1/environment/'+id,{
             name: this.editEnvironment.name,
             values : this.inputEditEnvironment
         })
@@ -236,7 +236,7 @@ export default {
           cancelButtonText: 'Cancel',
           type: 'warning'
         }).then(() => {
-            axios.delete(this.server_api+'/environment/'+id, {
+            axios.delete(this.server_api+'/V1/environment/'+id, {
       })
          .then(res => {
           this.$message({
