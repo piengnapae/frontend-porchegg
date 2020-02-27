@@ -33,11 +33,14 @@
         >
           ADD NEW TAB
         </el-button> -->
-        <div class="positionEnv">
+        <div style="float:right">
           <Environment></Environment>
         </div>
+        <br><br>
+        <div>
+          <Tab :data="editableTabs" :tabsValue="editableTabsValue" @remove="removeTab"></Tab>
+        </div>
         
-        <Tab :data="editableTabs" :tabsValue="editableTabsValue" @remove="removeTab"></Tab>
       </el-main>
     </el-container>
   </el-container>

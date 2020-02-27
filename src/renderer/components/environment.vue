@@ -260,7 +260,7 @@ export default {
         });
     },
     duplicateEnvironment(id){
-       axios.post(this.server_api+'/environment/'+id, {
+       axios.post(this.server_api+'/V1/environment/'+id, {
           id_user : 1,
           name: this.environment.name,
           values: this.convertToEnvironment(this.inputEnvironment) 
