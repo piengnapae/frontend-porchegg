@@ -15,14 +15,6 @@
     <el-container>
       <!--- left sidebar --->
       <el-aside width="220px">
-        <el-row>
-          <el-col :span="24">
-            <div>
-              <i class="el-icon-info"></i> COLLECTIONS
-            </div>
-          </el-col>
-        </el-row>
-        <Collection></Collection>
         <Folder @requestId="clickFolder"></Folder>
       </el-aside>
       <!--- right sidebar --->
@@ -50,7 +42,6 @@
 import '@fortawesome/fontawesome-free/css/all.css';
 import '@/assets/scss/main.scss';
 import Tab from '../components/tabRequest';
-import Collection from '../components/collection';
 import Folder from '../components/folder';
 import Request from '../components/request';
 import axios from 'axios';
@@ -62,7 +53,6 @@ import {env} from '../nuxt.config';
     components: {
       Tab,
       Folder,
-      Collection,
       Request,
       Environment,
     },

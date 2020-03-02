@@ -132,14 +132,15 @@ export default {
         name: '',
         values: []
         },
-        inputEnvironment: [{variable : "" , value : ""}],
+        inputEnvironment: [{"variable" : "" , "value" : ""}],
         inputEditEnvironment: [{}]
     }  
   },
-   updated:function () {
-    this.getEnvironment()
+
+  beforeUpdate: function () {
     if(this.createEnvironmentDialog == false){
       this.environment.name = ''
+      this.inputEnvironment = [{"variable" : "" , "value" : ""}]
     }
   },
 
@@ -148,136 +149,149 @@ export default {
   },
 
   methods: {
-        addRowsEnvironment() {
-        this.inputEnvironment.push({
-        })
-      },
-        deleteRowsEnvironment(indexEnvironment) {
-        this.inputEnvironment.splice(indexEnvironment,1)
-      },
-        addRowsEditEnvironment() {
-        this.inputEditEnvironment.push({
-        })
-      },
-        deleteRowsEditEnvironment(indexEditEnvironment) {
-        this.inputEditEnvironment.splice(indexEditEnvironment,1)
-      },
-        CreateEnvironment() {
-          axios.post(this.server_api+'/V1/environment', {
-          id_user : 1,
-          name: this.environment.name,
-          values: this.inputEnvironment
-      })
-          .then(res => {
-          this.$message({
-          message: 'Success Added Environment!!',
-          type: 'success'
-        })
-      })
-          .catch(err => {
-          this.$message({
-          message: 'Failed!!',
-          type: 'error'
-        })
-          console.log(err)
-      })
-          this.createEnvironmentDialog = false
-      },
-        convertToEnvironment(env){
-          let arrayenv = []
-          env.forEach(element => {
-            const temp = {'variable' : element['variable'] , 'value': element['value']}
-            arrayenv.push(temp)
-        });
-          return arrayenv
-      },
-        getEnvironment(id) {
-          axios.get(this.server_api+'/V1/environment')
-          .then(res => {
-            this.createEnvironment = res.data.data
-        })
-          .catch(err => {
-            console.log(err)
-        })
-      },
-        openEditBox(id){
-          axios.get(this.server_api+'/V1/environment/'+id)
-          .then(res => {
-            this.editEnvironment.name = res.data.name
-            this.editEnvironment.id = res.data.id
-            this.inputEditEnvironment = JSON.parse(res.data.values)
-            this.editEnvironmentDialog = true
-        })
-          .catch(err => {
-            console.log(err)
-        })
-      },
-        EditEnvironment(id){
-          axios.put(this.server_api+'/V1/environment/'+id,{
-            name: this.editEnvironment.name,
-            values : this.inputEditEnvironment
-        })
-          .then(res => {
-            this.editEnvironment.name = res.data.name
-            this.inputEditEnvironment = res.data.values
-            this.$message({
-            message: 'Success Edited Environment!!',
-            type: 'success'
-        })
-        })
-          .catch(err => {
-            console.log(err)
-        })
-        this.editEnvironmentDialog = false
+    addRowsEnvironment() {
+      this.inputEnvironment.push({})
+    },
+
+    deleteRowsEnvironment(indexEnvironment) {
+      this.inputEnvironment.splice(indexEnvironment,1)
+    },
         
-      },
-    remove(id) {
-        this.$confirm('Are you want to delete this environment? ', 'Delete Environment', {
-          confirmButtonText: 'Delete',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
-            axios.delete(this.server_api+'/V1/environment/'+id, {
+    addRowsEditEnvironment() {
+      this.inputEditEnvironment.push({})
+    },
+        
+    deleteRowsEditEnvironment(indexEditEnvironment) {
+      this.inputEditEnvironment.splice(indexEditEnvironment,1)
+    },
+
+    CreateEnvironment() {
+      axios.post(this.server_api+'/V1/environment', {
+        id_user : 1,
+        name: this.environment.name,
+        values: this.inputEnvironment
       })
-         .then(res => {
+        .then(res => {
+          this.getEnvironment()
           this.$message({
-          message: 'Success Deleted Environment!!',
-          type: 'success'
+            message: 'Success Added Environment!!',
+            type: 'success'
+          })
         })
-      })
         .catch(err => {
           this.$message({
-          message: 'Failed!!',
-          type: 'error'
-        })
+            message: 'Failed!!',
+            type: 'error'
+          })
           console.log(err)
+        })
+      this.createEnvironmentDialog = false
+    },
+        
+    convertToEnvironment(env){
+      let arrayenv = []
+      env.forEach(element => {
+        const temp = {'variable' : element['variable'] , 'value': element['value']}
+        arrayenv.push(temp)
       })
-        }).catch(() => {
+
+      return arrayenv
+      },
+
+    getEnvironment(id) {
+      axios.get(this.server_api+'/V1/environment')
+        .then(res => {
+          this.createEnvironment = res.data.data
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+
+    openEditBox(id){
+      axios.get(this.server_api+'/V1/environment/'+id)
+        .then(res => {
+          this.editEnvironment.name = res.data.name
+          this.editEnvironment.id = res.data.id
+          this.inputEditEnvironment = JSON.parse(res.data.values)
+          this.editEnvironmentDialog = true
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+
+    EditEnvironment(id){
+      axios.put(this.server_api+'/V1/environment/'+id,{
+        name: this.editEnvironment.name,
+        values : this.inputEditEnvironment
+      })
+        .then(res => {
+          this.editEnvironment.name = res.data.name
+          this.inputEditEnvironment = res.data.values
+          this.getEnvironment()
+          this.$message({
+            message: 'Success Edited Environment!!',
+            type: 'success'
+          })
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      this.editEnvironmentDialog = false  
+    },
+
+    remove(id) {
+      this.$confirm('Are you want to delete this environment? ', 'Delete Environment', {
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+          axios.delete(this.server_api+'/V1/environment/'+id, {
+          })
+            .then(res => {
+              this.getEnvironment()
+              this.$message({
+                message: 'Success Deleted Environment!!',
+                type: 'success'
+              })
+            })
+            .catch(err => {
+              this.$message({
+                message: 'Failed!!',
+                type: 'error'
+              })
+              console.log(err)
+            })
+        })
+        .catch(() => {
           this.$message({
             type: 'info',
             message: 'Delete canceled'
-          });          
-        });
+          })         
+        })
     },
+
     duplicateEnvironment(id){
-       axios.post(this.server_api+'/V1/environment/'+id, {
-          id_user : 1,
-          name: this.environment.name,
-          values: this.convertToEnvironment(this.inputEnvironment) 
+      axios.post(this.server_api+'/V1/environment/'+id, {
+        id_user : 1,
+        name: this.environment.name,
+        values: this.convertToEnvironment(this.inputEnvironment) 
       })
-          .then(res => {
+        .then(res => {
+          this.getEnvironment()
           this.$message({
-          message: 'Success Duplicated Environment!!',
-          type: 'success'
+            message: 'Success Duplicated Environment!!',
+            type: 'success'
+          })
         })
-      })
-          .catch(err => {
+        .catch(err => {
           this.$message({
-          message: 'Failed!!',
-          type: 'error'
-        })
+            message: 'Failed!!',
+            type: 'error'
+          })
           console.log(err)
-      })
+        })
     }
   }
 }
