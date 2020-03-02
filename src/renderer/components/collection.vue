@@ -32,7 +32,7 @@ export default {
     }
   },
 
-  updated: function () {
+  beforeUpdate: function () {
     if(this.addCollectionDialog == false){
       this.collection.name = ''
     }
@@ -48,7 +48,6 @@ export default {
           message: 'Success Added Collection!!',
           type: 'success'
         })
-        // this.$emit()
       })
       .catch(err => {
         this.$message({
