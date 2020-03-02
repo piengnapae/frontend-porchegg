@@ -8,7 +8,7 @@
           </el-col>
           <el-col :span="12" style="textAlign: right;">
             Hi, Administrator ทดสอบผู้ใช้ระบบ 
-            <el-button icon="el-icon-switch-button" circle></el-button>
+            <el-button icon="el-icon-switch-button" circle  @click="logout()"></el-button>
           </el-col>
        </el-row>
     </el-header>
@@ -141,6 +141,9 @@ import {env} from '../nuxt.config';
       },
       closeMessageLoading(){
         this.dialog.close()
+      },
+      logout(){
+      this.$router.push('/login') 
       }
     }
   }
