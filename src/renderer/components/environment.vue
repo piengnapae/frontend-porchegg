@@ -80,30 +80,30 @@
             <el-input v-model="environment.name" autocomplete="off"></el-input>
           </el-form-item>  
         </el-form> 
-          <el-col :span="11"> VARIABLE </el-col>
-            <el-col :span="11"> VALUE </el-col> <br>
-              <div v-for="(env, indexEnvironment) in inputEnvironment" v-bind:key="indexEnvironment">
-                <div style="margin: 15px;"></div>
-                <el-row :gutter="25"> 
-                  <el-col :span="11">  
-                    <el-input v-model="env.variable"  ></el-input>
-                  </el-col>
-                  <el-col :span="11">      
-                    <el-input v-model="env.value" ></el-input>
-                  </el-col>
-                  <el-col :span="2" v-if="inputEnvironment.length > 1">
-                    <el-button @click="deleteRowsEnvironment(indexEnvironment)" type="danger" circle><i class="el-icon-delete"></i></el-button>
-                  </el-col>
-                </el-row>   
-              </div>
+        <el-col :span="12"> VARIABLE </el-col>
+        <el-col :span="12"> VALUE </el-col> <br>
+        <div v-for="(env, indexEnvironment) in inputEnvironment" v-bind:key="indexEnvironment">
+          <div style="margin: 15px;"></div>
+          <el-row :gutter="25"> 
+            <el-col :span="12">  
+              <el-input v-model="env.variable"  ></el-input>
+            </el-col>
+            <el-col :span="12">      
+              <el-input v-model="env.value" ></el-input>
+            </el-col>
+            <el-col :span="2" v-if="inputEnvironment.length > 1">
+              <el-button @click="deleteRowsEnvironment(indexEnvironment)" type="danger" circle><i class="el-icon-delete"></i></el-button>
+            </el-col>
+          </el-row>   
+        </div>
 
-                <div style="margin: 15px;"></div>
-                <center><el-button class="font" type="text" @click="addRowsEnvironment"><i class="el-icon-plus"></i> Add New</el-button></center>
+        <div style="margin: 15px;"></div>
+        <center><el-button class="font" type="text" @click="addRowsEnvironment"><i class="el-icon-plus"></i> Add New</el-button></center>
       
-      <span slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="createEnvironmentDialog = false">Cancel</el-button>
-        <el-button type="success" @click="CreateEnvironment() ">Create</el-button>
-      </span>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="danger" @click="createEnvironmentDialog = false">Cancel</el-button>
+          <el-button type="success" @click="CreateEnvironment() ">Create</el-button>
+        </span>
     </el-dialog>
   </div>
 </template>

@@ -1,16 +1,14 @@
 <template>
   <div>
     <!-- {{array}} -->
-    <el-tabs v-model="tabsValue" type="card" closable @tab-remove="removeTab" class="box">
+    <el-tabs v-model="tabsValue" type="card" editable  @edit="handleTabs" class="box">
       <el-tab-pane
         v-for="(item) in data"
         :key="item.name"
         :label="item.title"
         :name="item.name"
       >
-        <!-- {{item.content}} -->
-        
-        <Request :data="item.content"></Request>  
+        <Request :data="item.content" :targetName="item.name" @newRequest="addRequest" @remove="removeTab"></Request>  
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -41,6 +39,18 @@ export default {
   methods: {
     removeTab(targetName) {
       this.$emit('remove', targetName)
+    },
+
+    addRequest(id) {
+      this.$emit('addRequest', id)
+    },
+
+    handleTabs(targetName, action) {
+      if(action === 'remove'){
+        this.removeTab(targetName)
+      }else{
+        this.$emit('newTab', targetName)
+      }
     }
   }
 }
