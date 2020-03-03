@@ -19,18 +19,12 @@
       </el-aside>
       <!--- right sidebar --->
       <el-main>
-        <!-- <el-button
-          size="small"
-          @click="addTab(editableTabsValue)"
-        >
-          ADD NEW TAB
-        </el-button> -->
         <div style="float:right">
           <Environment></Environment>
         </div>
         <br><br>
         <div>
-          <Tab :data="editableTabs" :tabsValue="editableTabsValue" @remove="removeTab"></Tab>
+          <Tab :data="editableTabs" :tabsValue="editableTabsValue" @newTab="addTab" @remove="removeTab" @addRequest="clickFolder"></Tab>
         </div>
         
       </el-main>
@@ -133,12 +127,14 @@ import {env} from '../nuxt.config';
       test(){
         this.$router.push('/test')
       },
+
       openMessageLoading(){
         this.dialog = this.$message({
           message: 'Loading...',
           duration: 0,
         });
       },
+      
       closeMessageLoading(){
         this.dialog.close()
       },

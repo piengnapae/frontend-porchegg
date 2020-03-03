@@ -132,13 +132,13 @@
           </el-form>
           <span slot="footer" class="dialog-footer">
             <el-button type="danger" @click="addRequestDialog = false">CANCLE</el-button>
-            <el-button type="success" @click="addRequest('request')">SAVE</el-button>
+            <el-button type="success" @click="addRequest()">SAVE</el-button>
           </span>
         </el-dialog>
 
         <!-- dialog folder -->
 
-          <el-dialog title="Add Folder" :visible.sync="addFolderDialog">
+        <el-dialog title="Add Folder" :visible.sync="addFolderDialog">
           <el-form :model="folder">
             <el-form-item label="Collection ID : " :label-width="formLabelWidth" hidden>
               <el-input v-model="folder.id_collection" :disabled="true"></el-input>
@@ -154,7 +154,7 @@
           </el-form>
           <span slot="footer" class="dialog-footer">
             <el-button type="danger" @click="addFolderDialog = false">CANCLE</el-button>
-            <el-button type="success" @click="addFolder('folder')">SAVE</el-button>
+            <el-button type="success" @click="addFolder()">SAVE</el-button>
           </span>
         </el-dialog>
 
@@ -327,7 +327,6 @@ export default {
     },
 
     getCollection() {
-      // this.loading = true
       axios.get(this.server_api+'/V1/collections')
         .then(res => {
           this.collections = res.data.data
@@ -336,7 +335,6 @@ export default {
         .catch(err => {
           console.log(err)
         })
-      // this.loading = false
     },
 
     showFolder(id) {
@@ -364,14 +362,15 @@ export default {
       this.addFolderDialog = true
     },
 
-    addFolder(folder) {
+    addFolder() {
       axios.post(this.server_api+'/V1/folders', {
         id_collection: this.folder.id_collection,
         name: this.folder.name,
         parent_id: this.folder.parent_id
       })
       .then(res => {
-       this.$message({
+        this.getFolder(res.data.data.id_collection)
+        this.$message({
           message: 'Added New Folder',
           type: 'success'
         })
@@ -390,7 +389,7 @@ export default {
       this.folder.parent_id = null
     },
 
-    addRequest(request) {
+    addRequest() {
       axios.post(this.server_api+'/V1/requests', {
         id_folder: this.request.id_folder,
         name: this.request.name,
@@ -398,7 +397,7 @@ export default {
         url: this.request.url
       })
       .then(res => {
-       this.$message({
+        this.$message({
           message: 'Added New Request',
           type: 'success'
         })
@@ -452,9 +451,7 @@ export default {
     },
 
     remove(node, data) {
-
       const id = data.folder_id || data.request_id
-
       this.$confirm('Do you want to delete ' + data.type + ': ' + data.label +'?', 'Delete '+ data.type, {
           confirmButtonText: 'Yes',
           cancelButtonText: 'Cancel',
