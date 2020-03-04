@@ -8,7 +8,8 @@
           </el-col>
           <el-col :span="12" style="textAlign: right;">
             Hi, Administrator ทดสอบผู้ใช้ระบบ 
-            <el-button icon="el-icon-switch-button" circle  @click="logout()"></el-button>
+            <el-button icon="el-icon-refresh" circle @click="fetching"></el-button>
+            <el-button icon="el-icon-switch-button" circle  @click="logout"></el-button>          
           </el-col>
        </el-row>
     </el-header>
@@ -18,6 +19,7 @@
         <Folder @requestId="clickFolder"></Folder>
       </el-aside>
       <!--- right sidebar --->
+      <!-- {{editableTabs}} -->
       <el-main>
         <div style="float:right">
           <Environment></Environment>
@@ -57,8 +59,8 @@ import {env} from '../nuxt.config';
         editableTabs: [{
           title: 'New Tab',
           name: '1',
-          content: 'New Tab content',
-          id: 0
+          content: '',
+          id_request: null
         }],
         tabIndex: 1,
         editableTabsValue: '1',
@@ -67,6 +69,28 @@ import {env} from '../nuxt.config';
     },
     
     methods: {
+      fetching () {
+        console.log("loading...")
+        this.editableTabs.forEach((value, index) => {
+          var id = value['id_request']
+          var name = value['name']
+
+          if(value['id_request'] != null){
+            axios.get(this.server_api+'/V1/requests/'+ id)
+            .then(res => {
+              this.editableTabs[index] = {
+                title : res.data.name,
+                name : name,
+                content: res.data,
+                id_request: res.data.id
+              }
+
+              console.log(res.data)
+            })
+          }
+        })
+      },
+
       clickFolder (id) {
         this.openMessageLoading()
         let arrId = []
@@ -84,8 +108,8 @@ import {env} from '../nuxt.config';
               name: newTabName,
               content: res.data,
               id_request: id
-            });
-            this.editableTabsValue = newTabName;
+            })
+            this.editableTabsValue = newTabName
             this.closeMessageLoading()
           })
           .catch(err => {
@@ -101,7 +125,8 @@ import {env} from '../nuxt.config';
         this.editableTabs.push({
           title: 'New Tab',
           name: newTabName,
-          content: 'New Tab content'
+          content: 'New Tab content',
+          id_request: null
         });
         this.editableTabsValue = newTabName
       },

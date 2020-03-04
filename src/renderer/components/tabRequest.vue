@@ -1,6 +1,7 @@
 <template>
   <div>
     <!-- {{array}} -->
+    <!-- <el-button type="text" @click="test"> test </el-button> -->
     <el-tabs v-model="tabsValue" type="card" editable  @edit="handleTabs" class="box">
       <el-tab-pane
         v-for="(item) in data"
