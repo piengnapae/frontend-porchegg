@@ -121,6 +121,8 @@ import '@/assets/scss/login.scss';
               }
             })
             .then(res => {
+              let id = res.data.data.id
+              sessionStorage.setItem('id_user', id)
               this.$router.push('/member')
             })
             .catch(err =>{
