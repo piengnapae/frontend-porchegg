@@ -250,7 +250,7 @@
           ></AceEditor>
         </el-tab-pane>
 
-        <el-tab-pane label="Raw" name="second">{{raw}}</el-tab-pane>
+        <el-tab-pane label="Raw" name="second">{{raw}}<br>......<br> </el-tab-pane>
         <el-tab-pane label="Preview" name="third">{{preview}}</el-tab-pane>
       </el-tabs>
     </div>
@@ -424,7 +424,8 @@ export default {
           name: this.request.name,
           id_folder: this.request.id_folder,
           method: this.request.method,
-          url: this.request.url
+          url: this.request.url,
+          id_user: sessionStorage.getItem('id_user')
         })
         .then(res => {
           this.$message({
@@ -456,7 +457,6 @@ export default {
     },
 
     sendRequest() {
-      console.log(this.convertToParams(this.inputParameter))  
       axios({
         method: this.method,
         url: this.url,
@@ -554,7 +554,8 @@ export default {
         id_folder: this.request.id_folder,
         name: this.request.name,
         method: this.request.method,
-        url: this.request.url
+        url: this.request.url,
+        id_user: sessionStorage.getItem('id_user')
       })
       .then(res => {
         this.$emit('newRequest', res.data.data.id)

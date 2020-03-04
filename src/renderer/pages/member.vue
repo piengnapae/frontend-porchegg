@@ -19,14 +19,22 @@
         <Folder @requestId="clickFolder"></Folder>
       </el-aside>
       <!--- right sidebar --->
-      <!-- {{editableTabs}} -->
       <el-main>
         <div style="float:right">
           <Environment></Environment>
         </div>
         <br><br>
         <div>
-          <Tab :data="editableTabs" :tabsValue="editableTabsValue" @newTab="addTab" @remove="removeTab" @addRequest="clickFolder"></Tab>
+          <el-tabs v-model="editableTabsValue" type="card" editable  @edit="handleTabs" class="box">
+            <el-tab-pane
+              v-for="item in editableTabs"
+              :key="item.name"
+              :label="item.title"
+              :name="item.name"
+            >
+              <Request :data="item.content" :key="item.hash" :targetName="item.name" @newRequest="clickFolder" @remove="removeTab"></Request>  
+            </el-tab-pane>
+          </el-tabs>
         </div>
         
       </el-main>
@@ -37,7 +45,6 @@
 <script>
 import '@fortawesome/fontawesome-free/css/all.css';
 import '@/assets/scss/main.scss';
-import Tab from '../components/tabRequest';
 import Folder from '../components/folder';
 import Request from '../components/request';
 import axios from 'axios';
@@ -47,7 +54,6 @@ import {env} from '../nuxt.config';
   export default {
 
     components: {
-      Tab,
       Folder,
       Request,
       Environment,
@@ -70,13 +76,20 @@ import {env} from '../nuxt.config';
     },
     
     methods: {
+      handleTabs(targetName, action) {
+        if(action === 'remove'){
+          this.removeTab(targetName)
+        }else{
+          this.addTab(targetName)
+        }
+      },
+
       fetching () {
-        console.log("loading...")
         this.editableTabs.forEach((value, index) => {
           var id = value['id_request']
           var name = value['name']
 
-          if(value['id_request'] != null){
+          if(value['id_request'] != 0){
             axios.get(this.server_api+'/V1/requests/'+ id)
             .then(res => {
               const temp = {
@@ -167,7 +180,8 @@ import {env} from '../nuxt.config';
         this.dialog.close()
       },
       logout(){
-      this.$router.push('/login') 
+        sessionStorage.clear()
+        this.$router.push('/login') 
       }
     }
   }

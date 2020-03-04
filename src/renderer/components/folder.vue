@@ -394,9 +394,11 @@ export default {
         id_folder: this.request.id_folder,
         name: this.request.name,
         method: this.request.method,
-        url: this.request.url
+        url: this.request.url,
+        id_user: sessionStorage.getItem('id_user')
       })
       .then(res => {
+        this.getFolder(res.data.id_folder)
         this.$message({
           message: 'Added New Request',
           type: 'success'
