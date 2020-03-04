@@ -60,7 +60,8 @@ import {env} from '../nuxt.config';
           title: 'New Tab',
           name: '1',
           content: '',
-          id_request: null
+          id_request: 0,
+          hash: null,
         }],
         tabIndex: 1,
         editableTabsValue: '1',
@@ -78,14 +79,14 @@ import {env} from '../nuxt.config';
           if(value['id_request'] != null){
             axios.get(this.server_api+'/V1/requests/'+ id)
             .then(res => {
-              this.editableTabs[index] = {
+              const temp = {
                 title : res.data.name,
                 name : name,
                 content: res.data,
-                id_request: res.data.id
+                id_request: res.data.id,
+                hash: res.data.hash
               }
-
-              console.log(res.data)
+              this.$set(this.editableTabs, index, temp)
             })
           }
         })
@@ -107,7 +108,8 @@ import {env} from '../nuxt.config';
               title: res.data.name,
               name: newTabName,
               content: res.data,
-              id_request: id
+              id_request: id,
+              hash: res.data.hash
             })
             this.editableTabsValue = newTabName
             this.closeMessageLoading()
@@ -126,7 +128,8 @@ import {env} from '../nuxt.config';
           title: 'New Tab',
           name: newTabName,
           content: 'New Tab content',
-          id_request: null
+          id_request: 0,
+          hash: null
         });
         this.editableTabsValue = newTabName
       },

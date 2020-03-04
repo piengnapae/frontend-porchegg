@@ -4,12 +4,12 @@
     <!-- <el-button type="text" @click="test"> test </el-button> -->
     <el-tabs v-model="tabsValue" type="card" editable  @edit="handleTabs" class="box">
       <el-tab-pane
-        v-for="(item) in data"
-        :key="item.name"
+        v-for="item in data"
+        :key="item.id_request"
         :label="item.title"
         :name="item.name"
       >
-        <Request :data="item.content" :targetName="item.name" @newRequest="addRequest" @remove="removeTab"></Request>  
+        <Request :data="item.content" :key="item.hash" :targetName="item.name" @newRequest="addRequest" @remove="removeTab"></Request>  
       </el-tab-pane>
     </el-tabs>
   </div>
