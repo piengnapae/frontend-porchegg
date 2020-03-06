@@ -250,7 +250,7 @@
           ></AceEditor>
         </el-tab-pane>
 
-        <el-tab-pane label="Raw" name="second">{{raw}}<br>......<br> </el-tab-pane>
+        <el-tab-pane label="Raw" name="second">{{raw}}<br>......<br> {{params}} </el-tab-pane>
         <el-tab-pane label="Preview" name="third">{{preview}}</el-tab-pane>
       </el-tabs>
     </div>
@@ -320,9 +320,10 @@ export default {
     return {
       server_api: env.SERVER_API,
       inputParameter: [{"keyParams": "", "valueParams": ""}],
+      params : this.data.params,
       inputHeader: [{"keyHeaders": "", "valueHeaders": ""}],
       content: '',
-      textbody: '{}',
+      textbody: this.data.body || '{}',
       optionsj: {
         readOnly: true,
         autoScrollEditorIntoView: true
@@ -358,7 +359,7 @@ export default {
         }
       ],
       auth: 'No Auth',
-      token: '',
+      token: this.data.auth,
       username: '',
       password: '',
       isShowHeader: '',
@@ -425,9 +426,14 @@ export default {
           id_folder: this.request.id_folder,
           method: this.request.method,
           url: this.request.url,
-          id_user: sessionStorage.getItem('id_user')
+          id_user: sessionStorage.getItem('id_user'),
+          body: JSON.parse(this.textbody),
+          params: this.convertToParams(this.inputParameter),
+          header: this.inputHeader,
+          auth: JSON.stringify(this.token)
         })
         .then(res => {
+          this.inputParameter = this.convertParams(this.data.params)
           this.$message({
             message: 'Success',
             type: 'success'
@@ -578,6 +584,19 @@ export default {
       this.request.name = 'Untitled Request'
       this.request.method = 'get'
       this.request.url = ''
+    },
+
+    convertParams(data){
+      // [{"keyParams": "", "valueParams": ""}]
+      let arr = []
+      data = JSON.parse(data)
+      for (var key in data) {
+        if (data.hasOwnProperty(key)){
+          arr.push({"keyParams" : key, "valueParams" : data[key]})
+        }
+      }
+
+      return arr
     }
   }
 }
