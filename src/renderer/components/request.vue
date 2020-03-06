@@ -393,7 +393,18 @@ export default {
       }
     }
   },
-    
+
+  created() {
+    var params = this.data.params
+    if(params != undefined) {
+      params = JSON.parse(params)
+      let temp = []
+      for(const p in params) {
+        temp.push({"keyParams": p ,"valueParams" : params[p]})
+      }
+      this.inputParameter = temp
+    }
+  },
   methods: {
     editorInit: function(editor) {
       require('brace/mode/json')
