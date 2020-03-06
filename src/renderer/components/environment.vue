@@ -167,7 +167,7 @@ export default {
 
     CreateEnvironment() {
       axios.post(this.server_api+'/V1/environment', {
-        id_user : 1,
+        id_user : sessionStorage.getItem('id_user'),
         name: this.environment.name,
         values: this.inputEnvironment
       })

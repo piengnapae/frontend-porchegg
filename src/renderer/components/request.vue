@@ -458,8 +458,8 @@ export default {
 
     sendRequest() {
       axios({
-        method: this.method,
-        url: this.url,
+        method: this.request.method,
+        url: this.request.url,
         headers: this.headerArray(),             
         data: JSON.parse(this.textbody),
         params: this.convertToParams(this.inputParameter)
