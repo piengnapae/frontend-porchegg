@@ -150,10 +150,11 @@ import '@/assets/scss/register.scss';
               this.$router.push('/login')
             })
             .catch(err => {
-              if(err.response.data.email && err.response.data.username){
+              console.log(err.response.data.errors.errors.email)
+              if(err.response.data.errors.errors.email && err.response.data.errors.errors.username){
                 this.errorMessage = "Email และ Username มีคนใช้แล้ว กรุณาตรวจสอบใหม่"
                 // The email and username has already been taken.
-              }else if(err.response.data.email){
+              }else if(err.response.data.errors.errors.email){
                 this.errorMessage = "Email มีคนใช้แล้ว กรุณาตรวจสอบใหม่"
                 // +err.response.data.email
               }else{

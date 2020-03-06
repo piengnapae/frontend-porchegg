@@ -409,7 +409,7 @@ export default {
           message: 'Can\'t add the new request, please try again!',
           type: 'error'
         })
-        console.log(err)
+        console.log(err.response)
       })
 
       this.addRequestDialog = false
@@ -463,7 +463,7 @@ export default {
             .then(res => {
               const parent = node.parent
               const children = parent.data.children || parent.data
-              const index = children.findIndex(d => d.request_id === data.request_id || d.folder_id === data.folder_id)
+              const index = children.findIndex(d => d.folder_id === id || d.request_id === id)
               
               children.splice(index, 1)
 
@@ -508,6 +508,7 @@ export default {
     },
 
     handleDrop(draggingNode, dropNode, dropType, ev) {
+      console.log('Node : ' +JSON.stringify(this.folders))
       console.log('tree drop: ', dropNode.label, dropType)
     },
 
