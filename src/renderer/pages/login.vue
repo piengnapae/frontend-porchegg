@@ -122,7 +122,9 @@ import '@/assets/scss/login.scss';
             })
             .then(res => {
               let id = res.data.data.id
+              let username = res.data.data.username
               sessionStorage.setItem('id_user', id)
+              sessionStorage.setItem('username', username)
               this.$router.push('/member')
             })
             .catch(err =>{

@@ -7,7 +7,7 @@
             PorchEGG
           </el-col>
           <el-col :span="12" style="textAlign: right;">
-            Hi, Administrator ทดสอบผู้ใช้ระบบ 
+            Hi, {{username}} 
             <el-button icon="el-icon-refresh" circle @click="fetching"></el-button>
             <el-button icon="el-icon-switch-button" circle  @click="logout"></el-button>          
           </el-col>
@@ -72,6 +72,7 @@ import {env} from '../nuxt.config';
         tabIndex: 1,
         editableTabsValue: '1',
         dialog: null,
+        username: sessionStorage.getItem('username')
         }
     },
     
