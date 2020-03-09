@@ -4,7 +4,7 @@
       <!--- Header ---->
        <el-row>
           <el-col :span="12">
-            PorchEGG
+            <nuxt-link class="credit-link" to="/credit">PorchEGG</nuxt-link>
           </el-col>
           <el-col :span="12" style="textAlign: right;">
             Hi, {{username}} 

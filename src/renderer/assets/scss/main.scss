@@ -87,3 +87,15 @@ body {
   right: 0;
   z-index: 1;
 }
+.credit-link{
+  color: #fff;
+  text-decoration: none;
+}
+.credit-page{
+  padding-top: 20px;
+  margin-top: -21px;
+  background: $primary-bg;
+  display: block;
+  text-align: center;
+  height: 100vh;
+}
