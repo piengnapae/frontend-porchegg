@@ -1,7 +1,5 @@
  <template>
   <div>
-    
-    {{environments}}
     <el-select v-if="createEnvironment.length > 0" v-model="environments" @change="showEnv()" >
       <el-option label="No Environment" value="No Environment">
       </el-option>
@@ -329,17 +327,10 @@ export default {
           for(let i = 0; i < data.length; i++ ){
             // console.log(data[i]['variable'])
             // console.log(data[i]['value'])
-
-            // let obj = {}
-            // obj['key'] = data[i]['value']
+            
             arrEnvironment[data[i]['variable']] = data[i]['value']
-           
           }
-         
-          // console.log(arrEnvironment)
-          //  this.$emit('clickedEnv', arrEnvironment)
-          this.$bus.$emit('send-env', arrEnvironment)
-
+          this.$store.commit("environments/setEnvironment", arrEnvironment)
         })
         .catch(err => {
           console.log(err)
@@ -347,7 +338,7 @@ export default {
          
     
     // alert(this.environments)
-  }
+    }
   }
 }
 </script>

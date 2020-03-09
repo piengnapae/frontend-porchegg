@@ -22,13 +22,12 @@
       <!--- right sidebar --->
       <el-main>
         <div style="float:right">
-          <Environment @clickedEnv="onClickEnv"></Environment>
+          <Environment></Environment>
         </div>
         <div>
         </div>
         <br><br>
         <div>
-          <Tab :data="editableTabs" :tabsValue="editableTabsValue" @remove="removeTab" :tabURL="envURL"></Tab>
           <el-tabs v-model="editableTabsValue" type="card" editable  @edit="handleTabs" class="box">
             <el-tab-pane
               v-for="item in editableTabs"
@@ -82,10 +81,6 @@ import {env} from '../nuxt.config';
     },
     
     methods: {
-      onClickEnv(value) {
-      this.envURL = value
-      console.log(value) 
-    },
       clickFolder (id) {
         this.openMessageLoading()
         let arrId = []

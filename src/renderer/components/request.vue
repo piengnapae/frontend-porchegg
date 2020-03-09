@@ -7,7 +7,9 @@
         </div>
 
         <div v-else>
-          <i class="el-icon-info"></i> Untitled Request {{tabURL}} 000
+          <i class="el-icon-info"></i> Untitled Request
+          <!-- Please remove below line after success development -->
+          {{$store.state.environments}}
         </div>
       </el-col>
     </el-row>
@@ -416,11 +418,6 @@ export default {
       this.inputHeader = header
     }
   },
-  mounted(){
-    this.$bus.$on('send-env', function(dataEnv){
-      console.log(dataEnv)
-    })
-  },
   methods: {
     editorInit: function(editor) {
       require('brace/mode/json')
@@ -489,13 +486,22 @@ export default {
     },
 
     sendRequest() {
+      // 1 - get environment
+      const currentEnv = this.$store.state.environments.environment
+      
+      // 2 - replace {{ keyword }} with environment
+      // 2.1 - replace URL
+      let string = this.url
+      const regexp = /\{\{(.*?)\}\}/g
+      string = string.replace(regexp, function(match, token) {
+          return currentEnv[token];
+      });
+      //TODO: set new URL in request
+      //TODO: 2.2 - replace Parameters
+      //TODO: 2.3 - replace Authentication
+      //TODO: 2.4 - replace Headers
 
-      const string = this.url
-      const regexp = /[{]{2}(\w+)[}]{2}/g
-      const matches = string.matchAll(regexp)
-        for (const match of matches) {
-          console.log(match)
-        } 
+      // 3 - send params to axios
       const startTime = Date.now()
       axios({
         method: this.request.method,
