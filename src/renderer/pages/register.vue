@@ -150,7 +150,6 @@ import '@/assets/scss/register.scss';
               this.$router.push('/login')
             })
             .catch(err => {
-              console.log(err.response.data.errors.errors.email)
               if(err.response.data.errors.errors.email && err.response.data.errors.errors.username){
                 this.errorMessage = "This email and username is already used by another user. Please try with another email and username."          
               }else if(err.response.data.errors.errors.email){  
