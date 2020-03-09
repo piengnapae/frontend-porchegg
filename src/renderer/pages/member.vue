@@ -4,11 +4,12 @@
       <!--- Header ---->
        <el-row>
           <el-col :span="12">
-            PorchEGG
+            <nuxt-link class="credit-link" to="/credit">PorchEGG</nuxt-link>
           </el-col>
           <el-col :span="12" style="textAlign: right;">
-            Hi, Administrator ทดสอบผู้ใช้ระบบ 
-            <el-button icon="el-icon-switch-button" circle  @click="logout()"></el-button>
+            Hi, {{username}} 
+            <el-button icon="el-icon-refresh" circle @click="fetching"></el-button>
+            <el-button icon="el-icon-switch-button" circle  @click="logout"></el-button>          
           </el-col>
        </el-row>
     </el-header>
@@ -20,12 +21,6 @@
       </el-aside>
       <!--- right sidebar --->
       <el-main>
-        <!-- <el-button
-          size="small"
-          @click="addTab(editableTabsValue)"
-        >
-          ADD NEW TAB
-        </el-button> -->
         <div style="float:right">
           <Environment @clickedEnv="onClickEnv"></Environment>
         </div>
@@ -34,6 +29,16 @@
         <br><br>
         <div>
           <Tab :data="editableTabs" :tabsValue="editableTabsValue" @remove="removeTab" :tabURL="envURL"></Tab>
+          <el-tabs v-model="editableTabsValue" type="card" editable  @edit="handleTabs" class="box">
+            <el-tab-pane
+              v-for="item in editableTabs"
+              :key="item.name"
+              :label="item.title"
+              :name="item.name"
+            >
+              <Request :data="item.content" :key="item.hash" :targetName="item.name" @newRequest="clickFolder" @remove="removeTab"></Request>  
+            </el-tab-pane>
+          </el-tabs>
         </div>
         
       </el-main>
@@ -44,7 +49,6 @@
 <script>
 import '@fortawesome/fontawesome-free/css/all.css';
 import '@/assets/scss/main.scss';
-import Tab from '../components/tabRequest';
 import Folder from '../components/folder';
 import Request from '../components/request';
 import axios from 'axios';
@@ -54,7 +58,6 @@ import {env} from '../nuxt.config';
   export default {
 
     components: {
-      Tab,
       Folder,
       Request,
       Environment,
@@ -66,13 +69,15 @@ import {env} from '../nuxt.config';
         editableTabs: [{
           title: 'New Tab',
           name: '1',
-          content: 'New Tab content',
-          id: 0
+          content: '',
+          id_request: 0,
+          hash: null,
         }],
         tabIndex: 1,
         editableTabsValue: '1',
         dialog: null,
-        envURL: ''
+        envURL: '',
+        username: sessionStorage.getItem('username')
         }
     },
     
@@ -84,12 +89,42 @@ import {env} from '../nuxt.config';
       clickFolder (id) {
         this.openMessageLoading()
         let arrId = []
+      },
+      handleTabs(targetName, action) {
+        if(action === 'remove'){
+          this.removeTab(targetName)
+        }else{
+          this.addTab(targetName)  
+      } 
+      
+      },
 
-        this.editableTabs.forEach(tab => {
-          arrId.push(tab['id_request'])
+      fetching () {
+        this.editableTabs.forEach((value, index) => {
+          var id = value['id_request']
+          var name = value['name']
+
+          if(value['id_request'] != 0){
+            axios.get(this.server_api+'/V1/requests/'+ id)
+            .then(res => {
+              const temp = {
+                title : res.data.name,
+                name : name,
+                content: res.data,
+                id_request: res.data.id,
+                hash: res.data.hash
+              }
+              this.$set(this.editableTabs, index, temp)
+            })
+          }
         })
+      },
 
-        if(!arrId.includes(id)){
+      clickFolder (id) {
+        this.openMessageLoading()
+        const index = this.editableTabs.findIndex(arr => arr.id_request === id)
+
+        if(index < 0){
           axios.get(this.server_api+'/V1/requests/'+id)
           .then(res => {
             let newTabName = ++this.tabIndex + ''
@@ -97,15 +132,17 @@ import {env} from '../nuxt.config';
               title: res.data.name,
               name: newTabName,
               content: res.data,
-              id_request: id
-            });
-            this.editableTabsValue = newTabName;
+              id_request: id,
+              hash: res.data.hash
+            })
+            this.editableTabsValue = newTabName
             this.closeMessageLoading()
           })
           .catch(err => {
             console.log(err)
           })
         }else{
+          this.editableTabsValue = this.editableTabs[index].name
           this.closeMessageLoading()
         }
       },
@@ -115,7 +152,9 @@ import {env} from '../nuxt.config';
         this.editableTabs.push({
           title: 'New Tab',
           name: newTabName,
-          content: 'New Tab content'
+          content: 'New Tab content',
+          id_request: 0,
+          hash: null
         });
         this.editableTabsValue = newTabName
       },
@@ -141,17 +180,20 @@ import {env} from '../nuxt.config';
       test(){
         this.$router.push('/test')
       },
+
       openMessageLoading(){
         this.dialog = this.$message({
           message: 'Loading...',
           duration: 0,
         });
       },
+      
       closeMessageLoading(){
         this.dialog.close()
       },
       logout(){
-      this.$router.push('/login') 
+        sessionStorage.clear()
+        this.$router.push('/login') 
       }
     }
   }
