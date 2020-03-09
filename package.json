@@ -1,6 +1,6 @@
 {
   "name": "PorchEGG",
-  "version": "0.0.1",
+  "version": "0.1.2",
   "description": "Internal project",
   "main": "./dist/main/index.js",
   "scripts": {
