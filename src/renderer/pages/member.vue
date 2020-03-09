@@ -33,7 +33,7 @@
         </div>
         <br><br>
         <div>
-          <Tab :data="editableTabs" :tabsValue="editableTabsValue" @remove="removeTab"></Tab>
+          <Tab :data="editableTabs" :tabsValue="editableTabsValue" @remove="removeTab" :tabURL="envURL"></Tab>
         </div>
         
       </el-main>
@@ -72,11 +72,13 @@ import {env} from '../nuxt.config';
         tabIndex: 1,
         editableTabsValue: '1',
         dialog: null,
+        envURL: ''
         }
     },
     
     methods: {
       onClickEnv(value) {
+      this.envURL = value
       console.log(value) 
     },
       clickFolder (id) {

@@ -319,16 +319,16 @@ export default {
     },
 
     showEnv(){
-      console.log(this.environments)
+      // console.log(this.environments)
       axios.get(this.server_api+'/V1/environment/'+this.environments)
         .then(res => {
           const data = JSON.parse(res.data.values)
-          console.log(data)
+          // console.log(data)
           let arrEnvironment = []
 
           for(let i = 0; i < data.length; i++ ){
-            console.log(data[i]['variable'])
-            console.log(data[i]['value'])
+            // console.log(data[i]['variable'])
+            // console.log(data[i]['value'])
 
             // let obj = {}
             // obj['key'] = data[i]['value']
@@ -336,8 +336,10 @@ export default {
            
           }
          
-          console.log(arrEnvironment)
-           this.$emit('clickedEnv', arrEnvironment)
+          // console.log(arrEnvironment)
+          //  this.$emit('clickedEnv', arrEnvironment)
+          this.$bus.$emit('send-env', arrEnvironment)
+
         })
         .catch(err => {
           console.log(err)

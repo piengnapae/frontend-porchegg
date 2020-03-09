@@ -7,7 +7,7 @@
         </div>
 
         <div v-else>
-          <i class="el-icon-info"></i> Untitled Request 
+          <i class="el-icon-info"></i> Untitled Request {{tabURL}} 000
         </div>
       </el-col>
     </el-row>
@@ -262,7 +262,7 @@ import {env} from '../nuxt.config';
 export default {
   
   props: [
-    'data'
+    'data', 'sendEnv'
   ],
 
   components: {
@@ -343,7 +343,11 @@ export default {
       folders: []
     }
   },
-    
+  mounted(){
+    this.$bus.$on('send-env', function(dataEnv){
+      console.log(dataEnv)
+    })
+  },
   methods: {
     editorInit: function(editor) {
       require('brace/mode/json')
@@ -378,6 +382,7 @@ export default {
     },
 
     sendRequest() {
+
       const string = this.url
       const regexp = /[{]{2}(\w+)[}]{2}/g
       const matches = string.matchAll(regexp)
