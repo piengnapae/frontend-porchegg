@@ -4,7 +4,7 @@
 
   <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" class="demo-ruleForm">
     <el-row>
-      <b><h2>เข้าสู่ระบบ</h2></b>
+      <b><h2>Login</h2></b>
     </el-row>
 
     <el-row>     
@@ -32,11 +32,11 @@
     <p class="error">{{errorMessage}}</p>
 
     <el-row>
-        <el-button type="primary" class="button" round @click="submitForm('ruleForm')">เข้าสู่ระบบ</el-button>
+        <el-button type="primary" class="button" round @click="submitForm('ruleForm')">Login</el-button>
     </el-row>
 <br>
  <el-row>
-        <el-button type="primary" class="buttonregis" round @click="goToRegister">ลงทะเบียน</el-button>
+        <el-button type="primary" class="buttonregis" round @click="goToRegister">Register</el-button>
     </el-row>
   </el-form>
 </div>
@@ -128,7 +128,7 @@ import '@/assets/scss/login.scss';
               this.$router.push('/member')
             })
             .catch(err =>{
-              this.errorMessage = err.response.data.error.message;
+              this.errorMessage = err.response.data.error.message
             })
             
           } 
