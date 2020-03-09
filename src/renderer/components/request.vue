@@ -218,11 +218,11 @@
     <div v-if="isResponse" class="box">
       <el-form class="status-code" style="display: flex; justify-content: flex-end;">
         <el-form-item>
-          <span class="demo-input-label" style="padding-right: 10px" >Status </span>
+          <span class="demo-input-label" style="padding-right: 10px" >Status: <span style="color: green"> {{status}} </span></span>
         </el-form-item>
 
         <el-form-item>
-          <el-input v-model="status" :disabled="true" size="small"></el-input>
+          <span class="demo-input-label" style="padding-right: 10px; padding-left: 10px;" >Time: <span style="color: green"> {{statusTime}} </span></span>
         </el-form-item>
       </el-form>
 
@@ -374,6 +374,7 @@ export default {
       raw: 'raw',
       preview: 'preview',
       status: '',
+      statusTime: '',
       statusText: '',
       paramsInput:'',
       loading: false,
@@ -479,6 +480,7 @@ export default {
     },
 
     sendRequest() {
+      const startTime = Date.now()
       axios({
         method: this.request.method,
         url: this.request.url,
@@ -486,14 +488,17 @@ export default {
         data: JSON.parse(this.textbody),
         params: this.convertToParams(this.inputParameter)
       })
-      .then(res => { 
+      .then(res => {
+        const duration = Date.now() - startTime
         this.content = JSON.stringify(res.data, null, 4)
         this.status = res.status+" "+res.statusText
+        this.statusTime = duration + "ms"
         this.loading = false
       }).catch(err => {
-        console.log(err.response)
+        const duration = Date.now() - startTime
         this.content = JSON.stringify(err.response.data, null, 4)
         this.status = err.response.status+" "+err.response.statusText
+        this.statusTime = duration + "ms"
         this.loading = false
       })
     },
