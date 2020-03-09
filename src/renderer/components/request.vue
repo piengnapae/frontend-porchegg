@@ -292,7 +292,8 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button type="danger" @click="addRequestDialog = false">CANCLE</el-button>
-        <el-button type="success" @click="addRequest()">SAVE</el-button>
+        <el-button v-if="request.id_folder != null" type="success" @click="addRequest()">SAVE</el-button>
+        <el-button v-else type="success" disabled>SAVE</el-button>
       </span>
     </el-dialog>
   </div>
