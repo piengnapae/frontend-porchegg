@@ -108,13 +108,9 @@ import {env} from '../nuxt.config';
 
       clickFolder (id) {
         this.openMessageLoading()
-        let arrId = []
+        const index = this.editableTabs.findIndex(arr => arr.id_request === id)
 
-        this.editableTabs.forEach(tab => {
-          arrId.push(tab['id_request'])
-        })
-
-        if(!arrId.includes(id)){
+        if(index < 0){
           axios.get(this.server_api+'/V1/requests/'+id)
           .then(res => {
             let newTabName = ++this.tabIndex + ''
@@ -132,6 +128,7 @@ import {env} from '../nuxt.config';
             console.log(err)
           })
         }else{
+          this.editableTabsValue = this.editableTabs[index].name
           this.closeMessageLoading()
         }
       },

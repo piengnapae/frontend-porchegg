@@ -250,7 +250,7 @@
           ></AceEditor>
         </el-tab-pane>
 
-        <el-tab-pane label="Raw" name="second">{{raw}}<br>......<br> {{params}} </el-tab-pane>
+        <el-tab-pane label="Raw" name="second">{{raw}}<br>......<br></el-tab-pane>
         <el-tab-pane label="Preview" name="third">{{preview}}</el-tab-pane>
       </el-tabs>
     </div>
@@ -320,7 +320,6 @@ export default {
     return {
       server_api: env.SERVER_API,
       inputParameter: [{"keyParams": "", "valueParams": ""}],
-      params : this.data.params,
       inputHeader: [{"keyHeaders": "", "valueHeaders": ""}],
       content: '',
       textbody: this.data.body || '{}',
@@ -396,13 +395,20 @@ export default {
 
   created() {
     var params = this.data.params
-    if(params != undefined) {
+    var header = this.data.header
+
+    if(params != undefined && params != null) {
       params = JSON.parse(params)
       let temp = []
       for(const p in params) {
         temp.push({"keyParams": p ,"valueParams" : params[p]})
       }
       this.inputParameter = temp
+    }
+
+    if(header != undefined && header != null) {
+      header = JSON.parse(header)
+      this.inputHeader = header
     }
   },
   methods: {
@@ -444,7 +450,6 @@ export default {
           auth: JSON.stringify(this.token)
         })
         .then(res => {
-          this.inputParameter = this.convertParams(this.data.params)
           this.$message({
             message: 'Success',
             type: 'success'
@@ -596,19 +601,6 @@ export default {
       this.request.method = 'get'
       this.request.url = ''
     },
-
-    convertParams(data){
-      // [{"keyParams": "", "valueParams": ""}]
-      let arr = []
-      data = JSON.parse(data)
-      for (var key in data) {
-        if (data.hasOwnProperty(key)){
-          arr.push({"keyParams" : key, "valueParams" : data[key]})
-        }
-      }
-
-      return arr
-    }
   }
 }
 </script>
