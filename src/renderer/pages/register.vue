@@ -3,7 +3,7 @@
 <div class="form" id="app">
   <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" class="demo-ruleForm">
     <el-row>
-      <b><h2>ลงทะเบียน</h2></b>
+      <b><h2>Register</h2></b>
     </el-row>
 
     <el-row>
@@ -33,10 +33,10 @@
     <p class="error">{{errorMessage}}</p>
 
     <el-row>
-        <el-button type="primary" class="button" round @click="submitForm('ruleForm')">ลงทะเบียน</el-button>
+        <el-button type="primary" class="button" round @click="submitForm('ruleForm')">Register</el-button>
     </el-row>
     <div style="margin-top:20px;">
-      <router-link :to="{ name: 'login'}">กลับไปหน้าแรก</router-link>
+      <router-link :to="{ name: 'login'}">Return to home page </router-link>
       
     </div>
 
@@ -144,7 +144,7 @@ import '@/assets/scss/register.scss';
             })
             .then(res => {
               this.$message({
-                message: 'ลงทะเบียนสำเร็จ',
+                message: 'Success Register!!',
                 type: 'success'
               })
               this.$router.push('/login')
@@ -152,14 +152,11 @@ import '@/assets/scss/register.scss';
             .catch(err => {
               console.log(err.response.data.errors.errors.email)
               if(err.response.data.errors.errors.email && err.response.data.errors.errors.username){
-                this.errorMessage = "Email และ Username มีคนใช้แล้ว กรุณาตรวจสอบใหม่"
-                // The email and username has already been taken.
-              }else if(err.response.data.errors.errors.email){
-                this.errorMessage = "Email มีคนใช้แล้ว กรุณาตรวจสอบใหม่"
-                // +err.response.data.email
+                this.errorMessage = "This email and username is already used by another user. Please try with another email and username."          
+              }else if(err.response.data.errors.errors.email){  
+               this.errorMessage =  "This email is already used by another user. Please try with another email." 
               }else{
-                this.errorMessage = "Username มีคนใช้แล้ว กรุณาตรวจสอบใหม่"
-                // +err.response.data.username
+                this.errorMessage = "This username is already used by another user. Please try with another username." 
               }
               
             })
