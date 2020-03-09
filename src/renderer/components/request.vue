@@ -250,7 +250,7 @@
           ></AceEditor>
         </el-tab-pane>
 
-        <el-tab-pane label="Raw" name="second">{{raw}}<br>......<br> </el-tab-pane>
+        <el-tab-pane label="Raw" name="second">{{raw}}<br>......<br></el-tab-pane>
         <el-tab-pane label="Preview" name="third">{{preview}}</el-tab-pane>
       </el-tabs>
     </div>
@@ -322,7 +322,7 @@ export default {
       inputParameter: [{"keyParams": "", "valueParams": ""}],
       inputHeader: [{"keyHeaders": "", "valueHeaders": ""}],
       content: '',
-      textbody: '{}',
+      textbody: this.data.body || '{}',
       optionsj: {
         readOnly: true,
         autoScrollEditorIntoView: true
@@ -358,7 +358,7 @@ export default {
         }
       ],
       auth: 'No Auth',
-      token: '',
+      token: this.data.auth,
       username: '',
       password: '',
       isShowHeader: '',
@@ -392,7 +392,25 @@ export default {
       }
     }
   },
-    
+
+  created() {
+    var params = this.data.params
+    var header = this.data.header
+
+    if(params != undefined && params != null) {
+      params = JSON.parse(params)
+      let temp = []
+      for(const p in params) {
+        temp.push({"keyParams": p ,"valueParams" : params[p]})
+      }
+      this.inputParameter = temp
+    }
+
+    if(header != undefined && header != null) {
+      header = JSON.parse(header)
+      this.inputHeader = header
+    }
+  },
   methods: {
     editorInit: function(editor) {
       require('brace/mode/json')
@@ -425,7 +443,11 @@ export default {
           id_folder: this.request.id_folder,
           method: this.request.method,
           url: this.request.url,
-          id_user: sessionStorage.getItem('id_user')
+          id_user: sessionStorage.getItem('id_user'),
+          body: JSON.parse(this.textbody),
+          params: this.convertToParams(this.inputParameter),
+          header: this.inputHeader,
+          auth: JSON.stringify(this.token)
         })
         .then(res => {
           this.$message({
@@ -578,7 +600,7 @@ export default {
       this.request.name = 'Untitled Request'
       this.request.method = 'get'
       this.request.url = ''
-    }
+    },
   }
 }
 </script>
