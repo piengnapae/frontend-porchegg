@@ -378,7 +378,12 @@ export default {
     },
 
     sendRequest() {
-      console.log(this.convertToParams(this.inputParameter))  
+      const string = this.url
+      const regexp = /[{]{2}(\w+)[}]{2}/g
+      const matches = string.matchAll(regexp)
+        for (const match of matches) {
+          console.log(match)
+        } 
       axios({
         method: this.method,
         url: this.url,

@@ -1,13 +1,14 @@
- @@ -1,285 +0,0 @@
-<template>
+ <template>
   <div>
-    <el-select v-if="createEnvironment.length > 0" v-model="environments" >
+    
+    {{environments}}
+    <el-select v-if="createEnvironment.length > 0" v-model="environments" @change="showEnv()" >
       <el-option label="No Environment" value="No Environment">
       </el-option>
-      <el-option
+      <el-option  
         v-for="(createEnvironment, index) in createEnvironment" v-bind:key="index" 
         :label="createEnvironment.name" 
-        :value="createEnvironment.name"
+        :value="createEnvironment.id"
         >
       </el-option>
     </el-select>
@@ -17,11 +18,15 @@
       </el-option>
     </el-select>
 
+     <el-dialog title="Environment" :visible.sync="EnvironmentDialog">
+       {{env.name}} {{env.values}}
+    </el-dialog>
+
     <el-button circle><i class="el-icon-view" ></i></el-button>
     <el-button  icon="el-icon-setting" @click="addEnvironmentDialog = true" circle></el-button>     
-    <el-dialog title="Environment" :visible.sync="addEnvironmentDialog">
+    <el-dialog title="Environment" :visible.sync="addEnvironmentDialog"> 
       <div  v-for="(createEnvironment, index) in createEnvironment" v-bind:key="index">
-        {{ createEnvironment.name }}
+        {{ createEnvironment.name }}  
         <el-button style="position: absolute; right: 275px;" 
           icon="el-icon-copy-document" @click="duplicateEnvironment(createEnvironment.id)">
         </el-button>
@@ -44,7 +49,8 @@
     </el-dialog>
   
     <el-dialog title="Edit Environment" :visible.sync="editEnvironmentDialog ">
-      <el-form :model="editEnvironment">
+          <!-- {{ inputEditEnvironment }}   -->
+      <el-form :model="editEnvironment"> 
         <el-form-item label="NAME ENVIRONMENT" >
           <el-input v-model="editEnvironment.name" autocomplete="off" ></el-input>
         </el-form-item>  
@@ -117,6 +123,7 @@ export default {
     return {
         server_api: env.SERVER_API,
         addEnvironmentDialog: false,
+        EnvironmentDialog: false,
         createEnvironmentDialog : false,
         editEnvironmentDialog : false,
         removeEnvironmentDialog : false,
@@ -133,7 +140,12 @@ export default {
         values: []
         },
         inputEnvironment: [{"variable" : "" , "value" : ""}],
-        inputEditEnvironment: [{}]
+        inputEditEnvironment: [{}],
+        env: {
+        name: '',
+        values: ''
+        },
+        
     }  
   },
 
@@ -186,19 +198,29 @@ export default {
           console.log(err)
         })
       this.createEnvironmentDialog = false
-    },
-        
-    convertToEnvironment(env){
-      let arrayenv = []
-      env.forEach(element => {
-        const temp = {'variable' : element['variable'] , 'value': element['value']}
-        arrayenv.push(temp)
-      })
+    },  
 
-      return arrayenv
-      },
+      // ตรวจสอบว่าสิ่งที่ป้อนเข้ามามี {{}} หรือไม่
+      // ถ้ามี {{}} เชคว่า {{}} ที่ป้อนเข้ามาเป็นตัวแปรชื่อว่าอะไร
+      // เอาค่า env ใส่ใน array js
+      // เช็คกับ list ใน env เก็บค่าอะไรไว้บ้าง ตรงหรือไม่ วน เช็คค่า
 
+    // convertToEnvironment(env){
+    //   let arrayenv = []
+    //   env.forEach(element => {
+    //     const temp = {'variable' : element['variable'] , 'value': element['value']}
+    //     arrayenv.push(temp)
+    //   })
+    //   return arrayenv
+    //   },
+
+    // arrayEnv(){
+    //    const temp = ['s']
+    //     temp.push(temp)
+    //     console.log(temp)
+    // },
     getEnvironment(id) {
+ 
       axios.get(this.server_api+'/V1/environment')
         .then(res => {
           this.createEnvironment = res.data.data
@@ -206,6 +228,7 @@ export default {
         .catch(err => {
           console.log(err)
         })
+        
     },
 
     openEditBox(id){
@@ -242,7 +265,7 @@ export default {
     },
 
     remove(id) {
-      this.$confirm('Are you want to delete this environment? ', 'Delete Environment', {
+      this.$confirm('Do you want to delete this environment? ', 'Delete Environment', {
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
         type: 'warning'
@@ -276,7 +299,8 @@ export default {
       axios.post(this.server_api+'/V1/environment/'+id, {
         id_user : 1,
         name: this.environment.name,
-        values: this.convertToEnvironment(this.inputEnvironment) 
+        values: this.inputEnvironment
+        // this.convertToEnvironment(this.inputEnvironment) 
       })
         .then(res => {
           this.getEnvironment()
@@ -292,7 +316,36 @@ export default {
           })
           console.log(err)
         })
-    }
+    },
+
+    showEnv(){
+      console.log(this.environments)
+      axios.get(this.server_api+'/V1/environment/'+this.environments)
+        .then(res => {
+          const data = JSON.parse(res.data.values)
+          console.log(data)
+          let arrEnvironment = []
+
+          for(let i = 0; i < data.length; i++ ){
+            console.log(data[i]['variable'])
+            console.log(data[i]['value'])
+
+            // let obj = {}
+            // obj['key'] = data[i]['value']
+            arrEnvironment[data[i]['variable']] = data[i]['value']
+           
+          }
+         
+          console.log(arrEnvironment)
+           this.$emit('clickedEnv', arrEnvironment)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+         
+    
+    // alert(this.environments)
+  }
   }
 }
 </script>

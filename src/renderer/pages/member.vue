@@ -16,6 +16,7 @@
       <!--- left sidebar --->
       <el-aside width="220px">
         <Folder @requestId="clickFolder"></Folder>
+        
       </el-aside>
       <!--- right sidebar --->
       <el-main>
@@ -26,7 +27,9 @@
           ADD NEW TAB
         </el-button> -->
         <div style="float:right">
-          <Environment></Environment>
+          <Environment @clickedEnv="onClickEnv"></Environment>
+        </div>
+        <div>
         </div>
         <br><br>
         <div>
@@ -73,6 +76,9 @@ import {env} from '../nuxt.config';
     },
     
     methods: {
+      onClickEnv(value) {
+      console.log(value) 
+    },
       clickFolder (id) {
         this.openMessageLoading()
         let arrId = []
