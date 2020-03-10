@@ -488,16 +488,29 @@ export default {
     sendRequest() {
       // 1 - get environment
       const currentEnv = this.$store.state.environments.environment
-      
       // 2 - replace {{ keyword }} with environment
       // 2.1 - replace URL
-      let string = this.url
+      let string = this.request.url
       const regexp = /\{\{(.*?)\}\}/g
       string = string.replace(regexp, function(match, token) {
-          return currentEnv[token];
+          return currentEnv[token]; 
       });
       //TODO: set new URL in request
+      this.request.url =  string 
+      console.log(string)
+      console.log(this.request.url)
       //TODO: 2.2 - replace Parameters
+      
+
+      // const currentEnvParam = this.$store.state.environments.environment
+      // let stringParam = this.inputParameter
+      // const regexpParam = /\{\{(.*?)\}\}/g
+      // stringParam = string.replace(regexpParam, function(match, token) {
+      //     return currentEnvParam[token]; 
+      // });
+      // this.inputParameter =  stringParam 
+      // console.log(stringParam)
+      // console.log(this.inputParameter)
       //TODO: 2.3 - replace Authentication
       //TODO: 2.4 - replace Headers
 
@@ -573,6 +586,8 @@ export default {
     convertToArray(input){
       let arr = {}
       input.forEach(header => {
+        // if(input == null)
+        if(input != null) {
         var key = header['keyHeaders']
 
         if(key == ""){
@@ -580,9 +595,10 @@ export default {
         }
 
         arr[key] =  header['valueHeaders']
-      })
+      }})
       
       return arr
+      
     },
 
     headerArray(){
