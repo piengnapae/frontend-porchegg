@@ -410,7 +410,11 @@ export default {
 
     if(header != undefined && header != null) {
       header = JSON.parse(header)
-      this.inputHeader = header
+      let temp = []
+      for(const h in header) {
+        temp.push({"keyParams": h ,"valueParams" : header[h]})
+      }
+      this.inputHeader = temp
     }
   },
   methods: {
@@ -446,10 +450,10 @@ export default {
           method: this.request.method,
           url: this.request.url,
           id_user: sessionStorage.getItem('id_user'),
-          body: JSON.parse(this.textbody),
+          body: this.textbody,
           params: this.convertToParams(this.inputParameter),
-          header: this.inputHeader,
-          auth: JSON.stringify(this.token)
+          header: this.convertToArray(this.inputHeader),
+          auth: this.token
         })
         .then(res => {
           this.$message({
@@ -462,7 +466,7 @@ export default {
             message: 'Failed',
             type: 'error'
           })
-          console.log(err)
+          console.log(err.response)
         })
       }else{
         axios.get(this.server_api+'/V1/collections')
@@ -538,12 +542,11 @@ export default {
       let arr = {}
       params.forEach(params => {
         var key = params['keyParams']
+        arr[key] =  params['valueParams']
 
         if(key == ""){
-          return '{}'
+          arr = null
         }
-
-        arr[key] =  params['valueParams']
       })
       
       return arr
@@ -553,14 +556,13 @@ export default {
       let arr = {}
       input.forEach(header => {
         var key = header['keyHeaders']
+        arr[key] =  header['valueHeaders']
 
         if(key == ""){
-          return '{}'
+          arr = null
         }
-
-        arr[key] =  header['valueHeaders']
       })
-      
+
       return arr
     },
 
@@ -583,7 +585,11 @@ export default {
         name: this.request.name,
         method: this.request.method,
         url: this.request.url,
-        id_user: sessionStorage.getItem('id_user')
+        id_user: sessionStorage.getItem('id_user'),
+        body: this.textbody,
+        header: this.convertToArray(this.inputHeader),
+        params: this.convertToParams(this.inputParameter),
+        auth: this.token
       })
       .then(res => {
         this.$emit('newRequest', res.data.data.id)
@@ -598,7 +604,7 @@ export default {
           message: 'Can\'t add the new request, please try again!',
           type: 'error'
         })
-        console.log(err.response)
+        console.log(err.response.data.errors)
       })
 
       this.addRequestDialog = false

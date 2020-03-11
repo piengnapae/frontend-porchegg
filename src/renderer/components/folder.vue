@@ -41,7 +41,7 @@
                       </el-button>
                     </el-dropdown-item>
                     <el-dropdown-item>
-                      <el-button type="text"><i class="fas fa-file-export"></i> Export </el-button>
+                      <el-button type="text" @click="exportJson(collection.id)"><i class="fas fa-file-export"></i> Export </el-button>
                     </el-dropdown-item>
                     <el-dropdown-item>
                       <el-button type="text" @click="removeCollection(collection)">
@@ -228,7 +228,7 @@ export default {
           value: 'delete',
           label: 'DELETE'
         }
-      ],
+      ]
     }
   },
 
@@ -255,13 +255,45 @@ export default {
     }
   },
   methods: {
+    exportJson(id) {
+      axios.post(this.server_api+'/V1/export',{
+        id_collection: id
+      })
+      .then(res => {    
+        let text = JSON.stringify(res.data)
+        let blob = new Blob([text], {
+          type: "text/json",
+        })
+        let anchor = document.createElement("a")
+        anchor.download = res.data.info.name + ".json"
+        anchor.href = window.URL.createObjectURL(blob)
+        anchor.target = "_blank"
+        anchor.style.display = "none"
+        document.body.appendChild(anchor)
+        anchor.click()
+        document.body.removeChild(anchor)
+
+        this.$message({
+          message: 'Export Collection: ' + res.data.info.name + ' success!',
+          type: 'success'
+        })
+      })
+      .catch(err => {
+        console.log(err.response.data.errors.errors)
+        this.$message({
+          message: err.response.data.errors.errors,
+          type: 'error'
+        })
+      })
+    },
+
     addCollection(collection) {
       axios.post(this.server_api+'/V1/collections', {
         name: this.collection.name
       })
       .then(res => {
         this.getCollection()
-       this.$message({
+        this.$message({
           message: 'Success Added Collection!!',
           type: 'success'
         })
