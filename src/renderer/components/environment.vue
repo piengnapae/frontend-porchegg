@@ -331,6 +331,8 @@ export default {
             arrEnvironment[data[i]['variable']] = data[i]['value']
           }
           this.$store.commit("environments/setEnvironment", arrEnvironment)
+          console.log(arrEnvironment)
+          
         })
         .catch(err => {
           console.log(err)
