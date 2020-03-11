@@ -259,8 +259,8 @@ export default {
       axios.post(this.server_api+'/V1/export',{
         id_collection: id
       })
-      .then(res => {    
-        let text = JSON.stringify(res.data)
+      .then(res => {
+        let text = JSON.stringify(res.data,null, 2)
         let blob = new Blob([text], {
           type: "text/json",
         })
@@ -279,9 +279,9 @@ export default {
         })
       })
       .catch(err => {
-        console.log(err.response.data.errors.errors)
+        console.log(err.response.data.errors)
         this.$message({
-          message: err.response.data.errors.errors,
+          message: err.response.data.errors,
           type: 'error'
         })
       })

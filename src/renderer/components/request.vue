@@ -250,7 +250,7 @@
           ></AceEditor>
         </el-tab-pane>
 
-        <el-tab-pane label="Raw" name="second">{{raw}}<br>......<br></el-tab-pane>
+        <el-tab-pane label="Raw" name="second">{{raw}}<br>{{token}}<br></el-tab-pane>
         <el-tab-pane label="Preview" name="third">{{preview}}</el-tab-pane>
       </el-tabs>
     </div>
@@ -323,7 +323,7 @@ export default {
       inputParameter: [{"keyParams": "", "valueParams": ""}],
       inputHeader: [{"keyHeaders": "", "valueHeaders": ""}],
       content: '',
-      textbody: this.data.body || '{}',
+      textbody: this.data.body,
       optionsj: {
         readOnly: true,
         autoScrollEditorIntoView: true
@@ -359,7 +359,7 @@ export default {
         }
       ],
       auth: 'No Auth',
-      token: this.data.auth,
+      token: null,
       username: '',
       password: '',
       isShowHeader: '',
@@ -398,6 +398,12 @@ export default {
   created() {
     var params = this.data.params
     var header = this.data.header
+    var token = this.data.auth
+
+    if(token != undefined && token != null) {
+      token = JSON.parse(token)
+      this.token = token
+    }
 
     if(params != undefined && params != null) {
       params = JSON.parse(params)
@@ -412,7 +418,7 @@ export default {
       header = JSON.parse(header)
       let temp = []
       for(const h in header) {
-        temp.push({"keyParams": h ,"valueParams" : header[h]})
+        temp.push({"keyHeaders": h ,"valueHeaders" : header[h]})
       }
       this.inputHeader = temp
     }
@@ -443,6 +449,13 @@ export default {
     },
 
     save(id){
+
+      if(this.token == null || this.token == ''){
+        this.token = null
+      }else{
+        this.token = JSON.stringify(this.token)
+      }
+
       if(id){
         axios.put(this.server_api+'/V1/requests/'+id, {
           name: this.request.name,
@@ -482,6 +495,8 @@ export default {
           console.log(err)
         })
       }
+
+      this.token = JSON.parse(this.token)
     },
 
     sendRequest() {
