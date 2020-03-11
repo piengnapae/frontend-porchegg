@@ -633,11 +633,11 @@ export default {
           let arr = {}
           params.forEach(params => {
             // var key = params['keyParams']
-            var key = arrKeyParam
+            var key = arrKeyParam 
             if(key == ""){
               return '{}'
             }
-            arr[key] =  arrValueParam
+            arr[key] =  arrValueParam 
           }) 
           return arr
     },
@@ -646,7 +646,7 @@ export default {
 
        const currentEnv = this.$store.state.environments.environment
         const data = this.inputHeader
-          let arrKeyHeader = []
+            let arrKeyHeader = []
             for(let i = 0; i < data.length; i++ ){
               console.log(data[i]['keyHeaders'])
               arrKeyHeader = data[i]['keyHeaders']
@@ -655,17 +655,15 @@ export default {
 
           let stringKeyHeader = arrKeyHeader
             const regexpKeyHeader = /\{\{(.*?)\}\}/g
-            stringKeyHeader= stringKeyHeader.replace(regexpKeyHeader, function(match, token) {
-            return currentEnv[token] 
+            stringKeyHeader = stringKeyHeader.replace(regexpKeyHeader, function(match, token) {
+              return currentEnv[token] 
           })
-
           arrKeyHeader = stringKeyHeader
           console.log(arrKeyHeader)
 
           let arrValueHeader = []
             for(let i = 0; i < data.length; i++ ){
               console.log(data[i]['valueHeaders'])
-              // arrParam[data[i]['keyParams']] = data[i]['valueParams']
               arrValueHeader = data[i]['valueHeaders']
             }
             console.log(arrValueHeader)  
