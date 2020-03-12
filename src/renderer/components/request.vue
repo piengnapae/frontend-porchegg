@@ -529,8 +529,14 @@ export default {
         this.loading = false
       }).catch(err => {
         const duration = Date.now() - startTime
-        this.content = JSON.stringify(err.response.data, null, 4)
-        this.status = err.response.status+" "+err.response.statusText
+
+        if(typeof err.response !== 'undefined'){
+          this.content = JSON.stringify(err.response.data, null, 4)
+          this.status = err.response.status+" "+err.response.statusText
+        }else{
+          this.content = JSON.stringify(err, null, 4)
+          this.status = err.message
+        }
         this.statusTime = duration + "ms"
         this.loading = false
       })
@@ -637,8 +643,8 @@ export default {
       let tokenAuth = {}
 
       headerData = this.convertToArray(this.inputHeader)
-      if(this.token != '' && this.token != null){
-        tokenAuth['authorization'] = 'Bearer '+ stringToken
+      if(this.token != ''){
+        tokenAuth['authorization'] = this.token
       }
         
       let merged = {...headerData, ...tokenAuth};
