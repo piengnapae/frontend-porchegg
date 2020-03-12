@@ -8,8 +8,6 @@
 
         <div v-else>
           <i class="el-icon-info"></i> Untitled Request
-          <!-- Please remove below line after success development -->
-          {{$store.state.environments}}
         </div>
       </el-col>
     </el-row>
@@ -256,7 +254,7 @@
           ></AceEditor>
         </el-tab-pane>
 
-        <el-tab-pane label="Raw" name="second">{{raw}}<br>......<br></el-tab-pane>
+        <el-tab-pane label="Raw" name="second">{{raw}}<br>{{token}}<br></el-tab-pane>
         <el-tab-pane label="Preview" name="third">{{preview}}</el-tab-pane>
       </el-tabs>
     </div>
@@ -328,7 +326,7 @@ export default {
       inputParameter: [{"keyParams": "", "valueParams": ""}],
       inputHeader: [{"keyHeaders": "", "valueHeaders": ""}],
       content: '',
-      textbody: this.data.body || '{}',
+      textbody: this.data.body,
       optionsj: {
         readOnly: true,
         autoScrollEditorIntoView: true
@@ -364,7 +362,7 @@ export default {
         }
       ],
       auth: 'No Auth',
-      token: this.data.auth,
+      token: null,
       username: '',
       password: '',
       isShowHeader: '',
@@ -404,6 +402,12 @@ export default {
   created() {
     var params = this.data.params
     var header = this.data.header
+    var token = this.data.auth
+
+    if(token != undefined && token != null) {
+      token = JSON.parse(token)
+      this.token = token
+    }
 
     if(params != undefined && params != null) {
       params = JSON.parse(params)
@@ -416,7 +420,11 @@ export default {
 
     if(header != undefined && header != null) {
       header = JSON.parse(header)
-      this.inputHeader = header
+      let temp = []
+      for(const h in header) {
+        temp.push({"keyHeaders": h ,"valueHeaders" : header[h]})
+      }
+      this.inputHeader = temp
     }
   },
   methods: {
@@ -445,6 +453,13 @@ export default {
     },
 
     save(id){
+
+      if(this.token == null || this.token == ''){
+        this.token = null
+      }else{
+        this.token = JSON.stringify(this.token)
+      }
+
       if(id){
         axios.put(this.server_api+'/V1/requests/'+id, {
           name: this.request.name,
@@ -452,10 +467,10 @@ export default {
           method: this.request.method,
           url: this.request.url,
           id_user: sessionStorage.getItem('id_user'),
-          body: JSON.parse(this.textbody),
+          body: this.textbody,
           params: this.convertToParams(this.inputParameter),
-          header: this.inputHeader,
-          auth: JSON.stringify(this.token)
+          header: this.convertToArray(this.inputHeader),
+          auth: this.token
         })
         .then(res => {
           this.$message({
@@ -468,7 +483,7 @@ export default {
             message: 'Failed',
             type: 'error'
           })
-          console.log(err)
+          console.log(err.response)
         })
       }else{
         axios.get(this.server_api+'/V1/collections')
@@ -484,34 +499,25 @@ export default {
           console.log(err)
         })
       }
+
+      this.token = JSON.parse(this.token)
     },
 
     sendRequest() {
-      // 1 - get environment
       const currentEnv = this.$store.state.environments.environment
-      // 2 - replace {{ keyword }} with environment
-      // 2.1 - replace URL
       this.url = this.request.url 
       let string = this.request.url
       const regexp = /\{\{(.*?)\}\}/g
       string = string.replace(regexp, function(match, token) {
           return currentEnv[token]; 
       });
-
-      //TODO: set new URL in request
       this.request.url = string 
-
-      // TODO: 2.2 - replace Parameters
-      //TODO: 2.3 - replace Authentication
-      //TODO: 2.4 - replace Headers
-      // 3 - send params to axios
       const startTime = Date.now()
-      console.log(this.headerArray())
       axios({
         method: this.request.method,
         url: this.request.url,
         headers: this.headerArray(),             
-        data: JSON.parse(this.textbody),
+        data: this.textbody,
         params: this.convertToParams(this.inputParameter)
       })
       .then(res => {
@@ -619,23 +625,25 @@ export default {
     headerArray(){
 
       const currentEnv = this.$store.state.environments.environment
-    
-      let stringToken = this.token
+
+      if(this.token != null){
+         let stringToken = this.token
       const regexpToken = /\{\{(.*?)\}\}/g
       stringToken = stringToken.replace(regexpToken, function(match, token) {
           return currentEnv[token] 
       })
-
+      
       let headerData = {}
       let tokenAuth = {}
 
       headerData = this.convertToArray(this.inputHeader)
-      if(this.token != ''){
+      if(this.token != '' && this.token != null){
         tokenAuth['authorization'] = 'Bearer '+ stringToken
       }
         
       let merged = {...headerData, ...tokenAuth};
       return merged
+      }
     },
 
     addRequest() {
@@ -644,7 +652,11 @@ export default {
         name: this.request.name,
         method: this.request.method,
         url: this.request.url,
-        id_user: sessionStorage.getItem('id_user')
+        id_user: sessionStorage.getItem('id_user'),
+        body: this.textbody,
+        header: this.convertToArray(this.inputHeader),
+        params: this.convertToParams(this.inputParameter),
+        auth: this.token
       })
       .then(res => {
         this.$emit('newRequest', res.data.data.id)
@@ -659,7 +671,7 @@ export default {
           message: 'Can\'t add the new request, please try again!',
           type: 'error'
         })
-        console.log(err.response)
+        console.log(err.response.data.errors)
       })
 
       this.addRequestDialog = false

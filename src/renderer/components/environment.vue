@@ -198,25 +198,6 @@ export default {
       this.createEnvironmentDialog = false
     },  
 
-      // ตรวจสอบว่าสิ่งที่ป้อนเข้ามามี {{}} หรือไม่
-      // ถ้ามี {{}} เชคว่า {{}} ที่ป้อนเข้ามาเป็นตัวแปรชื่อว่าอะไร
-      // เอาค่า env ใส่ใน array js
-      // เช็คกับ list ใน env เก็บค่าอะไรไว้บ้าง ตรงหรือไม่ วน เช็คค่า
-
-    // convertToEnvironment(env){
-    //   let arrayenv = []
-    //   env.forEach(element => {
-    //     const temp = {'variable' : element['variable'] , 'value': element['value']}
-    //     arrayenv.push(temp)
-    //   })
-    //   return arrayenv
-    //   },
-
-    // arrayEnv(){
-    //    const temp = ['s']
-    //     temp.push(temp)
-    //     console.log(temp)
-    // },
     getEnvironment(id) {
  
       axios.get(this.server_api+'/V1/environment')
@@ -298,7 +279,6 @@ export default {
         id_user : 1,
         name: this.environment.name,
         values: this.inputEnvironment
-        // this.convertToEnvironment(this.inputEnvironment) 
       })
         .then(res => {
           this.getEnvironment()
