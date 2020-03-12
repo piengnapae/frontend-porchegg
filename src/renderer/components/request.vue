@@ -2,8 +2,12 @@
   <div>
     <el-row>
       <el-col :span="24">
-        <div>
-          <i class="el-icon-info"></i> {{request.name}}
+        <div v-if="data.name != null">
+          <i class="el-icon-info"></i> {{data.name}}
+        </div>
+
+        <div v-else>
+          <i class="el-icon-info"></i> Untitled Request
         </div>
       </el-col>
     </el-row>
@@ -309,8 +313,7 @@ import {env} from '../nuxt.config';
 export default {
   
   props: [
-    'data',
-    'targetName'
+    'data', 'sendEnv'
   ],
 
   components: {
@@ -391,7 +394,8 @@ export default {
         name: this.data.name || 'Untitled Request',
         method: this.data.method || 'get',
         url: this.data.url || ''
-      }
+      },
+      url:''
     }
   },
 
@@ -500,6 +504,14 @@ export default {
     },
 
     sendRequest() {
+      const currentEnv = this.$store.state.environments.environment
+      this.url = this.request.url 
+      let string = this.request.url
+      const regexp = /\{\{(.*?)\}\}/g
+      string = string.replace(regexp, function(match, token) {
+          return currentEnv[token]; 
+      });
+      this.request.url = string 
       const startTime = Date.now()
       axios({
         method: this.request.method,
@@ -509,6 +521,7 @@ export default {
         params: this.convertToParams(this.inputParameter)
       })
       .then(res => {
+        this.request.url = this.url
         const duration = Date.now() - startTime
         this.content = JSON.stringify(res.data, null, 4)
         this.status = res.status+" "+res.statusText
@@ -560,34 +573,72 @@ export default {
     },
 
     convertToParams(params){
-      let arr = {}
-      params.forEach(params => {
-        var key = params['keyParams']
-        arr[key] =  params['valueParams']
 
-        if(key == ""){
-          arr = null
-        }
-      })
-      
-      return arr
+        const currentEnv = this.$store.state.environments.environment
+
+          let arr = {}
+          params.forEach(params => {
+
+             var keyParams = params['keyParams']
+               const regexpKeyParam = /\{\{(.*?)\}\}/g
+                keyParams = keyParams.replace(regexpKeyParam, function(match, token) {
+                  return currentEnv[token] 
+              })
+              var key = keyParams
+
+            if(key == ""){
+              return '{}'
+            }
+              var valueParams = params['valueParams']
+               const regexpValueParam = /\{\{(.*?)\}\}/g
+                valueParams = valueParams.replace(regexpValueParam, function(match, token) {
+                  return currentEnv[token] 
+              })
+               arr[key]  = valueParams
+            })
+            
+            return arr
     },
 
     convertToArray(input){
-      let arr = {}
-      input.forEach(header => {
-        var key = header['keyHeaders']
-        arr[key] =  header['valueHeaders']
 
-        if(key == ""){
-          arr = null
-        }
-      })
+       const currentEnv = this.$store.state.environments.environment
 
-      return arr
+            let arr = {}
+            input.forEach(header => {
+               var keyHeaders = header['keyHeaders']
+               const regexpKeyHeader = /\{\{(.*?)\}\}/g
+                keyHeaders = keyHeaders.replace(regexpKeyHeader, function(match, token) {
+                  return currentEnv[token] 
+              })
+              var key = keyHeaders
+
+              if(key == ""){
+                return '{}'
+              }
+
+              var valueHeaders = header['valueHeaders']
+               const regexpValueHeader = /\{\{(.*?)\}\}/g
+                valueHeaders = valueHeaders.replace(regexpValueHeader, function(match, token) {
+                  return currentEnv[token] 
+              })
+               arr[key]  = valueHeaders
+            })
+            
+            return arr
     },
 
     headerArray(){
+
+      const currentEnv = this.$store.state.environments.environment
+
+      if(this.token != null){
+         let stringToken = this.token
+      const regexpToken = /\{\{(.*?)\}\}/g
+      stringToken = stringToken.replace(regexpToken, function(match, token) {
+          return currentEnv[token] 
+      })
+      
       let headerData = {}
       let tokenAuth = {}
 
@@ -598,6 +649,7 @@ export default {
         
       let merged = {...headerData, ...tokenAuth};
       return merged
+      }
     },
 
     addRequest() {

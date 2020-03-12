@@ -17,11 +17,14 @@
       <!--- left sidebar --->
       <el-aside width="220px">
         <Folder @requestId="clickFolder"></Folder>
+        
       </el-aside>
       <!--- right sidebar --->
       <el-main>
         <div style="float:right">
           <Environment></Environment>
+        </div>
+        <div>
         </div>
         <br><br>
         <div>
@@ -72,17 +75,23 @@ import {env} from '../nuxt.config';
         tabIndex: 1,
         editableTabsValue: '1',
         dialog: null,
+        envURL: '',
         username: sessionStorage.getItem('username')
         }
     },
     
     methods: {
+      clickFolder (id) {
+        this.openMessageLoading()
+        let arrId = []
+      },
       handleTabs(targetName, action) {
         if(action === 'remove'){
           this.removeTab(targetName)
         }else{
-          this.addTab(targetName)
-        }
+          this.addTab(targetName)  
+      } 
+      
       },
 
       fetching () {
