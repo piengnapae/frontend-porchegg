@@ -228,7 +228,8 @@
 
       <el-tabs v-model="activeName" @tab-click="requestTab">
         <el-tab-pane label="Pretty" name="first" v-if="loading">
-            <center><el-button>Cancel</el-button></center>
+         <br> <center>Sending request</center> <br>
+            <center><el-button @click="cancelSend()">Cancel</el-button></center>
           <AceEditor
             v-model="content"
             @init="editorInit"
@@ -433,6 +434,11 @@ export default {
     send(){
       this.loading = true
       this.sendRequest()
+    },
+
+    cancelSend(){
+      this.loading = false
+      this.sendRequest() == false
     },
 
     getFolder(){
