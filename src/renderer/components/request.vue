@@ -228,6 +228,7 @@
 
       <el-tabs v-model="activeName" @tab-click="requestTab">
         <el-tab-pane label="Pretty" name="first" v-if="loading">
+            <center><el-button>Cancel</el-button></center>
           <AceEditor
             v-model="content"
             @init="editorInit"
