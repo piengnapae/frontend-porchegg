@@ -442,7 +442,18 @@ export default {
 
     cancelSend(){
       this.loading = false
-      this.sendRequest() == false
+   
+        const CancelToken = axios.CancelToken;
+        let cancel;
+
+        axios.get('http://data.tmd.go.th/api/WeatherToday/V1', {
+          cancelToken: new CancelToken(function executor(c) {
+            cancel = c;
+          })
+        })
+        // cancel the request
+        cancel()
+
     },
 
     getFolder(){
