@@ -487,13 +487,8 @@ export default {
     },
 
     sendRequest() {
-       console.log(this.inputParameter)
-       console.log(this.convertToParams(this.inputParameter))
-
       // 1 - get environment
       const currentEnv = this.$store.state.environments.environment
-      console.log(this.$store.state.environments)
-
       // 2 - replace {{ keyword }} with environment
       // 2.1 - replace URL
       this.url = this.request.url 
@@ -502,44 +497,16 @@ export default {
       string = string.replace(regexp, function(match, token) {
           return currentEnv[token]; 
       });
+
       //TODO: set new URL in request
-     
       this.request.url = string 
-      // this.url = this.request.url 
-      console.log(this.url)
-      console.log(string)
-      console.log(this.request.url)
 
       // TODO: 2.2 - replace Parameters
-        
-        // const data = this.inputParameter
-        // let arrParam = []
-        //   for(let i = 0; i < data.length; i++ ){
-        //     console.log(data[i]['keyParams'])
-        //     console.log(data[i]['valueParams'])
-        //     // arrParam[data[i]['keyParams']] = data[i]['valueParams']
-        //     arrParam = data[i]['valueParams']
-        //   }
-        //   console.log(arrParam)  
-        //   let stringParam = arrParam
-        //   const regexpParam = /\{\{(.*?)\}\}/g
-        //    stringParam = stringParam.replace(regexp, function(match, token) {
-        //   return currentEnv[token] 
-        //   })
-          
-        //   arrParam = stringParam
-        //   console.log(arrParam)
-
-          
-          
-          // console.log(stringParam)
-
-
-          //TODO: 2.3 - replace Authentication
-          //TODO: 2.4 - replace Headers
-
-          // 3 - send params to axios
+      //TODO: 2.3 - replace Authentication
+      //TODO: 2.4 - replace Headers
+      // 3 - send params to axios
       const startTime = Date.now()
+      console.log(this.headerArray())
       axios({
         method: this.request.method,
         url: this.request.url,
@@ -594,111 +561,77 @@ export default {
     },
 
     convertToParams(params){
-      const currentEnv = this.$store.state.environments.environment
-        const data = this.inputParameter
-          let arrKeyParam = []
-            for(let i = 0; i < data.length; i++ ){
-              console.log(data[i]['keyParams'])
-              // arrParam[data[i]['keyParams']] = data[i]['valueParams']
-              arrKeyParam = data[i]['keyParams']
-            }
-            console.log(arrKeyParam)  
 
-          let stringKeyParam = arrKeyParam
-            const regexpKeyParam = /\{\{(.*?)\}\}/g
-            stringKeyParam = stringKeyParam.replace(regexpKeyParam, function(match, token) {
-            return currentEnv[token] 
-          })
-
-          arrKeyParam = stringKeyParam
-          console.log(arrKeyParam)
-
-          let arrValueParam = []
-            for(let i = 0; i < data.length; i++ ){
-              console.log(data[i]['keyParams'])
-              console.log(data[i]['valueParams'])
-              // arrParam[data[i]['keyParams']] = data[i]['valueParams']
-              arrValueParam = data[i]['valueParams']
-            }
-            console.log(arrValueParam)  
-
-          let stringValueParam = arrValueParam
-          const regexpValueParam = /\{\{(.*?)\}\}/g
-           stringValueParam = stringValueParam.replace(regexpValueParam, function(match, token) {
-          return currentEnv[token] 
-          })
-          arrValueParam = stringValueParam
-          console.log(arrValueParam)
+        const currentEnv = this.$store.state.environments.environment
 
           let arr = {}
           params.forEach(params => {
-            // var key = params['keyParams']
-            var key = arrKeyParam 
+
+             var keyParams = params['keyParams']
+               const regexpKeyParam = /\{\{(.*?)\}\}/g
+                keyParams = keyParams.replace(regexpKeyParam, function(match, token) {
+                  return currentEnv[token] 
+              })
+              var key = keyParams
+
             if(key == ""){
               return '{}'
             }
-            arr[key] =  arrValueParam 
-          }) 
-          return arr
+              var valueParams = params['valueParams']
+               const regexpValueParam = /\{\{(.*?)\}\}/g
+                valueParams = valueParams.replace(regexpValueParam, function(match, token) {
+                  return currentEnv[token] 
+              })
+               arr[key]  = valueParams
+            })
+            
+            return arr
     },
 
     convertToArray(input){
 
        const currentEnv = this.$store.state.environments.environment
-        const data = this.inputHeader
-            let arrKeyHeader = []
-            for(let i = 0; i < data.length; i++ ){
-              console.log(data[i]['keyHeaders'])
-              arrKeyHeader = data[i]['keyHeaders']
-            }
-            console.log(arrKeyHeader)  
-
-          let stringKeyHeader = arrKeyHeader
-            const regexpKeyHeader = /\{\{(.*?)\}\}/g
-            stringKeyHeader = stringKeyHeader.replace(regexpKeyHeader, function(match, token) {
-              return currentEnv[token] 
-          })
-          arrKeyHeader = stringKeyHeader
-          console.log(arrKeyHeader)
-
-          let arrValueHeader = []
-            for(let i = 0; i < data.length; i++ ){
-              console.log(data[i]['valueHeaders'])
-              arrValueHeader = data[i]['valueHeaders']
-            }
-            console.log(arrValueHeader)  
-
-          let stringValueHeader = arrValueHeader
-            const regexpValueHeader = /\{\{(.*?)\}\}/g
-            stringValueHeader = stringValueHeader.replace(regexpValueHeader, function(match, token) {
-              return currentEnv[token] 
-          })
-          arrValueHeader = stringValueHeader
-          console.log(arrValueHeader)
 
             let arr = {}
             input.forEach(header => {
-              // var key = header['keyHeaders']
-              var key = arrKeyHeader
+               var keyHeaders = header['keyHeaders']
+               const regexpKeyHeader = /\{\{(.*?)\}\}/g
+                keyHeaders = keyHeaders.replace(regexpKeyHeader, function(match, token) {
+                  return currentEnv[token] 
+              })
+              var key = keyHeaders
 
               if(key == ""){
                 return '{}'
               }
 
-              // arr[key] =  header['valueHeaders']
-              arr[key] =  arrValueHeader
+              var valueHeaders = header['valueHeaders']
+               const regexpValueHeader = /\{\{(.*?)\}\}/g
+                valueHeaders = valueHeaders.replace(regexpValueHeader, function(match, token) {
+                  return currentEnv[token] 
+              })
+               arr[key]  = valueHeaders
             })
             
             return arr
     },
 
     headerArray(){
+
+      const currentEnv = this.$store.state.environments.environment
+    
+      let stringToken = this.token
+      const regexpToken = /\{\{(.*?)\}\}/g
+      stringToken = stringToken.replace(regexpToken, function(match, token) {
+          return currentEnv[token] 
+      })
+
       let headerData = {}
       let tokenAuth = {}
 
       headerData = this.convertToArray(this.inputHeader)
       if(this.token != ''){
-        tokenAuth['authorization'] = 'Bearer '+this.token
+        tokenAuth['authorization'] = 'Bearer '+ stringToken
       }
         
       let merged = {...headerData, ...tokenAuth};

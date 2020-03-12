@@ -317,29 +317,18 @@ export default {
     },
 
     showEnv(){
-      // console.log(this.environments)
       axios.get(this.server_api+'/V1/environment/'+this.environments)
         .then(res => {
           const data = JSON.parse(res.data.values)
-          // console.log(data)
           let arrEnvironment = []
-
-          for(let i = 0; i < data.length; i++ ){
-            // console.log(data[i]['variable'])
-            // console.log(data[i]['value'])
-            
+          for(let i = 0; i < data.length; i++ ){  
             arrEnvironment[data[i]['variable']] = data[i]['value']
           }
           this.$store.commit("environments/setEnvironment", arrEnvironment)
-          console.log(arrEnvironment)
-          
         })
         .catch(err => {
           console.log(err)
         })
-         
-    
-    // alert(this.environments)
     }
   }
 }
