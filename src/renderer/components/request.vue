@@ -593,7 +593,7 @@ export default {
 
       headerData = this.convertToArray(this.inputHeader)
       if(this.token != ''){
-        tokenAuth['authorization'] = 'Bearer '+this.token
+        tokenAuth['authorization'] = this.token
       }
         
       let merged = {...headerData, ...tokenAuth};
