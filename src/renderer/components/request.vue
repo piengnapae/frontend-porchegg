@@ -613,38 +613,42 @@ export default {
     },
 
     convertToArray(input){
-
       const currentEnv = this.$store.state.environments.environment
       let arr = {}
         
         input.forEach(header => {
           var keyHeaders = header['keyHeaders']
+          var key = keyHeaders
+          var valueHeaders = header['valueHeaders']
+          arr[key]  = valueHeaders
+
           const regexpKeyHeader = /\{\{(.*?)\}\}/g
           
           keyHeaders = keyHeaders.replace(regexpKeyHeader, function(match, token) {
             return currentEnv[token] 
           })
           
-          var key = keyHeaders
-          var valueHeaders = header['valueHeaders']
+          
           const regexpValueHeader = /\{\{(.*?)\}\}/g
 
           valueHeaders = valueHeaders.replace(regexpValueHeader, function(match, token) {
             return currentEnv[token] 
           })
           
-          arr[key]  = valueHeaders
+          
           if(key == ""){
             arr = undefined
           }
         })
-            
       return arr
     },
 
     headerArray(){
-
       const currentEnv = this.$store.state.environments.environment
+      let headerData = {}
+      let tokenAuth = {}
+
+      headerData = this.convertToArray(this.inputHeader)
 
       if(this.token != null && this.auth != "bearer" && this.token != undefined){
         let stringToken = this.token
@@ -652,18 +656,14 @@ export default {
           stringToken = stringToken.replace(regexpToken, function(match, token) {
             return currentEnv[token] 
           })
-      
-        let headerData = {}
-        let tokenAuth = {}
-
-        headerData = this.convertToArray(this.inputHeader)
+        
         if(this.token != ''){
           tokenAuth['authorization'] = this.token
         }
-          
-        let merged = {...headerData, ...tokenAuth};
-        return merged
       }
+      
+      let merged = {...headerData, ...tokenAuth};
+      return merged
     },
 
     addRequest() {
