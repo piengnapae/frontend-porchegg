@@ -231,18 +231,12 @@
       </el-form>
 
       <el-tabs v-model="activeName" @tab-click="requestTab">
-        <el-tab-pane label="Pretty" name="first" v-if="loading">
-         <br> <center>Sending request</center> <br>
-            <center><el-button @click="cancelSend()">Cancel</el-button></center>
-          <AceEditor
-            v-model="content"
-            @init="editorInit"
-            lang="json"
-            theme="chrome"
-            height="500px"
-            :options="optionsj"
-            v-loading="loading"
-          ></AceEditor>
+        <el-tab-pane  label="Pretty" name="first" v-if="loading">  
+          <div class="cancelSend">
+              <center v-loading="loading"></center><br>
+                Sending request 
+                  <br><br>  <center> <el-button @click="cancelSend()">Cancel</el-button></center>
+          </div>  
         </el-tab-pane>
 
         <el-tab-pane label="Pretty" name="first" v-else>
@@ -254,6 +248,7 @@
             height="500px"
             :options="optionsj"
           ></AceEditor>
+          
         </el-tab-pane>
 
         <el-tab-pane label="Raw" name="second">{{raw}}<br>{{token}}<br></el-tab-pane>
@@ -442,18 +437,14 @@ export default {
 
     cancelSend(){
       this.loading = false
-   
-        const CancelToken = axios.CancelToken;
-        let cancel;
-
-        axios.get('http://data.tmd.go.th/api/WeatherToday/V1', {
+      const CancelToken = axios.CancelToken
+      let cancel
+        axios(this.request.url, {
           cancelToken: new CancelToken(function executor(c) {
-            cancel = c;
+            cancel = c
           })
         })
-        // cancel the request
-        cancel()
-
+        cancel("Cancel Send Request")
     },
 
     getFolder(){
