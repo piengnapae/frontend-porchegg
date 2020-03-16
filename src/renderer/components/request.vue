@@ -351,7 +351,7 @@ export default {
       ],
       optionauth: [
         {
-          value: 'No Auth',
+          value: 'none',
           label: 'No Auth'
         }, {
           value: 'bearer',
@@ -660,21 +660,18 @@ export default {
       const currentEnv = this.$store.state.environments.environment
       let headerData = {}
       let tokenAuth = {}
-
       headerData = this.convertToArray(this.inputHeader)
-
-      if(this.token != null && this.auth != "bearer" && this.token != undefined){
+        
+      if(this.token != null && this.token != undefined){
         let stringToken = this.token
         const regexpToken = /\{\{(.*?)\}\}/g
           stringToken = stringToken.replace(regexpToken, function(match, token) {
-            return currentEnv[token] 
+            return currentEnv[token]
           })
-        
-        if(this.token != ''){
-          tokenAuth['authorization'] = this.token
+        if(this.auth != "none"){
+          tokenAuth['authorization'] = stringToken
         }
       }
-      
       let merged = {...headerData, ...tokenAuth};
       return merged
     },
