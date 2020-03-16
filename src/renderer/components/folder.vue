@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="collection">
     <br>
     <el-button @click="addCollectionDialog = true"><i class="el-icon-plus"></i> New Collection</el-button>
 
