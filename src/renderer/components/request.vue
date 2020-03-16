@@ -304,7 +304,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios, { CancelToken } from 'axios';
 import '@fortawesome/fontawesome-free/css/all.css';
 import AceEditor from "vue2-ace-editor";
 import '@/assets/scss/main.scss';
@@ -395,7 +395,8 @@ export default {
         method: this.data.method || 'get',
         url: this.data.url || ''
       },
-      url:''
+      url:'',
+      source: null,
     }
   },
 
@@ -403,6 +404,8 @@ export default {
     var params = this.data.params
     var header = this.data.header
     var token = this.data.auth
+
+    this.source = CancelToken.source()
 
     if(token != undefined && token != null) {
       token = JSON.parse(token)
@@ -444,20 +447,7 @@ export default {
        
      cancelSend(){
       this.loading = false
-
-      const CancelToken = axios.CancelToken
-      const source = CancelToken.source()
-
-          axios(this.request.url, {
-            cancelToken: source.token
-          }).then(function (thrown) {
-            if (axios.isCancel(thrown)) {
-              console.log('Request canceled', thrown.message)
-            } else {
-              console.log("err")
-            }
-          })  
-          source.cancel(' canceled by the user.')
+      this.source.cancel('canceled by the user.')
     },
 
     getFolder(){
@@ -519,6 +509,13 @@ export default {
     },
 
     sendRequest() {
+      //cancel before request
+      if (this.source) {
+          this.source.cancel()
+      }
+      this.source = CancelToken.source()
+      const cancelToken = this.source.token
+      
       const currentEnv = this.$store.state.environments.environment
       this.url = this.request.url 
       let string = this.request.url
@@ -540,7 +537,8 @@ export default {
         url: this.request.url,
         headers: this.headerArray(),             
         data: body,
-        params: this.convertToParams(this.inputParameter)
+        params: this.convertToParams(this.inputParameter),
+        cancelToken: cancelToken
       })
       .then(res => {
         this.request.url = this.url
