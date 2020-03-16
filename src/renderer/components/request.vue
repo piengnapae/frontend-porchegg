@@ -123,7 +123,7 @@
               </el-col>
 
               <el-col :xs="18" :sm="20">
-                <el-row v-if="auth === 'Bearer Token'">
+                <el-row v-if="auth === 'bearer'">
                   <el-row>TOKEN</el-row>
                   <el-input v-model="token" size="mini"></el-input>                 
                 </el-row>
@@ -313,7 +313,7 @@ import {env} from '../nuxt.config';
 export default {
   
   props: [
-    'data', 'sendEnv'
+    'data', 'sendEnv', 'targetName'
   ],
 
   components: {
@@ -354,7 +354,7 @@ export default {
           value: 'No Auth',
           label: 'No Auth'
         }, {
-          value: 'Bearer Token',
+          value: 'bearer',
           label: 'Bearer Token'
         }, {
           value: 'Basic Auth',
@@ -406,7 +406,10 @@ export default {
 
     if(token != undefined && token != null) {
       token = JSON.parse(token)
-      this.token = token
+      for(const t in token) {
+        this.token = token[t]
+        this.auth = t
+      }
     }
 
     if(params != undefined && params != null) {
@@ -472,14 +475,8 @@ export default {
     },
 
     save(id){
-
-      if(this.token == null || this.token == ''){
-        this.token = null
-      }else{
-        this.token = JSON.stringify(this.token)
-      }
-
-      if(id){
+      axios.get(this.server_api+'/V1/requests/'+id)
+      .then(res => {
         axios.put(this.server_api+'/V1/requests/'+id, {
           name: this.request.name,
           id_folder: this.request.id_folder,
@@ -489,7 +486,7 @@ export default {
           body: this.textbody,
           params: this.convertToParams(this.inputParameter),
           header: this.convertToArray(this.inputHeader),
-          auth: this.token
+          auth: this.convertAuth(this.token)
         })
         .then(res => {
           this.$message({
@@ -504,7 +501,8 @@ export default {
           })
           console.log(err.response)
         })
-      }else{
+      })
+      .catch( err => {
         axios.get(this.server_api+'/V1/collections')
         .then(res => {
           this.collections = res.data.data
@@ -517,9 +515,7 @@ export default {
         })
           console.log(err)
         })
-      }
-
-      this.token = JSON.parse(this.token)
+      })
     },
 
     sendRequest() {
@@ -531,6 +527,11 @@ export default {
           return currentEnv[token]; 
       });
       this.request.url = string 
+
+      var body = undefined
+      if(this.textbody != '' && this.textbody != null){
+        body = JSON.parse(this.textbody)
+      }
       const startTime = Date.now()
       
      
@@ -538,10 +539,8 @@ export default {
         method: this.request.method,
         url: this.request.url,
         headers: this.headerArray(),             
-        data: this.textbody,
-        params: this.convertToParams(this.inputParameter),
-
-        
+        data: body,
+        params: this.convertToParams(this.inputParameter)
       })
       .then(res => {
         this.request.url = this.url
@@ -598,82 +597,86 @@ export default {
 
     convertToParams(params){
 
-        const currentEnv = this.$store.state.environments.environment
+      const currentEnv = this.$store.state.environments.environment
+      let arr = {}
+      
+      params.forEach(params => {
+        var keyParams = params['keyParams']
+        const regexpKeyParam = /\{\{(.*?)\}\}/g
+        
+        keyParams = keyParams.replace(regexpKeyParam, function(match, token) {
+          return currentEnv[token] 
+        })
+        
+        var key = keyParams        
+        var valueParams = params['valueParams']
+        const regexpValueParam = /\{\{(.*?)\}\}/g
+        
+        valueParams = valueParams.replace(regexpValueParam, function(match, token) {
+          return currentEnv[token] 
+        })
+        arr[key]  = valueParams
 
-          let arr = {}
-          params.forEach(params => {
-
-             var keyParams = params['keyParams']
-               const regexpKeyParam = /\{\{(.*?)\}\}/g
-                keyParams = keyParams.replace(regexpKeyParam, function(match, token) {
-                  return currentEnv[token] 
-              })
-              var key = keyParams
-
-            if(key == ""){
-              return '{}'
-            }
-              var valueParams = params['valueParams']
-               const regexpValueParam = /\{\{(.*?)\}\}/g
-                valueParams = valueParams.replace(regexpValueParam, function(match, token) {
-                  return currentEnv[token] 
-              })
-               arr[key]  = valueParams
-            })
+        if(key == ""){
+          arr = undefined
+        }
+      })
             
-            return arr
+      return arr
     },
 
     convertToArray(input){
+      const currentEnv = this.$store.state.environments.environment
+      let arr = {}
+        
+        input.forEach(header => {
+          var keyHeaders = header['keyHeaders']
+          var key = keyHeaders
+          var valueHeaders = header['valueHeaders']
+          arr[key]  = valueHeaders
 
-       const currentEnv = this.$store.state.environments.environment
+          const regexpKeyHeader = /\{\{(.*?)\}\}/g
+          
+          keyHeaders = keyHeaders.replace(regexpKeyHeader, function(match, token) {
+            return currentEnv[token] 
+          })
+          
+          
+          const regexpValueHeader = /\{\{(.*?)\}\}/g
 
-            let arr = {}
-            input.forEach(header => {
-               var keyHeaders = header['keyHeaders']
-               const regexpKeyHeader = /\{\{(.*?)\}\}/g
-                keyHeaders = keyHeaders.replace(regexpKeyHeader, function(match, token) {
-                  return currentEnv[token] 
-              })
-              var key = keyHeaders
-
-              if(key == ""){
-                return '{}'
-              }
-
-              var valueHeaders = header['valueHeaders']
-               const regexpValueHeader = /\{\{(.*?)\}\}/g
-                valueHeaders = valueHeaders.replace(regexpValueHeader, function(match, token) {
-                  return currentEnv[token] 
-              })
-               arr[key]  = valueHeaders
-            })
-            
-            return arr
+          valueHeaders = valueHeaders.replace(regexpValueHeader, function(match, token) {
+            return currentEnv[token] 
+          })
+          
+          
+          if(key == ""){
+            arr = undefined
+          }
+        })
+      return arr
     },
 
     headerArray(){
-
       const currentEnv = this.$store.state.environments.environment
-
-      if(this.token != null){
-         let stringToken = this.token
-      const regexpToken = /\{\{(.*?)\}\}/g
-      stringToken = stringToken.replace(regexpToken, function(match, token) {
-          return currentEnv[token] 
-      })
-      
       let headerData = {}
       let tokenAuth = {}
 
       headerData = this.convertToArray(this.inputHeader)
-      if(this.token != ''){
-        tokenAuth['authorization'] = this.token
-      }
+
+      if(this.token != null && this.auth != "bearer" && this.token != undefined){
+        let stringToken = this.token
+        const regexpToken = /\{\{(.*?)\}\}/g
+          stringToken = stringToken.replace(regexpToken, function(match, token) {
+            return currentEnv[token] 
+          })
         
+        if(this.token != ''){
+          tokenAuth['authorization'] = this.token
+        }
+      }
+      
       let merged = {...headerData, ...tokenAuth};
       return merged
-      }
     },
 
     addRequest() {
@@ -686,7 +689,7 @@ export default {
         body: this.textbody,
         header: this.convertToArray(this.inputHeader),
         params: this.convertToParams(this.inputParameter),
-        auth: this.token
+        auth: this.convertAuth(this.token)
       })
       .then(res => {
         this.$emit('newRequest', res.data.data.id)
@@ -710,6 +713,17 @@ export default {
       this.request.method = 'get'
       this.request.url = ''
     },
+
+    convertAuth(token){
+      let arr = {}
+      if(this.auth === 'bearer'){
+        arr = {'bearer' : this.token}
+      }else{
+        arr = undefined
+      }
+
+      return arr
+    }
   }
 }
 </script>
