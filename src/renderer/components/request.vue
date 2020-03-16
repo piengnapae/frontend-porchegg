@@ -235,9 +235,12 @@
           <div class="cancelSend">
               <center v-loading="loading"></center><br>
                 Sending request 
-                  <br><br>  <center> <el-button @click="cancelSend()">Cancel</el-button></center>
+
+                  <br><br>  <center> <el-button  @click="cancelSend()">Cancel</el-button></center>
+
           </div>  
         </el-tab-pane>
+
 
         <el-tab-pane label="Pretty" name="first" v-else>
           <AceEditor
@@ -424,6 +427,7 @@ export default {
       this.inputHeader = temp
     }
   },
+
   methods: {
     editorInit: function(editor) {
       require('brace/mode/json')
@@ -434,17 +438,23 @@ export default {
       this.loading = true
       this.sendRequest()
     },
-
-    cancelSend(){
+       
+     cancelSend(){
       this.loading = false
+
       const CancelToken = axios.CancelToken
-      let cancel
-        axios(this.request.url, {
-          cancelToken: new CancelToken(function executor(c) {
-            cancel = c
-          })
-        })
-        cancel("Cancel Send Request")
+      const source = CancelToken.source()
+
+          axios(this.request.url, {
+            cancelToken: source.token
+          }).then(function (thrown) {
+            if (axios.isCancel(thrown)) {
+              console.log('Request canceled', thrown.message)
+            } else {
+              console.log("err")
+            }
+          })  
+          source.cancel(' canceled by the user.')
     },
 
     getFolder(){
@@ -522,12 +532,16 @@ export default {
       });
       this.request.url = string 
       const startTime = Date.now()
+      
+     
       axios({
         method: this.request.method,
         url: this.request.url,
         headers: this.headerArray(),             
         data: this.textbody,
-        params: this.convertToParams(this.inputParameter)
+        params: this.convertToParams(this.inputParameter),
+
+        
       })
       .then(res => {
         this.request.url = this.url
@@ -549,6 +563,7 @@ export default {
         this.statusTime = duration + "ms"
         this.loading = false
       })
+      
     },
       
     requestTab(tab, event) {
